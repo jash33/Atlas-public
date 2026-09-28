@@ -1,0 +1,29 @@
+{
+  "name": "@atlas/console",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "dev": "vp dev --host 127.0.0.1",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@atlas/demo-estate": "workspace:*",
+    "@atlas/runtime-ports": "workspace:*",
+    "@atlas/workflow-ir": "workspace:*",
+    "@tanstack/react-table": "9.1.2",
+    "@xyflow/react": "12.10.0",
+    "d3": "7.9.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "yaml": "2.9.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/d3": "7.4.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

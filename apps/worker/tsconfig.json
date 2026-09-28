@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../packages/execution-grant" },
+    { "path": "../../packages/workflow-ir" },
+    { "path": "../../packages/runtime-ports" },
+    { "path": "../../packages/temporal-adapter" },
+    { "path": "../mock-services" }
+  ]
+}

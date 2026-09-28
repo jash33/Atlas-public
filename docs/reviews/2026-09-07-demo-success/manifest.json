@@ -1,0 +1,112 @@
+{
+  "apiRunId": "atlas:run:atlas.workflow-run-id:ae7e889789c62b68d05385a3b6f79e323b6009db61687650304aca6447b0e774",
+  "historicalModelTranscriptAvailable": false,
+  "projectionMatchesApproval": true,
+  "capturedAt": "2026-09-07T22:31:31.9318119Z",
+  "modelConfiguredAtCapture": "gpt-5.6-sol",
+  "workflowVersionId": "workflow-20260907-222502-659",
+  "gitHead": "8e1a6117877fef0406e817a0e4f88c5970c76223",
+  "files": [
+    {
+      "path": "planner-prompts.md",
+      "sha256": "7f3e2e3bebb86d147ccb5f6bdffabf260d86147afdf587b5c7617a1a28f3d41b",
+      "bytes": 18216
+    },
+    {
+      "path": "README.md",
+      "sha256": "d80e5d84010d8d29ab00863258cab0cbafffd7f7726f050abe309ec0ec84f090",
+      "bytes": 11254
+    },
+    {
+      "path": "workflow.atlas.yaml",
+      "sha256": "eae6f831358d0bddae485bd33691485361a42cdfc269b8fa8d361b8c465a4122",
+      "bytes": 3132
+    },
+    {
+      "path": "evidence/api-run.json",
+      "sha256": "a28ee0e6e9ce46e27a1d15495e7a3c1f655f821d099c2669cac423a90642c9e2",
+      "bytes": 51306
+    },
+    {
+      "path": "evidence/approval.jsonl",
+      "sha256": "ea2275e942ea2b46e265568fbdc489f3c58b26e37020ce5de6d2e4cd3cbd40ff",
+      "bytes": 5881
+    },
+    {
+      "path": "evidence/catalog.json",
+      "sha256": "b715ca6ae4740c09cca91d6606bdd660edb0917eca60d5654b4fdd8f0578415f",
+      "bytes": 3491
+    },
+    {
+      "path": "evidence/completed-runs.json",
+      "sha256": "df52ae9aeb87b2a01e77063eaf7281bc8bbdd10e7d76eab6df57563cfbde4627",
+      "bytes": 1307
+    },
+    {
+      "path": "evidence/current-capability-architecture.json",
+      "sha256": "0c9715742c8b4dc17ab33be75d2260a75126147187074078282419d5dad58034",
+      "bytes": 52728
+    },
+    {
+      "path": "evidence/current-planner-projection.json",
+      "sha256": "8553195d3fc1102433ce7fae912b82da9b0195bff9874dffcfd391ed44f6c577",
+      "bytes": 969444
+    },
+    {
+      "path": "evidence/reconstructed-intent-capability-index.json",
+      "sha256": "6754b0520221b7dad550da2a8033d483e0587c3509def0f502eb413c0a9cc3fd",
+      "bytes": 154220
+    },
+    {
+      "path": "evidence/reconstructed-recipe-hints.json",
+      "sha256": "b9eaf7cf49075a8d5a06cb63f831a8d90738db20538f964ed8131c673c0b1cf7",
+      "bytes": 22386
+    },
+    {
+      "path": "evidence/reconstructed-system-prompts.json",
+      "sha256": "c0cbc007f2217f834dc380431a3dd3a760e6ba30a0cda5590e346f7b58b00dc2",
+      "bytes": 357523
+    },
+    {
+      "path": "evidence/review.json",
+      "sha256": "dd27871270786811cd263320a94b94743549b967281a9fd2989620ee4026bf2c",
+      "bytes": 64412
+    },
+    {
+      "path": "evidence/sandbox-history.json",
+      "sha256": "5d9c91142aaeb536b897719f442d09b03b350c30484b10c1d5f55dcf29e25e22",
+      "bytes": 10510
+    },
+    {
+      "path": "evidence/sandbox-runs.jsonl",
+      "sha256": "092fbc9224b391f679d7ee20654c18ab0e8be8f22aa856ecc6100c0259e1c1a4",
+      "bytes": 96955
+    },
+    {
+      "path": "evidence/workflow.json",
+      "sha256": "ee83101bffcbc2bc0ecd2676a79a5642956749ae7ebd46b5a98975d05213e3c2",
+      "bytes": 21947
+    },
+    {
+      "path": "planner-source/openai-planner-model.ts",
+      "sha256": "34936f9bb781879c47a209eafdc2179b6e711a6bcf268ac85101877964d367d3",
+      "bytes": 21037
+    },
+    {
+      "path": "planner-source/planner-mapping-inference.ts",
+      "sha256": "2aa5dc882d41304a01770628489c451fe8fa307707c96c53139ac73a496e691b",
+      "bytes": 5954
+    },
+    {
+      "path": "planner-source/planner-mapping.ts",
+      "sha256": "41b262d9884fd7c244f362b401f244629ffdf677ecf3cefc58aca3ce875908a1",
+      "bytes": 29261
+    },
+    {
+      "path": "planner-source/workflow-planning.ts",
+      "sha256": "9f820f2498124fdb85ce9ce235e19fe33ba311881d4fea54a048bdd1c55a9ec5",
+      "bytes": 60800
+    }
+  ],
+  "publicCopyNote": "Internal intake references redacted; hashes describe sanitized public files."
+}

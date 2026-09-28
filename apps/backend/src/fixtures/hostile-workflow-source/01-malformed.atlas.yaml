@@ -1,0 +1,8 @@
+formatVersion: atlas-source/v1
+projectionFingerprint: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+workflow:
+  steps:
+    - id: done
+      kind: terminal
+      state: completed
+state: [completed

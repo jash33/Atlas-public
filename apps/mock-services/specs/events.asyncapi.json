@@ -1,0 +1,80 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Atlas Mock Domain Events",
+    "version": "1.0.0"
+  },
+  "channels": {
+    "invoicePaid": {
+      "address": "invoice.paid",
+      "messages": {
+        "invoicePaid": {
+          "name": "InvoicePaid",
+          "payload": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "eventType": {
+                "type": "string",
+                "const": "invoice.paid"
+              },
+              "invoiceId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paymentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "atlasWorkflowRunId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "eventId",
+              "eventType",
+              "invoiceId",
+              "paymentId",
+              "atlasWorkflowRunId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  "operations": {
+    "publishInvoicePaid": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/invoicePaid"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/invoicePaid/messages/invoicePaid"
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "PublishAcknowledgement": {
+        "type": "object",
+        "properties": {
+          "published": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "published"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

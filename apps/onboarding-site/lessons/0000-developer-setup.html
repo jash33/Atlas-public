@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson 0 &middot; Developer setup</title><link rel="stylesheet" href="../assets/course.css" />
+  <script src="../assets/copy-commands.js" defer></script>
+</head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Lesson 0 &middot; 5 min</p>
+  <h1>Run Atlas locally</h1>
+  <p class="standfirst">Install the tools, start the product, and choose whether to reset or keep your local data.</p>
+
+  <h2>1. Install</h2>
+  <p>You need Git, Docker Desktop with Compose v2, and Node 24.19.0.</p>
+  <pre class="flow">npm install --global pnpm@11.19.0
+git clone https://github.com/jash33/Atlas-public.git
+cd Atlas-public
+pnpm install --frozen-lockfile
+pnpm setup:local
+
+pnpm check
+vp test --run
+vp run -w typecheck
+vp run -r build</pre>
+
+  <h2>2. Start Atlas</h2>
+  <div class="table-scroll"><table><thead><tr><th>Command</th><th>Use it to</th></tr></thead><tbody>
+    <tr><td><code>pnpm prepare-demo</code></td><td>Delete old local Atlas state and start with an empty capability catalog containing only the pending Burger Town repository.</td></tr>
+    <tr><td><code>pnpm infra:up</code></td><td>Start the full product. It merges the named provider fixtures and preserves other resources and canonical saved data.</td></tr>
+    <tr><td><code>pnpm dev</code></td><td>Run source code in watch mode. Start its databases and services separately.</td></tr>
+    <tr><td><code>pnpm infra:test:e2e</code></td><td>Run the full local integration check from a replaced, clean provider baseline.</td></tr>
+  </tbody></table></div>
+  <div class="note">Normal <code>infra:up</code> is additive for the mock provider: a payment you seed by hand survives another startup. Use <code>prepare-demo</code> only when you want the destructive full-demo reset; <code>infra:test:e2e</code> also replaces provider resources for a repeatable integration check.</div>
+  <div class="note">Burger Town is a separate local app running on port 43123. Atlas reaches it from Docker at <code>http://host.docker.internal:43123</code>; the matching browser address is <code>http://localhost:43123</code>. The Burger Town Connect Source form loads these editable addresses from the Backend.</div>
+  <div class="note">If you ran an earlier blast-radius branch with the old Burger Town migration numbers, recreate the disposable local database before starting this version.</div>
+  <div class="note">After pulling the Production rename, the first <code>pnpm infra:up</code> may find a retired Production-like Atlas stack. It announces the change, deletes that disposable Atlas project's PostgreSQL, Temporal, and Worker-secret data, then recreates Development and Production. Unrelated Docker resources are excluded. Later starts preserve canonical data. Back up anything valuable outside these demo volumes first.</div>
+  <div class="note"><code>pnpm dev --console-only</code> starts the Console with Vite hot reload. Compose does not run the Console; port 5173 must be free before starting it.</div>
+
+  <h2>3. Open it</h2>
+  <div class="table-scroll"><table><thead><tr><th>Page</th><th>Address</th></tr></thead><tbody>
+    <tr><td>Atlas Console</td><td><a href="http://localhost:5173">http://localhost:5173</a></td></tr>
+    <tr><td>Backend health</td><td><a href="http://localhost:4000/health">http://localhost:4000/health</a></td></tr>
+    <tr><td>Mock services health</td><td><a href="http://localhost:4100/health">http://localhost:4100/health</a></td></tr>
+    <tr><td>Temporal UI</td><td><a href="http://localhost:8080">http://localhost:8080</a></td></tr>
+  </tbody></table></div>
+
+  <h2>4. Choose demo services</h2>
+  <p>By default, Stripe, Slack, and HubSpot run as local copies and need no credentials. To use official test accounts, add the providers you want to the root <code>.env</code>:</p>
+  <pre class="flow">STRIPE_DEMO_MODE=official-test
+STRIPE_SECRET_KEY=sk_test_...
+
+SLACK_DEMO_MODE=official-test
+SLACK_BOT_TOKEN=xoxb-...
+
+HUBSPOT_DEMO_MODE=official-test
+HUBSPOT_ACCESS_TOKEN=...</pre>
+  <p>A provider set to <code>official-test</code> will not start without its credential.</p>
+
+  <h2>5. Enable AI drafting (optional)</h2>
+  <p>Running workflows does not need an AI model. Creating a workflow from English does. Save the API key in <code>.local/openai-api-key</code>, then add:</p>
+  <pre class="flow">OPENAI_API_KEY_FILE=../../.local/openai-api-key
+OPENAI_MODEL=&lt;configured-model&gt;</pre>
+  <p>The key is mounted only in the Backend. Do not paste it into the Console.</p>
+
+  <h2>6. Reset the demo</h2>
+  <pre class="flow">pnpm prepare-demo</pre>
+  <p>Open the printed Console link. Burger Town is visible as the only repository, with no capabilities until its public source is analyzed and approved.</p>
+
+  <h2>Focused commands and cleanup</h2>
+  <pre class="flow">pnpm dev --console-only
+vp run @atlas/backend#dev
+vp run @atlas/mock-services#dev
+vp run @atlas/worker#dev
+
+pnpm infra:down
+pnpm infra:clean:docker-cache
+pnpm infra:clean:docker-cache -- --include-recent</pre>
+  <p><code>infra:down</code> keeps saved data. The default cleanup removes dangling Atlas images and build cache older than 24 hours, not containers or volumes. <code>--include-recent</code> removes the cache age cutoff.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <p class="note">If setup fails, give your coding agent the command, the failed step, and the first error.</p>
+  <div class="nav"><a href="index.html">All lessons</a><a href="0001-what-atlas-is.html">Lesson 1 &rarr;</a></div>
+</body>
+</html>

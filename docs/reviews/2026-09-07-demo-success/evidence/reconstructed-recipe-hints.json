@@ -1,0 +1,700 @@
+{
+  "title": "Burgertown workflows",
+  "workflows": [
+    {
+      "workflowId": "payAtTable",
+      "summary": "A. Pay at table",
+      "description": "Seeded tbl_4 / chk_ok. Read the due, tender card, capture, invoice.\nTable frees; optional tip and rewards earn."
+    },
+    {
+      "workflowId": "refundThenVoid",
+      "summary": "B. Refund then void",
+      "description": "Fixture chk_paid / pay_paid / ch_paid. Accept a refund, reverse the\nprocessor charge, then void. Void without a reversed refund is 409\nvoid_not_allowed. API only — no restaurant screen."
+    },
+    {
+      "workflowId": "orderThenKitchen",
+      "summary": "C. Order then kitchen",
+      "description": "Read the dinner board, open a dine-in check on an empty table, add a\nTownie with selections[], send, bump the ticket. Last ticket done\nmarks the fulfillment ready. itm_86 on add is 409. Send with nothing\nunsent is 409 nothing_to_send."
+    },
+    {
+      "workflowId": "localDiscountThenPay",
+      "summary": "D. Local discount then pay",
+      "description": "Apply LOCAL10 to chk_ok, re-read due_cents, pay the new due.\nPaying the pre-discount 1736 after the code is 422 amount_mismatch."
+    },
+    {
+      "workflowId": "deliveryEndToEnd",
+      "summary": "E. Delivery end to end",
+      "description": "Nine hops with three branch points — zone check, courier availability,\nready-gate on pickup. Creates a new delivery fulfillment; does not\nreuse dlv_pending."
+    },
+    {
+      "workflowId": "buildABurger",
+      "summary": "F. Build a burger",
+      "description": "Same write endpoint as C. Each step below expects a distinct 4xx from\naddItem, then the last step is the valid Townie. Five options in\nmodg_add is in HANDOFF but the live group only has three options, so\nthat row is not a step."
+    },
+    {
+      "workflowId": "rewardsRedeemThenPay",
+      "summary": "G. Rewards redemption then pay",
+      "description": "The stale-due trap. Redeem off_free_fries on chk_ok, re-fetch the\ncheck, pay the new due. Skipping the re-fetch and paying 1736 is\n422 amount_mismatch. Passing a stale check_version is 409\ncheck_version_stale."
+    },
+    {
+      "workflowId": "deliveryFailedThenRefund",
+      "summary": "H. Delivery failed then refund",
+      "description": "Fixture dlv_enroute. Fail the job; fulfillment stays ready.\nThe seeded check chk_enroute is unpaid, so the live path is cancel\nfulfillment — inventory is not restocked. HANDOFF also describes a\npaid recovery (refund → processor refund → void). That branch needs\na paid enroute fixture the seed does not have, so it is not a step."
+    },
+    {
+      "workflowId": "guestDietaryFilter",
+      "summary": "I. Guest dietary filter",
+      "description": "Read-only filter plus one add that warns. Maya avoids alg_dairy and\nis not strict, so a shake still 201s with warnings[]. 409\nallergen_conflict only fires when dietary_profile.strict is true.\nNo guest on the seed is strict, so that 409 is not a step."
+    }
+  ],
+  "connections": [
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getTable",
+      "targetOperationId": "getCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "getReceiptByCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getReceiptByCheck",
+      "targetOperationId": "addTip"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "addTip",
+      "targetOperationId": "earnRewards"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getTable",
+      "targetOperationId": "getCheck",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "getReceiptByCheck",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "addTip",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "earnRewards",
+      "destinationField": "guest_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "earnRewards",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "refundThenVoid",
+      "sourceOperationId": "createRefund",
+      "targetOperationId": "createProcessorRefund"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "refundThenVoid",
+      "sourceOperationId": "createProcessorRefund",
+      "targetOperationId": "voidCheck"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "refundThenVoid",
+      "sourceOperationId": "createRefund",
+      "targetOperationId": "createProcessorRefund",
+      "destinationField": "refund_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "getMenu",
+      "targetOperationId": "listItems"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "listItems",
+      "targetOperationId": "listInventory"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "listInventory",
+      "targetOperationId": "listModifierGroups"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "listModifierGroups",
+      "targetOperationId": "createCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "addItem",
+      "targetOperationId": "sendOrder"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "listTickets"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "listTickets",
+      "targetOperationId": "completeTicket"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "sendOrder",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "applyDiscount",
+      "targetOperationId": "getCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "checkZone",
+      "targetOperationId": "quoteDelivery"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "quoteDelivery",
+      "targetOperationId": "createFulfillment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "addItem",
+      "targetOperationId": "sendOrder"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "createDelivery"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "dispatchDelivery"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "dispatchDelivery",
+      "targetOperationId": "acceptDispatch"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "acceptDispatch",
+      "targetOperationId": "completeTicket"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "completeTicket",
+      "targetOperationId": "pickupDelivery"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "pickupDelivery",
+      "targetOperationId": "pingTracking"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "pingTracking",
+      "targetOperationId": "deliverDelivery"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "deliverDelivery",
+      "targetOperationId": "getCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "addCourierTip"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createCheck",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "sendOrder",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createDelivery",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "quoteDelivery",
+      "targetOperationId": "createDelivery",
+      "destinationField": "quote_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "dispatchDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "acceptDispatch",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "pickupDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "pingTracking",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "deliverDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "getCheck",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "addCourierTip",
+      "destinationField": "delivery_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "getRewards",
+      "targetOperationId": "listOffers"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "listOffers",
+      "targetOperationId": "getCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createRedemption"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createRedemption",
+      "targetOperationId": "getCheck"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "earnRewards"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "destinationField": "check_version"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "earnRewards",
+      "destinationField": "payment_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryFailedThenRefund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "getFulfillment"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "deliveryFailedThenRefund",
+      "sourceOperationId": "getFulfillment",
+      "targetOperationId": "cancelFulfillment"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryFailedThenRefund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "getFulfillment",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "kind": "data-flow",
+      "workflowId": "deliveryFailedThenRefund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "cancelFulfillment",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "sourceOperationId": "getGuest",
+      "targetOperationId": "listAllergens"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "sourceOperationId": "listAllergens",
+      "targetOperationId": "listItems"
+    },
+    {
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "sourceOperationId": "listItems",
+      "targetOperationId": "addItem"
+    }
+  ]
+}

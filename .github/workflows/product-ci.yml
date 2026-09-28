@@ -1,0 +1,71 @@
+name: Product foundation CI
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/product-ci.yml'
+      - '.node-version'
+      - 'apps/**'
+      - 'docs/CUSTOMER_SSO_INSTALL.md'
+      - 'docs/customer-roles.md'
+      - 'infra/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'tooling/**'
+      - 'tsconfig*.json'
+      - 'vite.config.ts'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/product-ci.yml'
+      - '.node-version'
+      - 'apps/**'
+      - 'docs/CUSTOMER_SSO_INSTALL.md'
+      - 'docs/customer-roles.md'
+      - 'infra/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'tooling/**'
+      - 'tsconfig*.json'
+      - 'vite.config.ts'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-bookworm
+        env:
+          POSTGRES_DB: atlas_test
+          POSTGRES_PASSWORD: atlas
+          POSTGRES_USER: atlas
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U atlas -d atlas_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@313600b80b104eadebb9111787d37a2e83e014ca # v1.17.0
+        with:
+          cache: true
+          node-version: '24.19.0'
+          run-install: false
+      - run: vp install --frozen-lockfile
+      - run: vp run -w check
+      - run: vp run -w typecheck
+      - run: vp run -w test
+        env:
+          ATLAS_TEST_DATABASE_URL: postgresql://atlas:atlas@localhost:${{ job.services.postgres.ports[5432] }}/atlas_test
+      - run: vp run -w build
+      - run: vp run -w setup:local
+      - run: vp run -w infra:test:e2e

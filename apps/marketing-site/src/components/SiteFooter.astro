@@ -1,0 +1,35 @@
+---
+import AtlasMark from '@atlas/site-ui/AtlasMark.astro';
+import { docsUrl } from '../lib/site';
+---
+<footer class="site-footer shell">
+<div class="footer-top">
+<div class="footer-brand">
+<a class="brand" href="/" aria-label="Atlas home">
+<AtlasMark />
+<span>atlas</span>
+</a>
+<p>Understand your systems.<br />Move forward with confidence.</p>
+</div>
+<nav class="footer-column" aria-label="Product navigation">
+<strong>Product</strong>
+<a href="/#platform">Platform</a>
+<a href="/#use-cases">Use cases</a>
+<a href="/how-it-works/">How it works</a>
+<a href="/compare/">Compare approaches</a>
+</nav>
+<nav class="footer-column" aria-label="Resource navigation">
+<strong>Resources</strong>
+<a href="/evaluate/">Evaluate Atlas</a>
+<a href="/how-it-works/#reference-workflow">Payment & Billing demo</a>
+<a href={docsUrl()}>Read the docs</a>
+<a href={docsUrl('/self-host/')}>Self-hosting guide</a>
+<a href={docsUrl('/sso-installation/')}>Company sign-in setup</a>
+</nav>
+</div>
+<div class="footer-bottom">
+<span>© {new Date().getFullYear()} Atlas</span>
+<span>Built for the systems you already have.</span>
+<span>Developer preview</span>
+</div>
+</footer>

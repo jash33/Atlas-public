@@ -1,0 +1,81 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Atlas Mock Operations Notification API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/operations/payment-notifications": {
+      "post": {
+        "operationId": "notifyPaymentOperations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentOperationsNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationAcknowledgement"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaymentOperationsNotification": {
+        "type": "object",
+        "properties": {
+          "atlasWorkflowRunId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoiceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paymentId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "atlasWorkflowRunId",
+          "invoiceId",
+          "paymentId",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "NotificationAcknowledgement": {
+        "type": "object",
+        "properties": {
+          "notified": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "notified"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

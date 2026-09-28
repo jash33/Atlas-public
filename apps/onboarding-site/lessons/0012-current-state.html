@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson 12 &middot; When an API changes</title><link rel="stylesheet" href="../assets/course.css" />
+  <script src="../assets/mermaid.min.js"></script><script src="../assets/mermaid-init.js" defer></script><script src="../assets/lightbox.js" defer></script>
+</head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas walkthrough &middot; Lesson 12 &middot; 2 min</p>
+  <h1>When an API changes</h1>
+  <p class="standfirst">Atlas finds the change, shows which workflows are affected, and sends the fix through normal review.</p>
+
+  <figure class="dg"><pre class="mermaid">
+flowchart LR
+  A["API changes"] --> B["Atlas checks it again"]
+  B --> C["Affected workflows"]
+  C --> D["Proposed fix"]
+  D --> E["Test and approve"]
+  E --> F["New runs use the fix"]
+  </pre><figcaption>Runs that already started keep the version they began with.</figcaption></figure>
+
+  <h2>Follow it in the Console</h2>
+  <ol>
+    <li><strong>Capabilities:</strong> compare the old and new Billing action.</li>
+    <li><strong>Changes:</strong> see the removed field and affected workflow.</li>
+    <li><strong>Create Workflow:</strong> review, test, approve, and activate the fix.</li>
+    <li><strong>Workflow Catalog:</strong> find the stable workflow and compare its active and latest versions.</li>
+    <li><strong>Runs:</strong> compare a run before the change with one after it.</li>
+    <li><strong>Activity:</strong> see the full history.</li>
+  </ol>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0011-acceptance.html">&larr; Main walkthrough</a><a href="index.html">All lessons &rarr;</a></div>
+</body>
+</html>

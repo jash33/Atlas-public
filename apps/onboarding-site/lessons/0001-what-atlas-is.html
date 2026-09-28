@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 1 &middot; Atlas and its console</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Lesson 1 &middot; 3 min</p>
+  <h1>Meet Atlas</h1>
+  <p class="standfirst">Atlas helps teams build and run integrations without giving AI direct access to their systems.</p>
+
+  <p>You describe what you want to connect. Atlas proposes a workflow using the APIs your team has approved. A person reviews and tests it before it can run.</p>
+
+  <h2>Business value</h2>
+  <div class="claim">
+    <span class="label">The promise</span>
+    <p>Atlas gives durability to the <strong>process across services</strong>, not to the code inside each service.</p>
+  </div>
+  <h3>What Atlas adds</h3>
+  <ul>
+    <li>Automatic retries with backoff for failed API calls.</li>
+    <li>Workflows that survive crashes, restarts, and outages.</li>
+    <li>Resume from the failed step instead of restarting everything.</li>
+    <li>Idempotency keys to reduce duplicate side effects.</li>
+    <li>Timeouts and durable waiting.</li>
+    <li>Ordered multi-service execution.</li>
+    <li>Compensation before irreversible actions.</li>
+    <li>Version pinning for in-flight runs.</li>
+    <li>Execution history, visibility, and controlled repair.</li>
+  </ul>
+  <p><strong>Business value:</strong> fewer integration failures, duplicate charges, half-completed processes, and custom retry/recovery code.</p>
+
+  <h3>What Atlas does not add</h3>
+  <p>You do not get durability <strong>inside</strong> an API call:</p>
+  <ul>
+    <li>Resume midway through the endpoint's logic.</li>
+    <li>Durable internal timers, waits, signals, or child workflows.</li>
+    <li>Automatic replay of internal decisions.</li>
+    <li>Fine-grained retry of individual internal operations.</li>
+    <li>Visibility into internal progress.</li>
+    <li>Compensation for hidden internal side effects.</li>
+    <li>Strong deduplication unless the endpoint supports idempotency.</li>
+  </ul>
+  <p>Temporal sees each endpoint call as one opaque Activity: it succeeded, failed, or timed out. If an endpoint lacks idempotency or compensation, Atlas can detect and manage that risk, but cannot manufacture those guarantees.</p>
+
+  <h2>The console</h2>
+  <div class="table-scroll"><table><thead><tr><th>Page</th><th>Use it to</th></tr></thead><tbody>
+    <tr><td>Home</td><td>Start a task or add useful summaries.</td></tr>
+    <tr><td>Create Workflow</td><td>Describe, review, test, and approve integrations.</td></tr>
+    <tr><td>Workflow Catalog</td><td>Find saved workflows in the selected environment and open their detail, version history, and recent runs.</td></tr>
+    <tr><td>Capabilities</td><td>See which API actions Atlas can use.</td></tr>
+    <tr><td>Runs</td><td>See what ran, what failed, and what you can do next.</td></tr>
+    <tr><td>Changes</td><td>Review API changes and update affected workflows.</td></tr>
+    <tr><td>Activity</td><td>See who changed what and when.</td></tr>
+    <tr><td>Settings</td><td>Manage people, workers, and access rules.</td></tr>
+  </tbody></table></div>
+
+  <h2>Two menus at the top</h2>
+  <p><strong>Environment</strong> switches between the development and demo production environments. <strong>Demo as</strong> shows what an Author, Admin, or Operator can do.</p>
+  <ul>
+    <li><strong>Authors</strong> create workflows.</li>
+    <li><strong>Admins</strong> approve workflows and manage settings.</li>
+    <li><strong>Operators</strong> watch runs and handle failures.</li>
+  </ul>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0000-developer-setup.html">&larr; Setup</a><a href="0002-what-done-means.html">Architecture &rarr;</a></div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+---
+import AtlasMark from '@atlas/site-ui/AtlasMark.astro';
+import { docsUrl } from '../lib/site';
+interface Props { current?: 'home' | 'how' | 'self-host' | 'docs' | 'evaluate' | 'compare'; }
+const { current } = Astro.props;
+const links = [{label:'Platform',href:'/#platform'}, {label:'How it works',href:'/how-it-works/',key:'how'}, {label:'Compare',href:'/compare/',key:'compare'}, {label:'Read the docs',href:docsUrl(),key:'docs'}];
+---
+<div class="header-wrap">
+<header class="site-header shell">
+  <a class="brand" href="/" aria-label="Atlas home">
+<AtlasMark />
+<span>atlas</span>
+</a>
+<nav class="desktop-nav" aria-label="Primary navigation">
+    {links.map(link =>
+<a href={link.href} aria-current={link.key && current === link.key ? 'page' : undefined}>{link.label}</a>)}
+    <a class="button button-small" href="/evaluate/" aria-current={current === 'evaluate' ? 'page' : undefined}>Evaluate Atlas <span aria-hidden="true">↗</span>
+</a>
+  </nav>
+<details class="mobile-nav">
+<summary aria-label="Navigation menu">Menu <span aria-hidden="true">+</span>
+</summary>
+<nav class="mobile-links" aria-label="Mobile navigation">{links.map(link =>
+<a href={link.href}>{link.label}</a>)}<a class="button" href="/evaluate/">Evaluate Atlas <span aria-hidden="true">↗</span>
+</a>
+</nav>
+</details>
+</header>
+</div>
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('.mobile-nav').forEach(menu => {
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+    menu.addEventListener('keydown', event => { if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary')?.focus(); } });
+  });
+</script>

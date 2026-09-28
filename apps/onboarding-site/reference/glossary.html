@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atlas glossary</title><link rel="stylesheet" href="../assets/course.css" />
+  <style>
+    dl.gloss { margin:0 0 2.5rem; }
+    dl.gloss dt { font-family:var(--mono); font-size:.9rem; font-weight:700; color:var(--ink); margin-top:1.35rem; }
+    dl.gloss dt:first-child { margin-top:0; }
+    dl.gloss dd { margin:.3rem 0 0; font-size:.98rem; line-height:1.55; }
+    .jump a { display:inline-block; margin:0 .8rem .45rem 0; font-family:var(--sans); font-size:.82rem; }
+  </style>
+</head>
+<body>
+  <p class="homelink"><a href="../lessons/index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Reference</p>
+  <h1>Glossary</h1>
+  <p class="standfirst">Short definitions for Atlas terms. You do not need to learn these before using the product.</p>
+
+  <nav class="jump" aria-label="Glossary sections"><a href="#product">Product</a><a href="#capabilities">Capabilities</a><a href="#workflows">Workflows</a><a href="#execution">Runs</a><a href="#change">Changes</a><a href="#settings">Settings</a></nav>
+
+  <h2 id="product">Product</h2>
+  <dl class="gloss">
+    <dt>Atlas</dt><dd>A tool for creating, approving, and running integrations.</dd>
+    <dt>Console</dt><dd>The Atlas website.</dd>
+    <dt>Backend</dt><dd>The service that stores data, checks permissions, and sends work to Workers.</dd>
+    <dt>Worker</dt><dd>The customer-side service that holds credentials and runs workflows.</dd>
+    <dt>environment</dt><dd>A separate place to run workflows, such as Development or Production.</dd>
+    <dt>control plane</dt><dd>The Console and Backend.</dd>
+    <dt>customer execution boundary</dt><dd>The Worker and the customer systems it can reach.</dd>
+  </dl>
+
+  <h2 id="capabilities">Capabilities</h2>
+  <dl class="gloss">
+    <dt>capability</dt><dd>One API action Atlas may use, such as getting an invoice.</dd>
+    <dt>source</dt><dd>The API document from which Atlas learns capabilities.</dd>
+    <dt>discovery</dt><dd>A check of a source for new or changed capabilities.</dd>
+    <dt>capability version</dt><dd>A saved version of one API action.</dd>
+    <dt><code>capabilityVersionId</code></dt><dd>The unique ID for a capability version.</dd>
+    <dt>provenance</dt><dd>A record of where information came from.</dd>
+    <dt>planner projection</dt><dd>The small set of approved capability facts the AI model may use.</dd>
+    <dt>capability pin</dt><dd>The exact capability version used by a workflow or run.</dd>
+    <dt>safety annotation</dt><dd>A fact supplied by a person, such as whether an action is safe to retry.</dd>
+  </dl>
+
+  <h2 id="workflows">Workflows</h2>
+  <dl class="gloss">
+    <dt>workflow</dt><dd>An integration authored and saved in Atlas. Connecting or ingesting a capability source does not create workflows.</dd>
+    <dt><code>.atlas.yaml</code></dt><dd>The editable, human-readable authoring source for a workflow. A Worker never executes it directly.</dd>
+    <dt>Workflow IR</dt><dd>The closed, typed data that Atlas compiles from authoring source and interprets at runtime.</dd>
+    <dt>transformation AST</dt><dd>The bounded data language used to map one capability's output into another capability's input without arbitrary code.</dd>
+    <dt>workflow version</dt><dd>A saved workflow that does not change. Editing creates another version.</dd>
+    <dt><code>irHash</code></dt><dd>A fingerprint used to detect changes to a workflow.</dd>
+    <dt><code>.atlas</code> bundle</dt><dd>The immutable, approved, signed UTF-8 JSON artifact verified by the Worker.</dd>
+    <dt>artifact</dt><dd>A fixed execution package with its own identity. The signed <code>.atlas</code> bundle is the current workflow artifact.</dd>
+    <dt>sandbox evidence</dt><dd>The test results for one workflow version.</dd>
+    <dt>approval</dt><dd>An Admin's decision that one tested workflow version may run.</dd>
+    <dt>activation</dt><dd>Choosing the approved version that new runs will use.</dd>
+    <dt>rollback</dt><dd>Choosing an older approved version for future runs.</dd>
+    <dt>projection fingerprint</dt><dd>A fingerprint of the capability facts used to create a draft.</dd>
+  </dl>
+
+  <h2 id="execution">Runs</h2>
+  <dl class="gloss">
+    <dt>run</dt><dd>One execution of a workflow.</dd>
+    <dt>run command</dt><dd>The job the Backend makes available to a Worker.</dd>
+    <dt>ExecutionGrant</dt><dd>A short-lived signed permission for a Worker to run one approved workflow.</dd>
+    <dt>bundle verification</dt><dd>The Worker's fail-closed check of a bundle's signature, identity, pins, approval, activation, and grant before Temporal starts.</dd>
+    <dt>delivery ID</dt><dd>An outside ID used to prevent the same request from starting twice.</dd>
+    <dt>idempotency</dt><dd>The ability to repeat a request without causing the same effect twice.</dd>
+    <dt>parked</dt><dd>A run that has stopped and needs a person to choose what happens next.</dd>
+    <dt>repair</dt><dd>An approved action that lets a parked run continue or end.</dd>
+    <dt>resume</dt><dd>Continue a run from its saved history.</dd>
+    <dt>compensation</dt><dd>An action that tries to undo an earlier action.</dd>
+    <dt>irreversible boundary</dt><dd>The point after which Atlas cannot fully undo completed work.</dd>
+  </dl>
+
+  <h2 id="change">Changes</h2>
+  <dl class="gloss">
+    <dt>drift</dt><dd>A difference between an approved API version and newly found information.</dd>
+    <dt>change classification</dt><dd>Atlas's bounded declared-contract label for a change: Incompatible contract, Compatible contract, Metadata changed, or Needs review.</dd>
+    <dt>blast radius</dt><dd>The workflows and steps affected by a change.</dd>
+    <dt>quarantine</dt><dd>A block on new runs while an unsafe change is reviewed.</dd>
+    <dt>migration</dt><dd>A proposed workflow update for a changed API.</dd>
+  </dl>
+
+  <h2 id="settings">Settings</h2>
+  <dl class="gloss">
+    <dt>Author</dt><dd>A person who creates workflows.</dd>
+    <dt>Admin</dt><dd>A person who approves workflows and changes settings.</dd>
+    <dt>Operator</dt><dd>A person who watches runs and handles failures.</dd>
+    <dt>secret alias</dt><dd>A name for a credential stored with the Worker. Atlas does not store the value.</dd>
+    <dt>allowed host</dt><dd>An internet host that a capability is permitted to call.</dd>
+    <dt>Activity event</dt><dd>A saved record of who changed something, what changed, and when.</dd>
+  </dl>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+</body>
+</html>

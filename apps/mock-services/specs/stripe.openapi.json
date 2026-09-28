@@ -1,0 +1,147 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Stripe API (contract-faithful rehearsal subset)",
+    "version": "2026-07-29.dahlia",
+    "description": "A deterministic local subset of the Stripe OpenAPI contract for rehearsal. It does not prove live Stripe connectivity."
+  },
+  "servers": [
+    {
+      "url": "http://mock-services:4100"
+    }
+  ],
+  "paths": {
+    "/v1/payment_intents": {
+      "post": {
+        "operationId": "PostPaymentIntents",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "x-atlas-data-classification": "internal"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentIntentCreateParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "PaymentIntentCreateParams": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          }
+        },
+        "required": [
+          "amount",
+          "currency"
+        ],
+        "additionalProperties": false
+      },
+      "PaymentIntent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^pi_.*"
+          },
+          "object": {
+            "type": "string",
+            "const": "payment_intent"
+          },
+          "amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[a-z]{3}$"
+          },
+          "livemode": {
+            "type": "boolean",
+            "const": false
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "requires_payment_method",
+              "requires_confirmation",
+              "requires_action",
+              "processing",
+              "requires_capture",
+              "canceled",
+              "succeeded"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "amount",
+          "currency",
+          "livemode",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-atlas-connection": {
+    "provider": "Stripe",
+    "mode": "contract-faithful-rehearsal",
+    "liveConnectivity": false,
+    "label": "Contract-faithful local rehearsal fallback",
+    "upstreamRepository": "https://github.com/stripe/openapi",
+    "upstreamRevision": "24e4796f5aa12204d7e208ef447a5d11705b9b41",
+    "upstreamPath": "latest/openapi.spec3.json",
+    "officialSandboxUrl": "https://api.stripe.com",
+    "officialSandboxActivation": "STRIPE_DEMO_MODE=official-test"
+  }
+}

@@ -1,0 +1,26 @@
+﻿{
+    "filter":  "completed",
+    "runs":  [
+                 {
+                     "runId":  "atlas:run:atlas.workflow-run-id:ae7e889789c62b68d05385a3b6f79e323b6009db61687650304aca6447b0e774",
+                     "workflowVersionId":  "workflow-20260907-222502-659",
+                     "intakeReference":  "redacted-intake-reference",
+                     "state":  "completed",
+                     "trigger":  {
+                                     "type":  "api",
+                                     "deliveryId":  "82f4ed27-053f-43b5-9d50-6cd97e807a6d:0:0"
+                                 },
+                     "startedAt":  "2026-09-07T22:28:47.418Z",
+                     "updatedAt":  "2026-09-07T22:28:48.742Z",
+                     "lifecycle":  {
+                                       "workflowName":  "demo",
+                                       "startedAt":  "2026-09-07T22:28:47.413Z",
+                                       "endedAt":  "2026-09-07T22:28:48.744Z",
+                                       "durationMs":  1331,
+                                       "retryCount":  0,
+                                       "outcome":  "succeeded",
+                                       "inProgress":  false
+                                   }
+                 }
+             ]
+}

@@ -1,0 +1,247 @@
+.wf-checks,
+.wf-checks-approval {
+  min-width: 0;
+}
+
+.wf-sandbox {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 20px;
+}
+
+.wf-sandbox > header {
+  align-items: start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.wf-sandbox h3,
+.wf-sandbox p {
+  margin: 4px 0 0;
+}
+
+.wf-checks-progress {
+  align-items: center;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+}
+
+.wf-checks-progress strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.wf-checks-progress p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.wf-checks-progress .wf-checks-count {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.wf-checks-spinner {
+  animation: wf-checks-spin 900ms linear infinite;
+  border: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  flex: 0 0 22px;
+  height: 22px;
+  width: 22px;
+}
+
+@keyframes wf-checks-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-checks-spinner {
+    animation: none;
+  }
+}
+
+.wf-sandbox-binding {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 0.7fr 1.5fr 1.5fr;
+  margin: 20px 0;
+}
+
+.wf-sandbox-binding div {
+  min-width: 0;
+}
+
+.wf-sandbox-binding dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.wf-sandbox-binding dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.wf-sandbox-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wf-sandbox-providers span {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.wf-sandbox-tests {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.wf-sandbox-tests li {
+  align-items: start;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto 1fr;
+  padding: 12px 0;
+}
+
+.wf-sandbox-tests li > span {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  padding: 4px 8px;
+  text-transform: capitalize;
+}
+
+.wf-sandbox-tests p {
+  color: var(--muted);
+}
+
+.wf-check-result {
+  margin: 16px 0 0;
+}
+
+.wf-checks-approval {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 700px) {
+  .wf-sandbox > header {
+    flex-direction: column;
+  }
+
+  .wf-sandbox-binding {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .wf-checks,
+  .wf-checks-approval {
+    min-width: 0;
+  }
+
+  .wf-sandbox > header {
+    flex-direction: column;
+  }
+}
+.wf-bundle-inspector {
+  background: var(--paper);
+  border: 1px solid var(--line, #d8d5cc);
+  border-radius: 0.75rem;
+  color: var(--ink);
+  margin: 1rem 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.wf-bundle-inspector > p {
+  color: var(--muted);
+}
+
+.wf-bundle-review-grid > *,
+.wf-bundle-source,
+.wf-inspection-drawers {
+  min-width: 0;
+}
+
+.wf-bundle-inspector textarea {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  max-width: 100%;
+  resize: vertical;
+  width: 100%;
+}
+
+.wf-inspection-drawers {
+  align-content: start;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.wf-evidence-drawer {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.wf-evidence-drawer summary {
+  align-items: center;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.8rem;
+  font-weight: 700;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0.75rem;
+}
+
+.wf-evidence-drawer summary::-webkit-details-marker {
+  display: none;
+}
+
+.wf-evidence-drawer summary > span:last-child {
+  color: var(--accent);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wf-evidence-drawer[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.wf-evidence-drawer-content {
+  background: var(--paper);
+  min-width: 0;
+  padding: 0.75rem;
+}
+
+.wf-evidence-drawer-content p,
+.wf-evidence-drawer-content pre {
+  margin: 0;
+}
+
+.wf-evidence-drawer-content pre {
+  max-height: 22rem;
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre;
+}

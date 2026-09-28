@@ -1,0 +1,76 @@
+---
+import '@atlas/site-ui/styles.css';
+import '../styles/docs.css';
+import AtlasMark from '@atlas/site-ui/AtlasMark.astro';
+import { SITE_ENV, MARKETING_SITE_ORIGIN } from 'astro:env/server';
+import type { MarkdownHeading } from 'astro';
+import DocsNavigation from '../components/DocsNavigation.astro';
+interface Props {
+  title: string;
+  description: string;
+  section?: string;
+  headings?: MarkdownHeading[];
+  noindex?: boolean;
+}
+const { title, description, section = 'Get started', headings = [], noindex = false } = Astro.props;
+const current = Astro.url.pathname;
+const canonical = new URL(current, Astro.site);
+const contents = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
+const marketingUrl = (path: string) => new URL(path, MARKETING_SITE_ORIGIN).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | Atlas Docs</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={SITE_ENV === 'production' && !noindex ? 'index, follow' : 'noindex, nofollow'} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="Atlas Docs" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} | Atlas Docs`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="header-wrap">
+      <header class="site-header shell docs-header">
+        <div class="docs-brand"><a class="brand" href={marketingUrl('/')} aria-label="Atlas home"><AtlasMark /><span>atlas</span></a><span class="brand-divider" aria-hidden="true"></span><a class="docs-wordmark" href="/">Docs</a></div>
+        <nav class="desktop-nav" aria-label="Primary navigation"><a href={marketingUrl('/how-it-works/')}>How it works</a><a href={marketingUrl('/')}>Back to Atlas <span aria-hidden="true">↗</span></a><a class="button button-small" href={marketingUrl('/evaluate/')}>Evaluate Atlas <span aria-hidden="true">↗</span></a></nav>
+        <a class="mobile-home" href={marketingUrl('/')}>Atlas home <span aria-hidden="true">↗</span></a>
+      </header>
+    </div>
+    <div class="docs-grid shell">
+      <aside class="docs-sidebar"><div class="sidebar-inner"><p class="eyebrow">Documentation</p><DocsNavigation {current} /><div class="sidebar-note"><span class="status-dot" aria-hidden="true"></span>Developer preview<p>Start small. Review what runs.</p></div></div></aside>
+      <details class="docs-mobile-menu"><summary>Browse documentation <span aria-hidden="true">+</span></summary><DocsNavigation {current} /></details>
+      <main id="main" class="docs-main" tabindex="-1">
+        <p class="docs-breadcrumb"><a href="/">Docs</a><span aria-hidden="true">/</span>{section}</p>
+        {contents.length > 0 && <details class="mobile-page-toc"><summary>On this page</summary><nav aria-label="Page sections">{contents.filter(heading => heading.depth === 2).map(heading => <a href={`#${heading.slug}`}>{heading.text}</a>)}</nav></details>}
+        <slot />
+        <footer class="docs-footer"><span>Atlas documentation</span><a href={marketingUrl('/')}>Understand your systems. Move forward. <span aria-hidden="true">↗</span></a></footer>
+      </main>
+      {contents.length > 0 && <aside class="page-toc"><nav aria-label="On this page"><p class="nav-label">On this page</p>{contents.map(heading => <a class:list={{ 'toc-subsection': heading.depth === 3 }} href={`#${heading.slug}`}>{heading.text}</a>)}</nav></aside>}
+    </div>
+    <script>
+      document.querySelectorAll<HTMLDetailsElement>('.docs-mobile-menu, .mobile-page-toc').forEach(menu => {
+        menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+        menu.addEventListener('keydown', event => { if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary')?.focus(); } });
+      });
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('.page-toc a')];
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          const visible = entries.find(entry => entry.isIntersecting);
+          if (!visible) return;
+          links.forEach(link => {
+            if (decodeURIComponent(link.hash.slice(1)) === visible.target.id) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          });
+        }, { rootMargin: '-100px 0px -60% 0px' });
+        document.querySelectorAll('.docs-article h2, .docs-article h3').forEach(heading => observer.observe(heading));
+      }
+    </script>
+  </body>
+</html>

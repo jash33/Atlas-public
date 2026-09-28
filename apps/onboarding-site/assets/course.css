@@ -1,0 +1,488 @@
+/* Atlas course — shared stylesheet.
+   Linked by every lesson and reference document so the course reads as one thing.
+   Tufte-influenced: generous measure, restrained palette, no decoration that isn't load-bearing. */
+
+:root {
+  --ink: #1a1a18;
+  --ink-soft: #55534d;
+  --ink-faint: #8a877f;
+  --paper: #fffef9;
+  --rule: #ddd9cd;
+  --accent: #7d2b1f;
+  --accent-soft: #f4ece6;
+  --good: #2f6b3f;
+  --warn: #8a5a10;
+  --mono: "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8e4da;
+    --ink-soft: #a8a49a;
+    --ink-faint: #76736b;
+    --paper: #16150f;
+    --rule: #33312a;
+    --accent: #e08a6f;
+    --accent-soft: #2a1e18;
+    --good: #7fbf8f;
+    --warn: #d4a545;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  padding: 4rem 1.5rem 8rem;
+  max-width: 42rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Wider screens: open the measure a little, and let the figures break out well
+   past the text column. Diagrams and the ASCII flows are the things that
+   actually suffer at 42rem — prose does not, so it widens far less.
+
+   Type scales on the ROOT, not on body: nearly everything on the page —
+   headings, standfirst, claim boxes, tables, captions — is sized in rem, so
+   growing only body would have left all of it at phone size. Because rem
+   drives the max-widths too, those are pinned in px here so the measure stays
+   where we want it while the type grows. The media-query breakpoints are
+   themselves unaffected: they always resolve against the initial 16px root. */
+
+@media (min-width: 48rem) {
+  html { font-size: 17px; }
+  body { max-width: 900px; padding: 3.5rem 2.5rem 8rem; }
+}
+
+@media (min-width: 72rem) {
+  html { font-size: 18.5px; }
+  body { max-width: 1120px; }
+}
+
+@media (min-width: 100rem) {
+  html { font-size: 20px; }
+  body { max-width: 1280px; }
+}
+
+/* ---- masthead ---- */
+
+.homelink {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  margin: 0 0 1.6rem;
+}
+.homelink a { text-decoration: none; color: var(--ink-faint); }
+.homelink a:hover { color: var(--accent); }
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+
+h1 {
+  font-size: 2.1rem;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.6rem;
+}
+
+.standfirst {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 0 0 2.5rem;
+}
+
+h2 {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 3.25rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 2rem 0 0.5rem;
+}
+
+p { margin: 0 0 1.1rem; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+ul, ol { margin: 0 0 1.1rem; padding-left: 1.35rem; }
+li { margin-bottom: 0.4rem; }
+
+/* ---- the claim / key callout ---- */
+
+.claim {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 1.1rem 1.3rem;
+  margin: 1.75rem 0;
+  font-size: 1.08rem;
+}
+.claim p:last-child { margin-bottom: 0; }
+.claim ol, .claim ul { margin: 0 0 0.9rem; padding-left: 1.3rem; }
+.claim li { margin-bottom: 0.25rem; }
+.claim .label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+/* ---- diagrams ----
+   Mermaid figures are rendered as printed plates: a fixed light ground in both
+   themes. Mermaid's colours are baked in at render time via an init directive,
+   so a diagram that inverted with the page would need two renders — the plate
+   keeps one render legible everywhere, and matches how the ASCII figures read. */
+
+figure.dg {
+  position: relative;
+  margin: 1.75rem 0;
+  padding: 1.1rem 1rem 0.9rem;
+  background: #fffef9;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow-x: auto;
+  cursor: zoom-in;
+  transition: border-color 0.12s;
+}
+figure.dg:hover { border-color: var(--accent); }
+figure.dg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dg-hint {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #a08a80;
+  text-align: right;
+  pointer-events: none;
+}
+figure.dg:hover .dg-hint { color: #7d2b1f; }
+
+figure.dg .mermaid { text-align: center; min-width: 0; }
+figure.dg .mermaid svg { max-width: 100%; height: auto; }
+figure.dg > img { display: block; width: 100%; height: auto; }
+
+/* Mermaid measures its label boxes with the font it was configured with, but
+   renders those labels as HTML inside <foreignObject> — which inherits from the
+   page. With the page set in a serif, every label was measured narrow and drawn
+   wide, so text clipped. Pin the rendered labels to the family mermaid measured
+   with. Must stay in sync with fontFamily in the diagrams' init directive. */
+
+figure.dg svg,
+figure.dg svg text,
+figure.dg svg .nodeLabel,
+figure.dg svg .edgeLabel,
+figure.dg svg .cluster-label,
+figure.dg svg .messageText,
+figure.dg svg .actor,
+figure.dg svg .noteText,
+figure.dg svg foreignObject div,
+figure.dg svg foreignObject span,
+.lb-stage svg,
+.lb-stage img,
+.lb-stage svg text,
+.lb-stage svg .nodeLabel,
+.lb-stage svg .edgeLabel,
+.lb-stage svg .cluster-label,
+.lb-stage svg .messageText,
+.lb-stage svg .actor,
+.lb-stage svg .noteText,
+.lb-stage svg foreignObject div,
+.lb-stage svg foreignObject span {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+/* Labels must be free to use the height mermaid reserved rather than being
+   squeezed onto one line. */
+figure.dg svg foreignObject div,
+.lb-stage svg foreignObject div {
+  white-space: normal;
+  overflow: visible;
+  text-align: center;
+}
+
+figure.dg figcaption {
+  margin-top: 0.85rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #e6e2d6;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #55534d;
+  text-align: left;
+}
+figure.dg figcaption b { color: #1a1a18; font-weight: 600; }
+
+/* Before mermaid runs, the source would flash as raw text. */
+figure.dg pre.mermaid:not([data-processed]) { visibility: hidden; }
+
+/* ---- full-screen diagram overlay ---- */
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  background: rgba(16, 15, 12, 0.82);
+  backdrop-filter: blur(3px);
+}
+.lb[hidden] { display: none; }
+
+.lb-inner {
+  width: 100%;
+  max-width: 78rem;
+  max-height: 100%;
+  overflow: auto;
+  background: #fffef9;
+  border-radius: 5px;
+  padding: 1.6rem 1.6rem 1.3rem;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+.lb-stage { cursor: zoom-in; }
+.lb-stage.zoomed { cursor: zoom-out; min-width: 200%; }
+.lb-stage svg,
+.lb-stage img { display: block; margin: 0 auto; }
+
+.lb-cap {
+  margin: 1.2rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid #e6e2d6;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #55534d;
+}
+.lb-cap b { color: #1a1a18; font-weight: 600; }
+
+.lb-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 1.1rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #fffef9;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.lb-close:hover { background: rgba(255, 255, 255, 0.24); }
+.lb-close:focus-visible { outline: 2px solid #fffef9; outline-offset: 2px; }
+
+@media (max-width: 40rem) {
+  .lb { padding: 3.2rem 0.5rem 0.75rem; }
+  .lb-inner { padding: 1rem 0.8rem 0.9rem; }
+  .lb-cap { font-size: 0.8rem; }
+}
+
+@media print { .lb { display: none; } .dg-hint { display: none; } }
+
+@media (max-width: 40rem) {
+  figure.dg { padding: 0.8rem 0.7rem 0.7rem; }
+  figure.dg figcaption { font-size: 0.74rem; }
+}
+
+/* ---- jargon box ----
+   Sits directly under the standfirst. Defines the lesson's heavy terms in plain
+   English BEFORE they appear in prose, so an intermediate dev never hits a word
+   cold. Keep definitions to one clause; anything longer belongs in the body. */
+
+.jargon {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+  margin: 0 0 2.5rem;
+  font-family: var(--sans);
+}
+
+.jargon > p:first-child {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.85rem;
+}
+
+.jargon dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.45rem 1rem; }
+.jargon dt { font-weight: 600; font-size: 0.87rem; color: var(--ink); white-space: nowrap; }
+.jargon dd { margin: 0; font-size: 0.87rem; line-height: 1.5; color: var(--ink-soft); }
+
+@media (max-width: 34rem) {
+  .jargon dl { grid-template-columns: 1fr; gap: 0.15rem; }
+  .jargon dd { margin-bottom: 0.6rem; }
+}
+
+/* ---- margin note ---- */
+
+.note {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--rule);
+  padding-left: 0.9rem;
+  margin: 1.5rem 0;
+}
+
+/* ---- tables ---- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  margin: 1.5rem 0;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border-bottom: 1px solid var(--ink);
+  padding: 0 0.7rem 0.45rem 0;
+}
+td {
+  vertical-align: top;
+  padding: 0.55rem 0.7rem 0.55rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.table-scroll { overflow-x: auto; margin: 1.5rem 0; }
+.table-scroll table { margin: 0; }
+
+/* ---- pipeline / flow diagram ---- */
+
+.flow {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  background: var(--accent-soft);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+  margin: 1.75rem 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.copyable-command {
+  position: relative;
+  margin: 1.75rem 0;
+}
+
+.copyable-command .flow {
+  margin: 0;
+  padding-right: 5.5rem;
+}
+
+.copy-command {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.copy-command:hover { color: var(--ink); border-color: var(--ink-faint); }
+.copy-command:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.copy-command.copied { color: var(--accent); }
+
+/* ---- citation ---- */
+
+.cite {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+}
+
+/* ---- footer blocks ---- */
+
+.source {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+  margin: 2.5rem 0 0;
+}
+.source h3 { margin-top: 0; font-size: 1rem; }
+.source p:last-child { margin-bottom: 0; }
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  margin-top: 3.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* ---- print ---- */
+
+@media print {
+  :root { --paper: #fff; --ink: #000; --accent: #7d2b1f; --accent-soft: #f6f2ee; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; }
+  .nav { display: none; }
+  h2 { break-after: avoid; }
+  table, .flow, .claim { break-inside: avoid; }
+  .copy-command { display: none; }
+}

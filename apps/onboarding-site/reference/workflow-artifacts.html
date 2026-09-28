@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atlas workflow artifacts &middot; Reference</title><link rel="stylesheet" href="../assets/course.css" />
+</head>
+<body>
+  <p class="homelink"><a href="../lessons/index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Reference</p>
+  <h1>From request to executable artifact</h1>
+  <p class="standfirst">Atlas compiles editable YAML into signed data. It never generates workflow source code.</p>
+
+  <pre class="flow">natural-language request
+  &rarr; reviewable .atlas.yaml
+  &rarr; deterministic compiler and validator
+  &rarr; typed CompiledWorkflowVersion
+  &rarr; sandbox evidence and Admin approval
+  &rarr; signed .atlas JSON bundle
+  &rarr; customer Worker verification
+  &rarr; generic Temporal interpreter</pre>
+
+  <h2>The representations</h2>
+  <div class="table-scroll"><table><thead><tr><th>Representation</th><th>Purpose</th><th>Editable?</th></tr></thead><tbody>
+    <tr><td>Natural-language request</td><td>Describes the result a person wants.</td><td>Yes</td></tr>
+    <tr><td><code>.atlas.yaml</code></td><td>Human-readable authoring source. It names approved capabilities and explicit mappings.</td><td>Yes</td></tr>
+    <tr><td>Workflow IR</td><td>Closed, typed data produced after Atlas resolves exact capability versions and validates the plan.</td><td>No</td></tr>
+    <tr><td><code>.atlas</code></td><td>Canonical UTF-8 JSON containing the approved plan, schemas, evidence, provenance, bindings, and signature.</td><td>No</td></tr>
+  </tbody></table></div>
+
+  <div class="claim"><span class="label">Executable means interpreted</span><p>The <code>.atlas</code> bundle is executable in the same sense that a database migration or declarative build plan is executable: a controlled runtime interprets its data. The bundle contains no JavaScript, TypeScript, WASM, shell commands, templates, or generated program.</p></div>
+
+  <h2>Where the glue goes</h2>
+  <p>Cross-API mappings live in a bounded transformation language inside the workflow IR. It can project and rename fields, build objects and arrays, use conditionals, and apply approved operations such as uppercase, concatenation, multiplication, or division.</p>
+  <p>Atlas resolves every input and output against pinned API schemas before approval. Missing fields, unsafe coercions, classification leaks, and unsupported operators stop the workflow. At runtime, the customer-side interpreter evaluates the same approved mapping before scheduling the destination capability.</p>
+
+  <h2>What happens when a request is vague</h2>
+  <p>The planner separates resolved mappings, validated candidates, and questions that need a person. Suggested answers come only from the authorized planner projection. A selected answer passes through the same deterministic compiler and validator as hand-edited YAML.</p>
+
+  <h2>What the Worker verifies</h2>
+  <p>Before Temporal starts, the Worker checks the bundle signature and digest, tenant and environment, workflow and artifact IDs, <code>irHash</code>, capability pins, approval, activation, and <code>ExecutionGrant</code>. A changed byte, unknown key, revoked version, or mismatched environment fails before a provider call.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="../lessons/0005-the-ir.html">Create a workflow</a><a href="../lessons/0006-the-runtime.html">Test and approve</a><a href="glossary.html">Glossary</a></div>
+</body>
+</html>

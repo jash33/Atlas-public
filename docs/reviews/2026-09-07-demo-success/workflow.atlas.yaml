@@ -1,0 +1,125 @@
+formatVersion: atlas-source/v1
+projectionFingerprint: 8d35fc9fc07394c30739e7acd9cbe2a4ae37da63fd0a52e111f33d078a77935f
+workflow:
+  irVersion: 2
+  inputSchema:
+    required:
+      item_id:
+        type: string
+      server_id:
+        type: string
+      location_id:
+        type: string
+  steps:
+    - kind: capabilityCall
+      id: create_fulfillment
+      arguments:
+        type:
+          source: literal
+          value: pickup
+        location_id:
+          source: input
+          path:
+            - location_id
+      result: fulfillment
+      idempotency:
+        businessKey:
+          source: input
+          path:
+            - item_id
+      responseSchema:
+        required:
+          id:
+            type: string
+      irreversibleAfter: true
+      inputSchema:
+        required:
+          type:
+            type: string
+          location_id:
+            type: string
+      capability: b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af
+    - kind: capabilityCall
+      id: create_check
+      arguments:
+        server_id:
+          source: input
+          path:
+            - server_id
+        fulfillment_id:
+          source: stepOutput
+          stepId: create_fulfillment
+          path:
+            - id
+      result: check
+      idempotency:
+        businessKey:
+          source: stepOutput
+          stepId: create_fulfillment
+          path:
+            - id
+      responseSchema:
+        required:
+          id:
+            type: string
+      irreversibleAfter: true
+      inputSchema:
+        required:
+          server_id:
+            type: string
+      capability: a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f
+    - kind: capabilityCall
+      id: add_item
+      arguments:
+        item_id:
+          source: input
+          path:
+            - item_id
+        check_id:
+          source: stepOutput
+          stepId: create_check
+          path:
+            - id
+      result: line_and_check
+      idempotency:
+        businessKey:
+          source: stepOutput
+          stepId: create_check
+          path:
+            - id
+      responseSchema:
+        required: {}
+      irreversibleAfter: true
+      inputSchema:
+        required:
+          item_id:
+            type: string
+          check_id:
+            type: string
+      capability: 9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5
+    - kind: capabilityCall
+      id: send_order
+      arguments:
+        check_id:
+          source: stepOutput
+          stepId: create_check
+          path:
+            - id
+      result: send_result
+      idempotency:
+        businessKey:
+          source: stepOutput
+          stepId: create_check
+          path:
+            - id
+      responseSchema:
+        required: {}
+      irreversibleAfter: true
+      inputSchema:
+        required:
+          check_id:
+            type: string
+      capability: a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd
+    - kind: terminal
+      id: completed
+      state: completed

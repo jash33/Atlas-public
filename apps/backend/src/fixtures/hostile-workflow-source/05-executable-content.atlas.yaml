@@ -1,0 +1,12 @@
+formatVersion: atlas-source/v1
+projectionFingerprint: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+workflow:
+  steps:
+    - id: invoke
+      kind: capabilityCall
+      capability: payment-api:getPayment
+      script: return eval(input.value)
+      arguments: {}
+    - id: done
+      kind: terminal
+      state: completed

@@ -1,0 +1,19 @@
+{
+  "name": "@atlas/execution-grant",
+  "private": true,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "canonicalize": "4.0.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

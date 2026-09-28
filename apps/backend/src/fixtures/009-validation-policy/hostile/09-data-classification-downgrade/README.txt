@@ -1,0 +1,2 @@
+Rewires step_notifyPaymentOperations.inputMapping.fields.completionStatus (an 'internal'-classified destination field) to source from step_getPayment's 'amount.value' (classification 'confidential').
+Expected diagnostic: policyDenial DATA_CLASSIFICATION_DOWNGRADE at steps[step_notifyPaymentOperations].inputMapping.fields.completionStatus. (Also triggers SCHEMA_TYPE_MISMATCH since amount.value is a decimalString and completionStatus's declared type differs only in format, not base type — both are expected, valid policy denials.)

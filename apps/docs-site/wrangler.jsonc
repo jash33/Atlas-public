@@ -1,0 +1,11 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "atlas-docs-site",
+  "compatibility_date": "2026-09-16",
+  // Astro builds static pages; Cloudflare serves them without a Worker script.
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+}

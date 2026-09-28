@@ -1,0 +1,381 @@
+/* PROTOTYPE ONLY: synthesized repository analysis sidebars selected with ?variant=A|B|C. */
+.cat-explorer:has(> .ras-sidebar) {
+  grid-template-columns: 220px minmax(0, 1fr) 320px;
+}
+.ras-sidebar {
+  align-self: start;
+  background: var(--surface-soft);
+  border-left: 1px solid var(--line);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 98px);
+  min-height: 510px;
+  min-width: 0;
+  overflow: hidden;
+  position: sticky;
+  top: 86px;
+}
+.ras-heading {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  flex-shrink: 0;
+  gap: 5px;
+  padding: 17px 18px;
+}
+.ras-heading small,
+.ras-brief > span,
+.ras-next > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.ras-heading h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.ras-scroll {
+  min-height: 0;
+  overflow-y: auto;
+}
+.ras-state {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 7px;
+  padding: 18px;
+}
+.ras-state::before {
+  background: var(--info);
+  border-radius: 999px;
+  content: '';
+  height: 4px;
+  width: 38px;
+}
+.ras-state-failed::before,
+.ras-state-outdated::before {
+  background: var(--danger);
+}
+.ras-state-complete::before,
+.ras-state-review::before {
+  background: var(--good);
+}
+.ras-state strong {
+  font-size: 14px;
+}
+.ras-state p,
+.ras-brief p,
+.ras-next p,
+.ras-console-empty p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+.ras-steps {
+  list-style: none;
+  margin: 0;
+  padding: 18px;
+}
+.ras-steps li {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 26px minmax(0, 1fr);
+  min-height: 57px;
+  position: relative;
+}
+.ras-steps li:not(:last-child)::after {
+  background: var(--line);
+  bottom: 2px;
+  content: '';
+  left: 12px;
+  position: absolute;
+  top: 28px;
+  width: 1px;
+}
+.ras-steps li > span {
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--muted);
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 800;
+  height: 26px;
+  justify-content: center;
+  position: relative;
+  width: 26px;
+  z-index: 1;
+}
+.ras-steps li > div {
+  display: grid;
+  gap: 3px;
+  padding-top: 2px;
+}
+.ras-steps strong {
+  font-size: 12px;
+}
+.ras-steps small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.ras-steps li.is-current > span {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  color: var(--accent);
+}
+.ras-steps li.is-complete > span {
+  background: var(--good-soft);
+  border-color: var(--good);
+  color: var(--good);
+}
+.ras-steps.is-compact {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+}
+.ras-steps.is-compact li {
+  align-items: center;
+  grid-template-columns: 22px minmax(0, 1fr);
+  min-height: 0;
+}
+.ras-steps.is-compact li::after {
+  display: none;
+}
+.ras-steps.is-compact li > span {
+  height: 22px;
+  width: 22px;
+}
+.ras-footer {
+  border-top: 1px solid var(--line);
+  margin-top: auto;
+  padding: 16px 18px;
+}
+.ras-footer button {
+  width: 100%;
+}
+.ras-variant-b {
+  background: var(--paper);
+}
+.ras-brief {
+  background: var(--surface-soft);
+  display: grid;
+  gap: 8px;
+  padding: 22px 18px;
+}
+.ras-brief h3 {
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.ras-segments {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 18px 18px 0;
+}
+.ras-segments span {
+  background: var(--line);
+  border-radius: 999px;
+  height: 5px;
+}
+.ras-segments span.is-complete {
+  background: var(--good);
+}
+.ras-segments span.is-current {
+  background: var(--accent);
+}
+.ras-next {
+  display: grid;
+  gap: 7px;
+  padding: 20px 18px;
+}
+.ras-next strong {
+  font-size: 14px;
+}
+.ras-disclosure {
+  border-top: 1px solid var(--line);
+}
+.ras-disclosure summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 15px 18px;
+}
+.ras-variant-c {
+  background: var(--ink);
+  border-left-color: color-mix(in srgb, var(--paper) 18%, transparent);
+  color: var(--paper);
+}
+.ras-variant-c .ras-heading {
+  border-bottom-color: color-mix(in srgb, var(--paper) 16%, transparent);
+}
+.ras-variant-c .ras-heading small,
+.ras-variant-c .ras-steps small {
+  color: color-mix(in srgb, var(--paper) 62%, transparent);
+}
+.ras-console-status {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
+  display: grid;
+  gap: 4px 9px;
+  grid-template-columns: auto 1fr auto;
+  padding: 14px 18px;
+}
+.ras-console-status strong {
+  font-size: 12px;
+}
+.ras-console-status small {
+  color: color-mix(in srgb, var(--paper) 64%, transparent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+}
+.ras-console-light {
+  background: var(--info);
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
+.ras-console-light-failed,
+.ras-console-light-outdated {
+  background: var(--danger);
+}
+.ras-console-light-complete,
+.ras-console-light-review {
+  background: var(--good);
+}
+.ras-variant-c .ras-steps li > span {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--paper) 28%, transparent);
+  color: color-mix(in srgb, var(--paper) 60%, transparent);
+}
+.ras-variant-c .ras-steps li.is-current > span {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+}
+.ras-variant-c .ras-steps li.is-complete > span {
+  background: var(--good-soft);
+  border-color: var(--good);
+  color: var(--good);
+}
+.ras-console-log {
+  border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
+}
+.ras-console-log > header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+.ras-console-log > header span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ras-console-log > header small {
+  color: color-mix(in srgb, var(--paper) 60%, transparent);
+  font-size: 9px;
+}
+.ras-console-log ol {
+  display: grid;
+  gap: 1px;
+  list-style: none;
+  margin: 0;
+  padding: 0 18px 18px;
+}
+.ras-console-log li {
+  background: color-mix(in srgb, var(--paper) 6%, transparent);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 58px 1fr;
+  padding: 8px;
+}
+.ras-console-log time,
+.ras-console-log li span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  line-height: 1.5;
+}
+.ras-console-log time {
+  color: color-mix(in srgb, var(--paper) 52%, transparent);
+}
+.ras-console-empty {
+  display: grid;
+  gap: 7px;
+  padding: 4px 18px 20px;
+}
+.ras-console-empty strong {
+  font-size: 11px;
+}
+.ras-console-empty p {
+  color: color-mix(in srgb, var(--paper) 62%, transparent);
+}
+.ras-variant-c .ras-footer {
+  border-top-color: color-mix(in srgb, var(--paper) 16%, transparent);
+}
+.ras-switcher {
+  align-items: center;
+  background: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+  border-radius: 999px;
+  bottom: 18px;
+  box-shadow: 0 12px 36px var(--shadow);
+  color: var(--paper);
+  display: flex;
+  gap: 12px;
+  left: 50%;
+  padding: 7px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+.ras-switcher > div {
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+  text-align: center;
+}
+.ras-switcher strong {
+  font-size: 11px;
+}
+.ras-switcher small {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+}
+.ras-switcher button {
+  align-items: center;
+  background: color-mix(in srgb, var(--paper) 12%, transparent);
+  border-radius: 50%;
+  color: var(--paper);
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  width: 32px;
+}
+@media (max-width: 1100px) {
+  .cat-explorer:has(> .ras-sidebar) {
+    grid-template-columns: 210px minmax(0, 1fr) 290px;
+  }
+}
+@media (max-width: 760px) {
+  .cat-explorer:has(> .ras-sidebar) {
+    grid-template-columns: 1fr;
+  }
+  .ras-sidebar {
+    bottom: 0;
+    box-shadow: -8px 0 28px var(--shadow);
+    max-height: none;
+    min-height: 0;
+    position: fixed;
+    right: 0;
+    top: 64px;
+    width: min(320px, calc(100vw - 48px));
+    z-index: 20;
+  }
+}

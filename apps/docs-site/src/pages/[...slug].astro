@@ -1,0 +1,20 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { guides } from '../lib/guides';
+export function getStaticPaths() {
+  return guides.map((guide, index) => ({ params: { slug: guide.slug }, props: { guide, previous: guides[index - 1], next: guides[index + 1] } }));
+}
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { guide, previous, next } = Astro.props;
+const { compiledContent, getHeadings } = guide.content;
+// Preserve the repository-relative link in the source guide and publish its web destination.
+const html = (await compiledContent()).replaceAll('href="customer-roles.md"', 'href="/customer-roles/"');
+---
+<DocsLayout title={guide.title} description={guide.description} section={guide.section} headings={getHeadings()}>
+  <article class="docs-article" set:html={html} />
+  <nav class="page-pagination" aria-label="More documentation">
+    {previous ? <a href={`/${previous.slug}/`}><span>← Previous</span><strong>{previous.title}</strong></a> : <a href="/"><span>← Get started</span><strong>Documentation overview</strong></a>}
+    {next && <a href={`/${next.slug}/`}><span>Next →</span><strong>{next.title}</strong></a>}
+  </nav>
+</DocsLayout>

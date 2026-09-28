@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 4 &middot; Capabilities</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas Console &middot; Lesson 4 &middot; 3 min</p>
+  <h1>Capabilities</h1>
+  <p class="standfirst">A capability is one API action Atlas may use, such as “get an invoice” or “send a message.”</p>
+
+  <h2>Connect an API</h2>
+  <p>Add an OpenAPI JSON document. Atlas reads it and lists the actions it finds. The page records the import as a confirmed source.</p>
+  <p>Paste the spec or choose a JSON file. Atlas lists each operation as a capability.</p>
+  <p>The Burger Town demo has its own connection option. It checks the prepared application and OpenAPI addresses, adds the expected actions and workflow connections, and leaves polling stopped.</p>
+
+  <h2>Review an action</h2>
+  <p>Select an action to see:</p>
+  <ul>
+    <li>the data it accepts and returns;</li>
+    <li>where its definition came from;</li>
+    <li>whether it is current and approved;</li>
+    <li>which credential and host it needs; and</li>
+    <li>which workflows use it.</li>
+  </ul>
+
+  <h2>Approve it</h2>
+  <p>An Admin must confirm safety details before Atlas can use an action in a new workflow. This includes whether retrying is safe and whether the action can be undone. Atlas never guesses these facts.</p>
+
+  <h2>When an API changes</h2>
+  <p>Atlas saves a new version of the affected action. Existing workflows still point to the version they were approved with. Open <strong>Changes</strong> to see what needs attention.</p>
+
+  <h2>When sources disagree</h2>
+  <p>If two connected sources claim different current contracts for the same action, the catalog marks it <strong>Conflicting sources</strong> and keeps it out of new workflow plans. Its details drawer shows every candidate version and where it came from. An Admin can designate one source as authoritative for the selected environment, or clear that choice after correcting the registrations.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0003-the-payment-flow.html">&larr; Home</a><a href="0005-the-ir.html">Create a workflow &rarr;</a></div>
+</body>
+</html>

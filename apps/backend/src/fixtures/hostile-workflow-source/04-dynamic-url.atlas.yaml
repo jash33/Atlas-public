@@ -1,0 +1,12 @@
+formatVersion: atlas-source/v1
+projectionFingerprint: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+workflow:
+  steps:
+    - id: download
+      kind: capabilityCall
+      capability: payment-api:getPayment
+      url: 'https://${input.host}/payment'
+      arguments: {}
+    - id: done
+      kind: terminal
+      state: completed

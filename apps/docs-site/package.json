@@ -1,0 +1,20 @@
+{
+  "name": "@atlas/docs-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "check": "astro check",
+    "dev": "astro dev --host 127.0.0.1 --port 4322",
+    "preview": "astro preview --host 127.0.0.1 --port 4322",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@atlas/site-ui": "workspace:*",
+    "astro": "7.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.6",
+    "typescript": "catalog:"
+  }
+}

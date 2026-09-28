@@ -1,0 +1,30 @@
+{
+  "name": "@atlas/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@atlas/demo-estate": "workspace:*",
+    "@atlas/execution-grant": "workspace:*",
+    "@atlas/runtime-ports": "workspace:*",
+    "@atlas/temporal-adapter": "workspace:*",
+    "@atlas/workflow-artifact": "workspace:*",
+    "@atlas/workflow-ir": "workspace:*",
+    "@hono/node-server": "catalog:",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@atlas/mock-services": "workspace:*",
+    "@temporalio/testing": "1.22.0",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "4.1.10"
+  }
+}

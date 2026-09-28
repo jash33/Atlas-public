@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 7 &middot; Runs</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas Console &middot; Lesson 7 &middot; 3 min</p>
+  <h1>Runs</h1>
+  <p class="standfirst">Use Runs to follow workflow progress and handle failures after a start through the ingest gateway.</p>
+
+  <h2>How a run starts</h2>
+  <p>The Console does not start workflows. External systems and local demos post to the environment&rsquo;s ingest gateway (<code>POST /ingest</code> on Development port 4300 or Production port 4301) with the workflow&rsquo;s exact name and a plaintext payload. A webhook or schedule can also start a run. Before Temporal starts, the Worker verifies the bundle signature, tenant, environment, workflow and artifact IDs, <code>irHash</code>, capability pins, approval, activation, and <code>ExecutionGrant</code>. Each accepted run is bound to the workflow version that was active when it began.</p>
+  <p>The Catalog detail page shows a copyable sample request. Common demo payment IDs include:</p>
+  <ul>
+    <li><code>payment_demo_001</code> completes normally.</li>
+    <li><code>payment_retry_demo_001</code> fails twice, retries, then succeeds.</li>
+    <li><code>payment_repair_demo_001</code> stops and waits for an operator.</li>
+  </ul>
+
+  <h2>See what happened</h2>
+  <p>The Runs list shows each run&rsquo;s duration, how many step retries happened, and whether the execution succeeded or failed once it stops. Select a run to see those same fields in the header, then inspect each step, how long it took, what failed, and whether Atlas retried it. Catalog recent runs also show duration and outcome when the worker has reported them. Sensitive values are hidden. Completed actions are listed so you can tell what should not run again.</p>
+  <p>A modified, revoked, inactive, or misplaced bundle fails before a provider call. Atlas records a sanitized verification event without storing bundle secrets or business payloads.</p>
+
+  <h2>Handle a failed run</h2>
+  <p>Atlas may let an Operator or Admin retry a step, continue the run, or abandon it with a reason. It only shows options that are safe for that run.</p>
+  <p>Continuing uses the saved history, so completed steps are not repeated. You cannot skip steps, edit the input, or switch workflow versions during a run.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0006-the-runtime.html">&larr; Test and approve</a><a href="0008-planning-and-validation.html">Changes &rarr;</a></div>
+</body>
+</html>

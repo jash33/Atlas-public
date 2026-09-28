@@ -1,0 +1,10 @@
+{
+  "name": "@atlas/onboarding-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ../../tooling/build-onboarding-site.mjs",
+    "dev": "vp dev --host 127.0.0.1",
+    "test": "vp test --run --passWithNoTests"
+  }
+}

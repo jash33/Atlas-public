@@ -1,0 +1,16 @@
+{$ATLAS_PUBLIC_ORIGIN} {
+	encode zstd gzip
+	header {
+		Referrer-Policy no-referrer
+		X-Content-Type-Options nosniff
+	}
+	@backend path /auth /auth/* /v1 /v1/* /health
+	handle @backend {
+		reverse_proxy backend:4000
+	}
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -1,0 +1,29 @@
+packages:
+  - apps/*
+  - packages/*
+
+allowBuilds:
+  '@scarf/scarf': false
+  '@swc/core': true
+  esbuild: true
+  protobufjs: true
+
+catalog:
+  '@hono/node-server': 2.1.0
+  '@types/node': 24.10.4
+  '@types/react': 19.2.18
+  '@types/react-dom': 19.2.4
+  '@vitejs/plugin-react': 6.0.5
+  hono: 4.13.1
+  react: 19.2.8
+  react-dom: 19.2.8
+  tsx: 4.23.12
+  typescript: 5.9.3
+  zod: 4.4.3
+
+overrides:
+  vite: npm:@voidzero-dev/vite-plus-core@0.2.6
+
+peerDependencyRules:
+  allowedVersions:
+    vite: 0.2.6

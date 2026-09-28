@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src", "types": ["node"] },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../execution-grant" },
+    { "path": "../transformation-runtime" },
+    { "path": "../workflow-artifact" },
+    { "path": "../workflow-ir" },
+    { "path": "../runtime-ports" }
+  ]
+}

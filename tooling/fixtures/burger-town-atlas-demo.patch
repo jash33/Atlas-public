@@ -1,0 +1,228 @@
+diff --git a/src/server/store.ts b/src/server/store.ts
+--- a/src/server/store.ts
++++ b/src/server/store.ts
+@@ -7,6 +7,19 @@
+ let store: Store = createSeed()
+ 
++/** Run a synchronous polling probe against its own disposable restaurant. */
++export function withIsolatedDemoStore<T>(operation: () => T): T {
++  const original = store
++  store = createSeed()
++  try {
++    return operation()
++  } finally {
++    store = original
++  }
++}
++
+ export function getStore() {
+   return store
+ }
+diff --git a/src/server/app.ts b/src/server/app.ts
+--- a/src/server/app.ts
++++ b/src/server/app.ts
+@@ -1,3 +1,4 @@
+ import { Hono } from "hono"
++import { installAtlasDemoControls, atlasDemoOpenApi } from "@/server/atlas-demo"
+ import { cors } from "hono/cors"
+@@ -73,2 +74,3 @@
+ app.use("*", cors())
++installAtlasDemoControls(app)
+ 
+@@ -101,3 +103,3 @@
+   const origin = new URL(c.req.url).origin
+-  return c.json(buildOpenApi(origin), 200, {
++  return c.json(atlasDemoOpenApi(buildOpenApi(origin)), 200, {
+     "Content-Type": "application/json; charset=utf-8",
+diff --git a/src/server/atlas-demo.ts b/src/server/atlas-demo.ts
+new file mode 100644
+--- /dev/null
++++ b/src/server/atlas-demo.ts
+@@ -0,0 +1,1 @@
++import type { Hono } from "hono"
++import { API_CATALOG } from "@/server/catalog"
++import { addLineItem, createCheck, createFulfillment, getStore, resetStore, withIsolatedDemoStore } from "@/server/store"
++
++type Fault = { operationId: string; stepId: string; mode: string; failures?: number; errorType?: string; attempts: number }
++type Observation = { operationId: string; stepId: string | null; method: string; path: string; status: number }
++type Replay = { fingerprint: string; promise: Promise<{ body: string; status: number }>; resolve: (result: { body: string; status: number }) => void }
++const safeWrites = new Set(["createFulfillment", "createCheck", "addItem", "sendOrder"])
++const state = { broken: false, faults: [] as Fault[], sideEffects: [] as Observation[], replays: new Map<string, Replay>() }
++function stable(value: unknown): string {
++  if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`
++  if (value && typeof value === "object") return `{${Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, entry]) => `${JSON.stringify(key)}:${stable(entry)}`).join(",")}}`
++  return JSON.stringify(value)
++}
++
++function missingKitchenNote(body: Record<string, unknown>) {
++  return state.broken && (typeof body.kitchen_note !== "string" || body.kitchen_note.trim() === "")
++}
++const requiredError = () => ({ code: "required_field_missing", fieldPath: "kitchen_note", message: "kitchen_note is required" })
++
++function matchOperation(method: string, path: string) {
++  for (const api of API_CATALOG) {
++    for (const operation of api.operations) {
++      const pattern = new RegExp(`^${operation.path.replace(/\{[^}]+\}/g, "[^/]+")}$`)
++      if (operation.method.toUpperCase() === method && pattern.test(path)) return operation.id
++    }
++  }
++  return undefined
++}
++
++export function installAtlasDemoControls(app: Hono) {
++  app.use("/v1/*", async (c, next) => {
++    if (c.req.path.startsWith("/v1/__control/")) return next()
++    if (c.req.method === "POST" && c.req.path === "/v1/sandbox") {
++      const body = await c.req.json().catch(() => ({}))
++      await next()
++      if (body.reset !== false && c.res.status < 300) {
++        state.replays.clear()
++        state.sideEffects = []
++        state.faults = []
++      }
++      return
++    }
++    const operationId = matchOperation(c.req.method, c.req.path)
++    const sandboxStepId = c.req.header("x-atlas-sandbox-step-id") ?? null
++    const stepId = sandboxStepId ?? c.req.header("x-atlas-step-id") ?? null
++    const fault = state.faults.find((entry) => entry.operationId === operationId && entry.stepId === sandboxStepId)
++    if (fault) {
++      fault.attempts += 1
++      if (fault.mode !== "transient" || fault.attempts <= (fault.failures ?? 1)) {
++        if (fault.mode === "timeout") await new Promise((resolve) => setTimeout(resolve, 100))
++        const status = fault.mode === "rate-limit" ? 429 : fault.mode === "timeout" ? 504 : fault.mode === "permanent" ? 422 : 503
++        return c.json({ error: { type: fault.errorType ?? (fault.mode === "rate-limit" ? "RateLimited" : "TransientDownstream") } }, status)
++      }
++    }
++    const body = operationId && safeWrites.has(operationId) ? await c.req.json().catch(() => ({})) : {}
++    if (operationId === "addItem" && missingKitchenNote(body)) return c.json(requiredError(), 400)
++    let replayKey: string | undefined
++    let pending: Replay | undefined
++    if (operationId && safeWrites.has(operationId) && typeof body.idempotency_key === "string" && body.idempotency_key.length > 0) {
++      replayKey = `${operationId}:${body.idempotency_key}`
++      const { idempotency_key: _key, ...request } = body
++      const fingerprint = stable({ path: c.req.path, request })
++      const existing = state.replays.get(replayKey)
++      if (existing) {
++        if (existing.fingerprint !== fingerprint) return c.json({ error: { code: "idempotency_conflict", message: "Idempotency key was used for a different request" } }, 409)
++        const cached = await existing.promise
++        return new Response(cached.body, { status: cached.status, headers: { "content-type": "application/json" } })
++      }
++      let complete!: Replay["resolve"]
++      const promise = new Promise<{ body: string; status: number }>((resolve) => { complete = resolve })
++      pending = { fingerprint, promise, resolve: complete }
++      state.replays.set(replayKey, pending)
++    }
++    try {
++      await next()
++      if (pending) {
++        pending.resolve({ body: await c.res.clone().text(), status: c.res.status })
++        if (c.res.status >= 400) state.replays.delete(replayKey!)
++      }
++    } catch (error) {
++      if (pending) {
++        pending.resolve({ body: JSON.stringify({ error: { code: "idempotency_attempt_failed" } }), status: 500 })
++        state.replays.delete(replayKey!)
++      }
++      throw error
++    }
++    if (operationId && !["GET", "HEAD", "OPTIONS"].includes(c.req.method) && c.res.status < 300) {
++      state.sideEffects.push({ operationId, stepId, method: c.req.method, path: c.req.path, status: c.res.status })
++      if (state.sideEffects.length > 1000) state.sideEffects.shift()
++    }
++  })
++
++  app.get("/v1/__control/contract", (c) => c.json({ operationId: "addItem", requiredField: "kitchen_note", broken: state.broken }))
++  app.post("/v1/__control/contract", async (c) => {
++    const body = await c.req.json()
++    if (typeof body.broken !== "boolean") return c.json({ error: "Expected broken boolean" }, 400)
++    state.broken = body.broken
++    return c.json({ operationId: "addItem", requiredField: "kitchen_note", broken: state.broken })
++  })
++  app.post("/v1/__control/probe/addItem", async (c) => {
++    const body = await c.req.json()
++    if (missingKitchenNote(body)) return c.json(requiredError(), 400)
++    const result = withIsolatedDemoStore(() => {
++      const fulfillment = createFulfillment({ location_id: "loc_oak", type: "pickup" })
++      const check = createCheck({ fulfillment_id: fulfillment.id, server_id: "emp_jon" })
++      return addLineItem(check.id, body)
++    })
++    return c.json(result)
++  })
++
++  app.put("/v1/__control/resources", async (c) => {
++    const body = await c.req.json()
++    if (!["replace", "merge"].includes(body.mode) || !Array.isArray(body.resources)) return c.json({ error: "Expected mode and resources" }, 400)
++    if (body.mode === "replace") {
++      resetStore()
++      state.faults = []
++      state.sideEffects = []
++      state.replays.clear()
++    }
++    for (const resource of body.resources) {
++      const collection = getStore()[resource.collection as keyof ReturnType<typeof getStore>]
++      if (!Array.isArray(collection) || !resource.document || typeof resource.document !== "object") return c.json({ error: "Unknown resource collection" }, 400)
++      const records = collection as Array<{ id: string }>
++      const index = records.findIndex((entry) => entry.id === resource.id)
++      const document = { ...resource.document, id: resource.id }
++      if (index === -1) records.push(document)
++      else records[index] = document
++    }
++    return c.json({ ok: true })
++  })
++  app.put("/v1/__control/faults", async (c) => {
++    const body = await c.req.json()
++    if (typeof body.operationId !== "string" || typeof body.stepId !== "string" || !["none", "transient", "rate-limit", "timeout", "permanent"].includes(body.mode)) return c.json({ error: "Invalid fault" }, 400)
++    state.faults = state.faults.filter((entry) => entry.operationId !== body.operationId || entry.stepId !== body.stepId)
++    if (body.mode !== "none") state.faults.push({ ...body, attempts: 0 })
++    return c.json({ ok: true })
++  })
++  app.get("/v1/__control/observations", (c) => c.json({
++    resources: Object.entries(getStore()).flatMap(([collection, records]) => Array.isArray(records) ? records.map((document) => ({ service: "burger-town", collection, id: "id" in document ? document.id : "", document })) : []),
++    sideEffects: state.sideEffects,
++    durableState: getStore(),
++    setup: { ready: true },
++  }))
++}
++
++/** Demo controls remain outside the business capability catalog. */
++export function atlasDemoOpenApi<T extends { paths: Record<string, unknown> }>(document: T): T {
++  document = structuredClone(document)
++  for (const path of Object.values(document.paths)) {
++    for (const operation of Object.values(path as Record<string, Record<string, unknown>>)) {
++      if (!safeWrites.has(String(operation.operationId))) continue
++      operation["x-atlas-safety"] = { idempotencyField: "idempotency_key", compensatedBy: null, irreversibleAfter: true }
++      operation.requestBody ??= { required: false, content: { "application/json": { schema: { type: "object", properties: {} } } } }
++      const request = operation.requestBody as { content: { "application/json": { schema: { properties: Record<string, unknown> } } } }
++      request.content["application/json"].schema.properties.idempotency_key = { type: "string", description: "Worker-injected per-step idempotency key; successful identical requests replay, conflicting reuse returns 409." }
++    }
++  }
++  const operation = (document.paths["/v1/checks/{check_id}/items"] as { post: Record<string, unknown> }).post
++  const request = operation.requestBody as { content: { "application/json": { schema: { required: string[]; properties: Record<string, unknown> } } } }
++  request.content["application/json"].schema.properties.kitchen_note = { type: "string", description: "Required only while the Atlas contract-change demo is enabled." }
++  if (state.broken) request.content["application/json"].schema.required = [...request.content["application/json"].schema.required, "kitchen_note"]
++  operation["x-atlas-polling"] = {
++    method: "POST", path: "/v1/__control/probe/addItem", requestBody: { item_id: "itm_fries", quantity: 1 },
++    expectedSuccess: { status: 200 },
++    recognizedError: { status: 400, code: "required_field_missing", codePath: ["code"], fieldPathPath: ["fieldPath"] },
++  }
++  Object.assign(document, { "x-atlas-sandbox": {
++    healthPath: "/health", controlPaths: { resources: "/v1/__control/resources", faults: "/v1/__control/faults", observations: "/v1/__control/observations" },
++    inputs: { order_id: "burger-town-sandbox-order", location_id: "loc_oak", server_id: "emp_jon", item_id: "itm_fries", quantity: 1, fulfillment_id: "ful_pickup_1", check_id: "chk_ok" },
++    targetState: { mode: "replace", resources: [] }, setupAssumptions: [{ path: ["setup", "ready"], equals: true }],
++  } })
++  return document
++}
+diff --git a/src/server/openapi.ts b/src/server/openapi.ts
+--- a/src/server/openapi.ts
++++ b/src/server/openapi.ts
+@@ -329,3 +329,4 @@
+   Fulfillment: {
+     type: "object",
++    required: ["id"],
+     properties: {
+@@ -349,3 +350,4 @@
+   Check: {
+     type: "object",
++    required: ["id"],
+     properties: {

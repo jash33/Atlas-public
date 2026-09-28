@@ -1,0 +1,1 @@
+- cut jargon where possible. this includes agent responses, code, comments, and everything else expected to be readable.

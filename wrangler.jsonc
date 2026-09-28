@@ -1,0 +1,28 @@
+{
+  // Static-only Worker: no "main" script, so Cloudflare serves ./apps/onboarding-site.
+  //
+  // Deployed by Workers Builds on push to `main`, which is set as the
+  // production branch in the dashboard (Settings -> Build -> Branch control).
+  // `npx wrangler deploy` still works and uploads the local checkout, which is
+  // the fallback when a build fails.
+  //
+  // Branch control and watch paths are dashboard state, not config — nothing
+  // in this file can pin them.
+  //
+  // The existing course Access policy is configured separately in the
+  // Cloudflare dashboard (Zero Trust -> Access -> Applications). The product
+  // MVP runs locally; this file has no product infrastructure scope.
+  "name": "atlas",
+  "compatibility_date": "2026-08-01",
+  // Every deploy would otherwise also publish a per-version hostname
+  // (<version>-atlas.<subdomain>.workers.dev). Useful for staging a change, but
+  // here it just means more live hostnames to keep behind Access. One URL is
+  // easier to reason about than one per deploy.
+  "preview_urls": false,
+  "assets": {
+    "directory": "./apps/onboarding-site",
+    // A document site, not a single-page app: unknown paths should 404 rather
+    // than silently rendering the contents page.
+    "not_found_handling": "404-page",
+  },
+}

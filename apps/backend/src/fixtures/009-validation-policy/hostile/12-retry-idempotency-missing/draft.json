@@ -1,0 +1,662 @@
+{
+  "irKind": "atlas.workflow.ir",
+  "irSchemaVersion": "1.0.0",
+  "workflowKey": "payment-to-billing",
+  "version": {
+    "versionId": "wf_payment_to_billing_v6",
+    "irHash": "sha256:bc763e48cc6b5519e2a359070afe61d9ee899d4c66d857f5a8d83364fba5a774",
+    "supersedesVersionId": "wf_payment_to_billing_v5",
+    "approvedBy": "admin_demo",
+    "approvedAt": "2026-08-03T19:30:00Z",
+    "organizationId": "org_atlas_demo"
+  },
+  "executionRequirements": {
+    "organizationId": "org_atlas_demo",
+    "workflowVersionId": "wf_payment_to_billing_v6",
+    "workflowIrHash": "sha256:bc763e48cc6b5519e2a359070afe61d9ee899d4c66d857f5a8d83364fba5a774",
+    "requiredCapabilityVersionIds": [
+      "sha256:9f2c000000000000000000000000000000000000000000000000000000a1a1",
+      "sha256:7e51000000000000000000000000000000000000000000000000000000b2b2",
+      "sha256:4b7e000000000000000000000000000000000000000000000000000000c3c3",
+      "sha256:2d90000000000000000000000000000000000000000000000000000000d4d4",
+      "sha256:6c33000000000000000000000000000000000000000000000000000000e5e5",
+      "sha256:1a77000000000000000000000000000000000000000000000000000000f6f6",
+      "sha256:5f04000000000000000000000000000000000000000000000000000000a7a7"
+    ]
+  },
+  "identities": [
+    {
+      "identityId": "id_payment_intake",
+      "role": "intake",
+      "keyRef": {
+        "kind": "input",
+        "path": "paymentId"
+      },
+      "activatesAfterStepId": null
+    },
+    {
+      "identityId": "id_invoice_coordinator",
+      "role": "coordinator",
+      "keyRef": {
+        "kind": "stepOutput",
+        "stepId": "step_getPayment",
+        "path": "invoiceId"
+      },
+      "activatesAfterStepId": "step_getPayment"
+    }
+  ],
+  "startSchema": {
+    "schemaHash": "sha256:startschema0000000000000000000000000000000000000000000000001a",
+    "label": "payment-to-billing.start"
+  },
+  "outputSchema": {
+    "schemaHash": "sha256:outputschema000000000000000000000000000000000000000000000001b",
+    "label": "payment-to-billing.output"
+  },
+  "sequence": [
+    "step_getPayment",
+    "step_getInvoice",
+    "step_validateAmountsMatch",
+    "step_beginInvoiceSettlement",
+    "step_markInvoicePaid",
+    "step_publishInvoicePaid",
+    "step_notifyPaymentOperations"
+  ],
+  "steps": [
+    {
+      "kind": "capabilityCall",
+      "stepId": "step_getPayment",
+      "capabilityVersionId": "sha256:9f2c000000000000000000000000000000000000000000000000000000a1a1",
+      "capabilityLabel": "payment-api:getPayment",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_getpayment000000000000000000000000000000000000001c",
+        "label": "getPayment.request"
+      },
+      "outputSchema": {
+        "schemaHash": "sha256:respschema_paymentsnap00000000000000000000000000000000001d",
+        "label": "getPayment.response"
+      },
+      "outputBinding": "payment",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "PaymentNotFound",
+          "PaymentNotSucceeded",
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": null,
+      "compensatedBy": null,
+      "irreversibleAfter": false,
+      "condition": null,
+      "errorRouting": {
+        "rules": [
+          {
+            "errorTypes": [
+              "PaymentNotFound",
+              "PaymentNotSucceeded"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "validation_failed",
+              "reasonCode": "PAYMENT_MISSING_OR_NOT_SUCCEEDED"
+            }
+          },
+          {
+            "errorTypes": [
+              "AuthenticationFailed"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "repair_required",
+              "reasonCode": "AUTHENTICATION_FAILURE_REQUIRES_SECRET_REPAIR"
+            }
+          }
+        ],
+        "defaultAction": {
+          "kind": "land",
+          "outcome": "validation_failed",
+          "reasonCode": "PAYMENT_MISSING_OR_NOT_SUCCEEDED"
+        }
+      }
+    },
+    {
+      "kind": "capabilityCall",
+      "stepId": "step_getInvoice",
+      "capabilityVersionId": "sha256:7e51000000000000000000000000000000000000000000000000000000b2b2",
+      "capabilityLabel": "billing-api:getInvoice",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getPayment",
+            "path": "invoiceId"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_getinvoice0000000000000000000000000000000000001e",
+        "label": "getInvoice.request"
+      },
+      "outputSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "label": "getInvoice.response"
+      },
+      "outputBinding": "invoice",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "InvoiceNotFound",
+          "InvoiceAlreadyPaidByAnotherPayment",
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": null,
+      "compensatedBy": null,
+      "irreversibleAfter": false,
+      "condition": null,
+      "errorRouting": {
+        "rules": [
+          {
+            "errorTypes": [
+              "InvoiceNotFound",
+              "InvoiceAlreadyPaidByAnotherPayment"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "validation_failed",
+              "reasonCode": "INVOICE_MISSING_OR_ALREADY_PAID"
+            }
+          },
+          {
+            "errorTypes": [
+              "AuthenticationFailed"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "repair_required",
+              "reasonCode": "AUTHENTICATION_FAILURE_REQUIRES_SECRET_REPAIR"
+            }
+          }
+        ],
+        "defaultAction": {
+          "kind": "land",
+          "outcome": "validation_failed",
+          "reasonCode": "INVOICE_MISSING_OR_ALREADY_PAID"
+        }
+      }
+    },
+    {
+      "kind": "terminal",
+      "stepId": "step_validateAmountsMatch",
+      "outcome": "manual_review",
+      "reasonCode": "PAYMENT_INVOICE_MISMATCH",
+      "condition": {
+        "kind": "or",
+        "conditions": [
+          {
+            "kind": "notEquals",
+            "left": {
+              "kind": "stepOutput",
+              "stepId": "step_getPayment",
+              "path": "amount.value"
+            },
+            "right": {
+              "kind": "stepOutput",
+              "stepId": "step_getInvoice",
+              "path": "outstandingBalance.value"
+            }
+          },
+          {
+            "kind": "notEquals",
+            "left": {
+              "kind": "stepOutput",
+              "stepId": "step_getPayment",
+              "path": "amount.currency"
+            },
+            "right": {
+              "kind": "stepOutput",
+              "stepId": "step_getInvoice",
+              "path": "outstandingBalance.currency"
+            }
+          },
+          {
+            "kind": "notEquals",
+            "left": {
+              "kind": "stepOutput",
+              "stepId": "step_getPayment",
+              "path": "status"
+            },
+            "right": {
+              "kind": "literal",
+              "valueType": "string",
+              "value": "succeeded"
+            }
+          },
+          {
+            "kind": "notEquals",
+            "left": {
+              "kind": "stepOutput",
+              "stepId": "step_getInvoice",
+              "path": "status"
+            },
+            "right": {
+              "kind": "literal",
+              "valueType": "string",
+              "value": "open"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "capabilityCall",
+      "stepId": "step_beginInvoiceSettlement",
+      "capabilityVersionId": "sha256:4b7e000000000000000000000000000000000000000000000000000000c3c3",
+      "capabilityLabel": "billing-api:beginInvoiceSettlement",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "invoiceId"
+          },
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          },
+          "expectedInvoiceVersion": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "version"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_begininvoicesettle0000000000000000000000000000020",
+        "label": "beginInvoiceSettlement.request"
+      },
+      "outputSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "label": "beginInvoiceSettlement.response"
+      },
+      "outputBinding": "invoiceAfterBegin",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "InvoiceVersionStale",
+          "InvoiceAlreadySettled",
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": null,
+      "compensatedBy": "step_cancelInvoiceSettlement",
+      "irreversibleAfter": false,
+      "condition": null,
+      "errorRouting": {
+        "rules": [
+          {
+            "errorTypes": [
+              "InvoiceVersionStale"
+            ],
+            "action": {
+              "kind": "revalidateFrom",
+              "targetStepId": "step_getInvoice",
+              "maxRevalidations": 2,
+              "onExhausted": {
+                "kind": "land",
+                "outcome": "repair_required",
+                "reasonCode": "BEGIN_SETTLEMENT_STALE_VERSION_EXHAUSTED"
+              }
+            }
+          },
+          {
+            "errorTypes": [
+              "InvoiceAlreadySettled"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "validation_failed",
+              "reasonCode": "INVOICE_ALREADY_SETTLED"
+            }
+          },
+          {
+            "errorTypes": [
+              "AuthenticationFailed"
+            ],
+            "action": {
+              "kind": "land",
+              "outcome": "repair_required",
+              "reasonCode": "AUTHENTICATION_FAILURE_REQUIRES_SECRET_REPAIR"
+            }
+          }
+        ],
+        "defaultAction": {
+          "kind": "land",
+          "outcome": "repair_required",
+          "reasonCode": "BEGIN_SETTLEMENT_UNCLASSIFIED_PERMANENT_FAILURE"
+        }
+      }
+    },
+    {
+      "kind": "compensation",
+      "stepId": "step_cancelInvoiceSettlement",
+      "compensatesStepId": "step_beginInvoiceSettlement",
+      "capabilityVersionId": "sha256:2d90000000000000000000000000000000000000000000000000000000d4d4",
+      "capabilityLabel": "billing-api:cancelInvoiceSettlement",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "invoiceId"
+          },
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          },
+          "expectedInvoiceVersion": {
+            "kind": "stepOutput",
+            "stepId": "step_beginInvoiceSettlement",
+            "path": "version"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_cancelinvoicesettle0000000000000000000000000000021",
+        "label": "cancelInvoiceSettlement.request"
+      },
+      "outputSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "label": "cancelInvoiceSettlement.response"
+      },
+      "outputBinding": "invoiceAfterCancel",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": {
+        "idempotencyKeyFieldPath": "paymentId"
+      },
+      "reasonCodeOnPermanentFailure": "CANCEL_SETTLEMENT_PERMANENT_FAILURE"
+    },
+    {
+      "kind": "capabilityCall",
+      "stepId": "step_markInvoicePaid",
+      "capabilityVersionId": "sha256:6c33000000000000000000000000000000000000000000000000000000e5e5",
+      "capabilityLabel": "billing-api:markInvoicePaid",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "invoiceId"
+          },
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          },
+          "paidAt": {
+            "kind": "stepOutput",
+            "stepId": "step_getPayment",
+            "path": "paidAt"
+          },
+          "expectedInvoiceVersion": {
+            "kind": "stepOutput",
+            "stepId": "step_beginInvoiceSettlement",
+            "path": "version"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_markinvoicepaid00000000000000000000000000000000022",
+        "label": "markInvoicePaid.request"
+      },
+      "outputSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "label": "markInvoicePaid.response"
+      },
+      "outputBinding": "invoiceAfterMarkPaid",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "InvoiceVersionStale",
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": {
+        "idempotencyKeyFieldPath": "paymentId"
+      },
+      "compensatedBy": null,
+      "irreversibleAfter": true,
+      "condition": null,
+      "errorRouting": {
+        "rules": [
+          {
+            "errorTypes": [
+              "AuthenticationFailed"
+            ],
+            "action": {
+              "kind": "compensateThenLand",
+              "outcome": "repair_required",
+              "reasonCode": "MARK_PAID_AUTH_FAILURE_AFTER_SETTLEMENT_BEGAN"
+            }
+          }
+        ],
+        "defaultAction": {
+          "kind": "compensateThenLand",
+          "outcome": "repair_required",
+          "reasonCode": "MARK_PAID_PERMANENT_FAILURE_AFTER_SETTLEMENT_BEGAN"
+        }
+      }
+    },
+    {
+      "kind": "publishEvent",
+      "stepId": "step_publishInvoicePaid",
+      "capabilityVersionId": "sha256:1a77000000000000000000000000000000000000000000000000000000f6f6",
+      "capabilityLabel": "domain-events:invoice.paid:InvoicePaid:publishInvoicePaid",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "eventId": {
+            "kind": "stableId",
+            "derivation": {
+              "namespace": "atlas.event.invoice.paid",
+              "parts": [
+                {
+                  "kind": "input",
+                  "path": "paymentId"
+                },
+                {
+                  "kind": "stepOutput",
+                  "stepId": "step_getInvoice",
+                  "path": "invoiceId"
+                },
+                {
+                  "kind": "literal",
+                  "valueType": "string",
+                  "value": "invoice.paid"
+                },
+                {
+                  "kind": "literal",
+                  "valueType": "integer",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "eventType": {
+            "kind": "literal",
+            "valueType": "string",
+            "value": "invoice.paid"
+          },
+          "eventVersion": {
+            "kind": "literal",
+            "valueType": "integer",
+            "value": 1
+          },
+          "occurredAt": {
+            "kind": "stepOutput",
+            "stepId": "step_markInvoicePaid",
+            "path": "paidAt"
+          },
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "invoiceId"
+          },
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          },
+          "customerId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "customerId"
+          },
+          "amount": {
+            "kind": "stepOutput",
+            "stepId": "step_getPayment",
+            "path": "amount"
+          },
+          "atlasWorkflowRunId": {
+            "kind": "runContext",
+            "field": "runId"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_invoicepaidevent0000000000000000000000000000000023",
+        "label": "InvoicePaid.message"
+      },
+      "outputBinding": "publishedEvent",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": {
+        "idempotencyKeyFieldPath": "eventId"
+      },
+      "reasonCodeOnPermanentFailure": "PUBLISH_INVOICE_PAID_PERMANENT_FAILURE_AFTER_BILLING_SUCCEEDED",
+      "condition": null
+    },
+    {
+      "kind": "notify",
+      "stepId": "step_notifyPaymentOperations",
+      "capabilityVersionId": "sha256:5f04000000000000000000000000000000000000000000000000000000a7a7",
+      "capabilityLabel": "ops-notification-api:notifyPaymentOperations",
+      "inputMapping": {
+        "kind": "pureMapping",
+        "fields": {
+          "atlasWorkflowRunId": {
+            "kind": "runContext",
+            "field": "runId"
+          },
+          "invoiceId": {
+            "kind": "stepOutput",
+            "stepId": "step_getInvoice",
+            "path": "invoiceId"
+          },
+          "paymentId": {
+            "kind": "input",
+            "path": "paymentId"
+          },
+          "completionStatus": {
+            "kind": "literal",
+            "valueType": "string",
+            "value": "completed"
+          }
+        }
+      },
+      "inputSchema": {
+        "schemaHash": "sha256:reqschema_notifypaymentops0000000000000000000000000000000024",
+        "label": "notifyPaymentOperations.request"
+      },
+      "outputBinding": "notificationResult",
+      "retryPolicy": {
+        "initialIntervalMs": 500,
+        "backoffCoefficient": 2,
+        "maxIntervalMs": 5000,
+        "maxAttempts": 3,
+        "nonRetryableErrorTypes": [
+          "AuthenticationFailed"
+        ]
+      },
+      "timeout": {
+        "perAttemptMs": 10000,
+        "totalMs": 30000
+      },
+      "idempotency": {
+        "idempotencyKeyFieldPath": "atlasWorkflowRunId"
+      },
+      "condition": null,
+      "errorRouting": {
+        "rules": [],
+        "defaultAction": {
+          "kind": "preserveAndLand",
+          "outcome": "repair_required",
+          "reasonCode": "NOTIFY_PAYMENT_OPERATIONS_PERMANENT_FAILURE"
+        }
+      }
+    }
+  ]
+}

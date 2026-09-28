@@ -1,0 +1,509 @@
+name: atlas
+
+x-backend-environment: &backend-environment
+  DATABASE_URL: postgresql://atlas:${ATLAS_DATABASE_PASSWORD:?Run pnpm setup:local}@postgres:5432/atlas
+  ATLAS_BACKEND_PORT: 4000
+  ATLAS_DEMO_ADMIN_PASSWORD: ${ATLAS_DEMO_ADMIN_PASSWORD:?Run pnpm setup:local}
+  CAPABILITY_SOURCE_ALLOWED_HOSTS: mock-specs,raw.githubusercontent.com
+  CAPABILITY_SOURCE_ALLOWED_PRIVATE_HOSTS: mock-specs
+  ATLAS_BURGER_TOWN_ALLOWED_HOSTS: ${ATLAS_BURGER_TOWN_ALLOWED_HOSTS:-host.docker.internal}
+  ATLAS_BURGER_TOWN_ALLOWED_PRIVATE_HOSTS: ${ATLAS_BURGER_TOWN_ALLOWED_PRIVATE_HOSTS:-host.docker.internal}
+  ATLAS_BURGER_TOWN_APPLICATION_URLS: ${ATLAS_BURGER_TOWN_APPLICATION_URLS:-http://host.docker.internal:43123}
+  ATLAS_BURGER_TOWN_OPENAPI_URLS: ${ATLAS_BURGER_TOWN_OPENAPI_URLS:-http://host.docker.internal:43123/openapi.json}
+  TEMPORAL_ADDRESS: temporal:7233
+  TEMPORAL_NAMESPACE: atlas-production
+  TEMPORAL_TASK_QUEUE: atlas-production
+  ATLAS_PLANNING_AUTHOR_TOKEN: ${ATLAS_PLANNING_AUTHOR_TOKEN:?Run pnpm setup:local}
+  ATLAS_PLANNING_AUTHOR_ACTOR_ID: atlas-author
+  ATLAS_PLANNING_ORGANIZATION_ID: org_atlas
+  ATLAS_APPROVAL_ADMIN_TOKEN: ${ATLAS_APPROVAL_ADMIN_TOKEN:?Run pnpm setup:local}
+  ATLAS_APPROVAL_ADMIN_ACTOR_ID: atlas-admin
+  ATLAS_REPAIR_OPERATOR_TOKEN: ${ATLAS_REPAIR_OPERATOR_TOKEN:?Run pnpm setup:local}
+  ATLAS_REPAIR_OPERATOR_ACTOR_ID: atlas-operator
+  ATLAS_SANDBOX_RUNNER_URLS: >-
+    {"development":"http://worker-development:4200","production":"http://worker-production:4200"}
+  STRIPE_DEMO_MODE: ${STRIPE_DEMO_MODE:-contract-faithful-rehearsal}
+  SLACK_DEMO_MODE: ${SLACK_DEMO_MODE:-contract-faithful-rehearsal}
+  HUBSPOT_DEMO_MODE: ${HUBSPOT_DEMO_MODE:-contract-faithful-rehearsal}
+  ATLAS_EXECUTION_ORGANIZATION_ID: org_atlas
+  ATLAS_WORKER_CREDENTIALS: ${ATLAS_WORKER_CREDENTIALS:?Run pnpm setup:local}
+  EXECUTION_GRANT_PRIVATE_KEYS: ${EXECUTION_GRANT_PRIVATE_KEYS:?Run pnpm setup:local}
+  ATLAS_BUNDLE_SIGNING_KEY_ID: ${ATLAS_BUNDLE_SIGNING_KEY_ID:?Run pnpm setup:local}
+  ATLAS_BUNDLE_SIGNING_PRIVATE_KEY: ${ATLAS_BUNDLE_SIGNING_PRIVATE_KEY:?Run pnpm setup:local}
+  ATLAS_DEMO_PROFILE: ${ATLAS_DEMO_PROFILE:-burger-town}
+
+x-worker-environment: &worker-environment
+  ATLAS_BACKEND_URL: http://backend:4000
+  ATLAS_EXECUTION_ORGANIZATION_ID: org_atlas
+  ATLAS_WORKER_INTAKE_HTTP_ENABLED: 'false'
+  ATLAS_BUNDLE_TRUST_CONFIG: ${ATLAS_BUNDLE_TRUST_CONFIG:?Run pnpm setup:local}
+  MOCK_SERVICES_URL: http://mock-services:4100
+  STRIPE_DEMO_MODE: ${STRIPE_DEMO_MODE:-contract-faithful-rehearsal}
+  STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+  SLACK_DEMO_MODE: ${SLACK_DEMO_MODE:-contract-faithful-rehearsal}
+  SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN:-}
+  HUBSPOT_DEMO_MODE: ${HUBSPOT_DEMO_MODE:-contract-faithful-rehearsal}
+  HUBSPOT_ACCESS_TOKEN: ${HUBSPOT_ACCESS_TOKEN:-}
+  RUN_COMMAND_ENCRYPTION_KEY_ALIAS: runCommandEncryptionKey
+  TEMPORAL_ADDRESS: 172.30.100.5:7233
+  TEMPORAL_PAYLOAD_ENCRYPTION_KEY_ALIAS: temporalPayloadEncryptionKey
+  WORKER_SECRET_CONFIG_PATH: /run/atlas/secrets.json
+
+x-worker: &worker
+  build:
+    context: ../..
+    dockerfile: apps/worker/Dockerfile
+  user: root
+  networks:
+    atlas-control:
+      priority: 1000
+    customer-execution:
+      priority: 100
+  command:
+    - /bin/sh
+    - -c
+    - >-
+      chown node:node /run/atlas;
+      su -s /bin/sh node -c "node -e \"const fs=require('node:fs'),r=require('node:crypto').randomBytes,p='/run/atlas/secrets.json',st=process.env.STRIPE_SECRET_KEY,sm=process.env.STRIPE_DEMO_MODE,t=process.env.SLACK_BOT_TOKEN,m=process.env.SLACK_DEMO_MODE,h=process.env.HUBSPOT_ACCESS_TOKEN,hm=process.env.HUBSPOT_DEMO_MODE;let s={};try{s=JSON.parse(fs.readFileSync(p,'utf8'))}catch{}if(sm==='official-test'&&!st)throw new Error('STRIPE_SECRET_KEY is required in official-test mode');if(m==='official-test'&&!t)throw new Error('SLACK_BOT_TOKEN is required in official-test mode');if(hm==='official-test'&&!h)throw new Error('HUBSPOT_ACCESS_TOKEN is required in official-test mode');s.temporalPayloadEncryptionKey??=r(32).toString('base64');s.runCommandEncryptionKey??=r(32).toString('base64');s.STRIPE_SECRET_KEY=st||'atlas-local-rehearsal-token';s.SLACK_BOT_TOKEN=t||'atlas-local-rehearsal-token';s.HUBSPOT_ACCESS_TOKEN=h||'atlas-local-rehearsal-token';fs.writeFileSync(p,JSON.stringify(s),{mode:0o600})\"";
+      exec su -s /bin/sh node -c 'exec node apps/worker/dist/index.js'
+  healthcheck:
+    test:
+      [
+        CMD,
+        node,
+        -e,
+        "fetch('http://localhost:4200/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+      ]
+    interval: 2s
+    timeout: 3s
+    retries: 30
+    start_period: 10s
+  restart: unless-stopped
+
+x-ingest-environment: &ingest-environment
+  ATLAS_BACKEND_URL: http://backend:4000
+  ATLAS_EXECUTION_ORGANIZATION_ID: org_atlas
+  ATLAS_INGEST_BACKEND_TOKEN: ${ATLAS_PLANNING_AUTHOR_TOKEN:?Run pnpm setup:local}
+  ATLAS_INGEST_CALLER_TOKEN: ${ATLAS_INGEST_CALLER_TOKEN:?Run pnpm setup:local}
+
+x-ingest: &ingest
+  build:
+    context: ../..
+    dockerfile: apps/ingest/Dockerfile
+  environment: *ingest-environment
+  networks: [atlas-control]
+  depends_on:
+    backend:
+      condition: service_healthy
+  healthcheck:
+    test:
+      [
+        CMD,
+        node,
+        -e,
+        "fetch('http://localhost:'+(process.env.ATLAS_INGEST_PORT||'4300')+'/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+      ]
+    interval: 5s
+    timeout: 3s
+    retries: 30
+    start_period: 10s
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:17.6-bookworm
+    environment:
+      POSTGRES_PASSWORD: ${ATLAS_POSTGRES_PASSWORD:?Run pnpm setup:local}
+      ATLAS_DATABASE_PASSWORD: ${ATLAS_DATABASE_PASSWORD:?Run pnpm setup:local}
+      ATLAS_TEMPORAL_PASSWORD: ${ATLAS_TEMPORAL_PASSWORD:?Run pnpm setup:local}
+      POSTGRES_USER: postgres
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - atlas-postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      atlas-data:
+        ipv4_address: 172.30.99.2
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  temporal-schema:
+    image: temporalio/admin-tools:1.31.2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_PORT: 5432
+      POSTGRES_SEEDS: 172.30.99.2
+      POSTGRES_USER: temporal
+      SQL_PASSWORD: ${ATLAS_TEMPORAL_PASSWORD:?Run pnpm setup:local}
+    volumes:
+      - ./temporal/scripts:/scripts:ro
+    networks:
+      atlas-data:
+        ipv4_address: 172.30.99.102
+    entrypoint: [/bin/sh]
+    command: /scripts/setup-postgres.sh
+    restart: on-failure:5
+
+  temporal:
+    image: temporalio/server:1.31.2
+    depends_on:
+      temporal-schema:
+        condition: service_completed_successfully
+    environment:
+      BIND_ON_IP: 0.0.0.0
+      DB: postgres12
+      DB_PORT: 5432
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
+      POSTGRES_PWD: ${ATLAS_TEMPORAL_PASSWORD:?Run pnpm setup:local}
+      POSTGRES_SEEDS: 172.30.99.2
+      POSTGRES_USER: temporal
+    ports:
+      - '127.0.0.1:7233:7233'
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig:ro
+    networks:
+      atlas-data:
+        ipv4_address: 172.30.99.100
+    healthcheck:
+      test: [CMD, nc, -z, localhost, '7233']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
+
+  temporal-gateway:
+    image: node:24.19.0-bookworm-slim
+    depends_on:
+      temporal:
+        condition: service_healthy
+    networks:
+      atlas-control:
+        ipv4_address: 172.30.100.5
+      atlas-data:
+    command:
+      - node
+      - -e
+      - >-
+        const net=require('node:net');
+        net.createServer(client=>{
+          const upstream=net.connect(7233,'172.30.99.100');
+          client.on('error',()=>upstream.destroy());
+          upstream.on('error',()=>client.destroy());
+          client.pipe(upstream).pipe(client);
+        }).listen(7233,'0.0.0.0');
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "const n=require('node:net');const c=h=>new Promise((r,j)=>{const s=n.connect(7233,h);s.once('connect',()=>{s.end();r()});s.once('error',j)});Promise.all([c('127.0.0.1'),c('172.30.99.100')]).then(()=>process.exit(0),()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 5s
+    restart: unless-stopped
+
+  temporal-namespace-production:
+    image: temporalio/admin-tools:1.31.2
+    depends_on:
+      temporal:
+        condition: service_healthy
+    environment:
+      DEFAULT_NAMESPACE: atlas-production
+      TEMPORAL_ADDRESS: 172.30.99.100:7233
+    volumes:
+      - ./temporal/scripts:/scripts:ro
+    networks: [atlas-data]
+    entrypoint: [/bin/sh]
+    command: /scripts/create-namespace.sh
+    restart: on-failure:5
+
+  temporal-namespace-development:
+    image: temporalio/admin-tools:1.31.2
+    depends_on:
+      temporal:
+        condition: service_healthy
+    environment:
+      DEFAULT_NAMESPACE: atlas-development
+      TEMPORAL_ADDRESS: 172.30.99.100:7233
+    volumes:
+      - ./temporal/scripts:/scripts:ro
+    networks: [atlas-data]
+    entrypoint: [/bin/sh]
+    command: /scripts/create-namespace.sh
+    restart: on-failure:5
+
+  temporal-ui:
+    image: temporalio/ui:2.49.1
+    depends_on:
+      temporal-namespace-production:
+        condition: service_completed_successfully
+      temporal-namespace-development:
+        condition: service_completed_successfully
+    environment:
+      TEMPORAL_ADDRESS: 172.30.99.100:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:5173
+    ports:
+      - '127.0.0.1:8080:8080'
+    networks: [atlas-data]
+
+  atlas-migrate:
+    build:
+      context: ../..
+      dockerfile: apps/backend/Dockerfile
+    environment: *backend-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [atlas-data]
+    command: [/bin/sh, -c, 'cd apps/backend && node dist/migrate.js']
+    restart: 'no'
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      <<: *backend-environment
+      # The key is file-mounted so it never appears in container metadata.
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      GITHUB_TOKEN_FILE: /run/secrets/github_api_token
+      ATLAS_DEMO_PROVIDER_URL: http://provider-repair-gateway:4200
+    secrets: [openai_api_key, github_api_token]
+    volumes:
+      - ../../planner-traces:/workspace/planner-traces
+    depends_on:
+      demo-capability-seed:
+        condition: service_completed_successfully
+      temporal-namespace-production:
+        condition: service_completed_successfully
+      temporal-namespace-development:
+        condition: service_completed_successfully
+      provider-repair-gateway:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:4000:4000'
+    networks:
+      atlas-control:
+        ipv4_address: 172.30.100.2
+        priority: 1000
+      atlas-data:
+        priority: 100
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  demo-capability-seed:
+    build:
+      context: ../..
+      dockerfile: apps/backend/Dockerfile
+    environment: *backend-environment
+    depends_on:
+      atlas-migrate:
+        condition: service_completed_successfully
+      mock-specs:
+        condition: service_healthy
+    networks: [atlas-control, atlas-data]
+    command: [node, apps/backend/dist/demo-capability-seed.js]
+    restart: 'no'
+
+  mock-services:
+    build:
+      context: ../..
+      dockerfile: apps/mock-services/Dockerfile
+    environment:
+      MOCK_SERVICES_PORT: 4100
+      STRIPE_DEMO_MODE: ${STRIPE_DEMO_MODE:-contract-faithful-rehearsal}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      SLACK_DEMO_MODE: ${SLACK_DEMO_MODE:-contract-faithful-rehearsal}
+      HUBSPOT_DEMO_MODE: ${HUBSPOT_DEMO_MODE:-contract-faithful-rehearsal}
+      MOCK_PROVIDER_DATABASE_URL: postgresql://atlas:${ATLAS_DATABASE_PASSWORD:?Run pnpm setup:local}@postgres:5432/atlas
+      MOCK_PROVIDER_ID: mock-services
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [customer-execution, atlas-data]
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4100/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  provider-repair-gateway:
+    build:
+      context: ../..
+      dockerfile: apps/mock-services/Dockerfile
+    environment:
+      PROVIDER_REPAIR_GATEWAY_PORT: 4200
+      MOCK_SERVICES_URL: http://mock-services:4100
+    depends_on:
+      mock-services:
+        condition: service_healthy
+    networks:
+      atlas-control:
+        ipv4_address: 172.30.100.4
+      customer-execution:
+    command: [node, apps/mock-services/dist/provider-repair-gateway.js]
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4200/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  mock-specs:
+    build:
+      context: ../..
+      dockerfile: apps/mock-services/Dockerfile
+    environment:
+      MOCK_SERVICES_PORT: 4100
+      STRIPE_DEMO_MODE: ${STRIPE_DEMO_MODE:-contract-faithful-rehearsal}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      SLACK_DEMO_MODE: ${SLACK_DEMO_MODE:-contract-faithful-rehearsal}
+      HUBSPOT_DEMO_MODE: ${HUBSPOT_DEMO_MODE:-contract-faithful-rehearsal}
+      MOCK_PROVIDER_DATABASE_URL: postgresql://atlas:${ATLAS_DATABASE_PASSWORD:?Run pnpm setup:local}@postgres:5432/atlas
+      MOCK_PROVIDER_ID: mock-specs
+    ports:
+      - '127.0.0.1:4100:4100'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      atlas-control:
+        ipv4_address: 172.30.100.3
+      atlas-data:
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4100/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  worker-production:
+    <<: *worker
+    environment:
+      <<: *worker-environment
+      ATLAS_EXECUTION_ENVIRONMENT_ID: production
+      ATLAS_WORKER_TOKEN: ${ATLAS_PRODUCTION_WORKER_TOKEN:?Run pnpm setup:local}
+      ATLAS_WORKFLOW_RESULT_TOKEN: ${ATLAS_PRODUCTION_RESULT_TOKEN:?Run pnpm setup:local}
+      EXECUTION_GRANT_PUBLIC_KEY: ${ATLAS_PRODUCTION_GRANT_PUBLIC_KEY:?Run pnpm setup:local}
+      TEMPORAL_NAMESPACE: atlas-production
+      TEMPORAL_TASK_QUEUE: atlas-production
+    volumes:
+      - atlas-production-worker-secrets:/run/atlas
+    depends_on:
+      backend:
+        condition: service_healthy
+      mock-services:
+        condition: service_healthy
+      temporal-namespace-production:
+        condition: service_completed_successfully
+      temporal-gateway:
+        condition: service_healthy
+  worker-development:
+    <<: *worker
+    environment:
+      <<: *worker-environment
+      ATLAS_EXECUTION_ENVIRONMENT_ID: development
+      ATLAS_WORKER_TOKEN: ${ATLAS_DEVELOPMENT_WORKER_TOKEN:?Run pnpm setup:local}
+      ATLAS_WORKFLOW_RESULT_TOKEN: ${ATLAS_DEVELOPMENT_RESULT_TOKEN:?Run pnpm setup:local}
+      EXECUTION_GRANT_PUBLIC_KEY: ${ATLAS_DEVELOPMENT_GRANT_PUBLIC_KEY:?Run pnpm setup:local}
+      TEMPORAL_NAMESPACE: atlas-development
+      TEMPORAL_TASK_QUEUE: atlas-development
+    volumes:
+      - atlas-development-worker-secrets:/run/atlas
+    depends_on:
+      backend:
+        condition: service_healthy
+      mock-services:
+        condition: service_healthy
+      temporal-namespace-development:
+        condition: service_completed_successfully
+      temporal-gateway:
+        condition: service_healthy
+
+  ingest-development:
+    <<: *ingest
+    environment:
+      <<: *ingest-environment
+      ATLAS_EXECUTION_ENVIRONMENT_ID: development
+      ATLAS_INGEST_PORT: 4300
+      ATLAS_INGEST_WORKER_URL: http://worker-development:4200
+      ATLAS_WORKFLOW_RESULT_TOKEN: ${ATLAS_DEVELOPMENT_RESULT_TOKEN:?Run pnpm setup:local}
+    ports:
+      - '127.0.0.1:4300:4300'
+
+  ingest-production:
+    <<: *ingest
+    environment:
+      <<: *ingest-environment
+      ATLAS_EXECUTION_ENVIRONMENT_ID: production
+      ATLAS_INGEST_PORT: 4301
+      ATLAS_INGEST_WORKER_URL: http://worker-production:4200
+      ATLAS_WORKFLOW_RESULT_TOKEN: ${ATLAS_PRODUCTION_RESULT_TOKEN:?Run pnpm setup:local}
+    ports:
+      - '127.0.0.1:4301:4301'
+
+networks:
+  atlas-control:
+    ipam:
+      config:
+        - subnet: 172.30.100.0/24
+  atlas-data:
+    ipam:
+      config:
+        - subnet: 172.30.99.0/24
+  customer-execution:
+    internal: true
+
+volumes:
+  atlas-postgres-data:
+    name: ${ATLAS_POSTGRES_VOLUME_NAME:-atlas-postgres-data}
+  atlas-development-worker-secrets:
+    name: ${ATLAS_DEVELOPMENT_WORKER_SECRETS_VOLUME_NAME:-atlas-development-worker-secrets}
+  atlas-production-worker-secrets:
+    name: ${ATLAS_PRODUCTION_WORKER_SECRETS_VOLUME_NAME:-atlas-production-worker-secrets}
+
+secrets:
+  openai_api_key:
+    file: ${OPENAI_API_KEY_FILE:-./secrets/empty-openai-api-key}
+  github_api_token:
+    file: ${GITHUB_TOKEN_FILE:-./secrets/empty-github-token}

@@ -1,0 +1,151 @@
+
+<section class="product-stage shell" aria-label="Interactive Atlas workflow illustration">
+<div class="product-window">
+<div class="window-top">
+<div class="window-title">
+<strong>atlas</strong>
+<span class="muted">/</span>
+<span>Payment & Billing</span>
+</div>
+<span class="sample-tag">ILLUSTRATIVE DEMO</span>
+</div>
+<div class="product-body">
+<aside class="product-sidebar" aria-hidden="true">
+<div class="workspace-label">WORKSPACE</div>
+<p>▦ &nbsp; Overview</p>
+<p>◇ &nbsp; Connected APIs</p>
+<p class="selected">⌘ &nbsp; Workflows</p>
+<p>↻ &nbsp; Changes</p>
+<p>≡ &nbsp; Run history</p>
+</aside>
+<div class="demo-content">
+<div class="demo-heading">
+<h3>Payment to invoice, connected.</h3>
+<div class="demo-tabs" role="tablist" aria-label="Explore the workflow">
+<button id="tab-understand" role="tab" aria-selected="true" aria-controls="demo-understand" tabindex="0">Understand</button>
+<button id="tab-build" role="tab" aria-selected="false" aria-controls="demo-build" tabindex="-1">Build</button>
+<button id="tab-adapt" role="tab" aria-selected="false" aria-controls="demo-adapt" tabindex="-1">Adapt</button>
+</div>
+</div>
+<div class="demo-view" id="demo-understand" role="tabpanel" aria-labelledby="tab-understand">
+<div class="workflow-canvas">
+<span class="source-label">CONNECTED API OPERATIONS</span>
+<div class="flow-stack">
+<div class="flow-node">
+<span class="node-icon">◇</span>
+<strong>Read payment</strong>
+<small>PAYMENTS / GET</small>
+</div>
+<div class="flow-node">
+<span class="node-icon">◇</span>
+<strong>Get invoice</strong>
+<small>BILLING / GET</small>
+</div>
+<div class="flow-node">
+<span class="node-icon">◇</span>
+<strong>Settle invoice</strong>
+<small>BILLING / POST</small>
+</div>
+</div>
+</div>
+<div class="demo-detail">
+<p class="eyebrow">01 / Understand</p>
+<h4>Know what the<br />work depends on.</h4>
+<p>Connect API definitions. Keep the operations and fields a workflow uses in view.</p>
+<dl>
+<dt>Source</dt>
+<dd>Approved API contracts</dd>
+<dt>Scope</dt>
+<dd>Atlas-managed workflows</dd>
+</dl>
+</div>
+</div>
+<div class="demo-view" id="demo-build" role="tabpanel" aria-labelledby="tab-build" hidden>
+<div class="workflow-canvas">
+<span class="source-label">REVIEW BEFORE EXECUTION</span>
+<div class="flow-stack">
+<div class="flow-node">
+<strong>Verify amount + currency</strong>
+<small>VALIDATION</small>
+</div>
+<div class="flow-node">
+<strong>Settle the invoice</strong>
+<small>REVIEWED WRITE</small>
+</div>
+<div class="flow-node">
+<strong>Notify operations</strong>
+<small>AFTER SETTLEMENT</small>
+</div>
+</div>
+</div>
+<div class="demo-detail">
+<p class="eyebrow">02 / Build</p>
+<h4>Turn intent into<br />reviewed steps.</h4>
+<p>Draft from approved operations. Test the behavior and approve the version that can run.</p>
+<dl>
+<dt>Execution</dt>
+<dd>Powered by Temporal</dd>
+<dt>Control</dt>
+<dd>Human approval</dd>
+</dl>
+</div>
+</div>
+<div class="demo-view" id="demo-adapt" role="tabpanel" aria-labelledby="tab-adapt" hidden>
+<div class="workflow-canvas">
+<span class="source-label">CONTRACT CHANGE DETECTED</span>
+<div class="flow-stack">
+<div class="flow-node">
+<strong>Billing API rediscovered</strong>
+<small>CONTRACT CHANGED</small>
+</div>
+<div class="flow-node changed">
+<span class="node-icon">!</span>
+<strong>Get invoice affected</strong>
+<small>customerId REMOVED</small>
+</div>
+<div class="flow-node">
+<strong>Review replacement</strong>
+<small>TEST → APPROVE → ACTIVATE</small>
+</div>
+</div>
+</div>
+<div class="demo-detail">
+<p class="eyebrow">03 / Adapt</p>
+<span class="demo-status">Review needed</span>
+<h4>A change with<br />a clear next step.</h4>
+<p>Trace a rediscovered contract change to the affected step. Pause new intake while a replacement is reviewed.</p>
+<dl>
+<dt>Existing runs</dt>
+<dd>Keep their approved version</dd>
+</dl>
+</div>
+</div>
+    </div>
+</div>
+  </div>
+<div class="demo-caption">
+<p>A closer look at the local Payment & Billing example. Select a stage to explore.</p>
+<a href="/how-it-works/#reference-workflow">Walk through the demo <span aria-hidden="true">↗</span>
+</a>
+</div>
+</section>
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.demo-tabs [role="tab"]'));
+  function selectTab(tab: HTMLButtonElement) {
+    tabs.forEach(item => {
+      const selected = item === tab;
+      item.setAttribute('aria-selected', String(selected));
+      item.tabIndex = selected ? 0 : -1;
+      const panel = document.getElementById(item.getAttribute('aria-controls') ?? '');
+      if (panel) panel.hidden = !selected;
+    });
+  }
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', event => {
+      const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : undefined;
+      if (next === undefined) return;
+      event.preventDefault(); selectTab(tabs[next]); tabs[next].focus();
+    });
+  });
+</script>

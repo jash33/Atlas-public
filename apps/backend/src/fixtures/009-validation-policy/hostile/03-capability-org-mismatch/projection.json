@@ -1,0 +1,442 @@
+{
+  "_comment": "Fingerprint-bound authorized capability projection for the payment-to-billing valid fixture. Field values (secretAlias, irreversibleAfter, compensatedByCapabilityVersionId) are taken from prototypes/006-capability-graph-prototype.md's example planner_capability_catalog rows for these 7 capabilities. `projectionFingerprint` below is a placeholder recomputed at test time by src/fingerprint.ts's sha256Of over {organizationId, workflowStartInputShape, capabilities} — see test/fixtures-loader.ts, which overwrites this field in-memory before use so the fixture file itself never has to be hand-hashed. Source: prototypes/006-capability-graph-prototype.md (read-only) and prototypes/007-workflow-ir/payment-to-billing.workflow.json (read-only) for the required capabilityVersionIds.",
+  "projectionFingerprint": "sha256:PLACEHOLDER_RECOMPUTED_AT_LOAD_TIME",
+  "organizationId": "org_atlas_demo",
+  "workflowStartInputShape": {
+    "schemaHash": "sha256:startschema0000000000000000000000000000000000000000000000001a",
+    "fields": [
+      {
+        "fieldPath": "paymentId",
+        "type": "string",
+        "required": true,
+        "format": "opaqueId",
+        "classification": "internal"
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "capabilityVersionId": "sha256:9f2c000000000000000000000000000000000000000000000000000000a1a1",
+      "identityKey": "payment-api:getPayment",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": true,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": false,
+      "secretAlias": "worker.secrets.paymentApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_getpayment000000000000000000000000000000000000001c",
+        "fields": [
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": {
+        "schemaHash": "sha256:respschema_paymentsnap00000000000000000000000000000000001d",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "status",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paidAt",
+            "type": "string",
+            "required": true,
+            "format": "isoInstant",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "amount.value",
+            "type": "string",
+            "required": true,
+            "format": "decimalString",
+            "classification": "confidential"
+          },
+          {
+            "fieldPath": "amount.currency",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "amount",
+            "type": "object",
+            "required": true,
+            "classification": "confidential"
+          }
+        ]
+      },
+      "ownerId": "team_payments"
+    },
+    {
+      "capabilityVersionId": "sha256:7e51000000000000000000000000000000000000000000000000000000b2b2",
+      "identityKey": "billing-api:getInvoice",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": true,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": false,
+      "secretAlias": "worker.secrets.billingApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_getinvoice0000000000000000000000000000000000001e",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "status",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "version",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "customerId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "confidential"
+          },
+          {
+            "fieldPath": "outstandingBalance.value",
+            "type": "string",
+            "required": true,
+            "format": "decimalString",
+            "classification": "confidential"
+          },
+          {
+            "fieldPath": "outstandingBalance.currency",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "ownerId": "team_billing"
+    },
+    {
+      "capabilityVersionId": "sha256:4b7e000000000000000000000000000000000000000000000000000000c3c3",
+      "identityKey": "billing-api:beginInvoiceSettlement",
+      "status": "enabledApproved",
+      "organizationId": "org_other_tenant",
+      "readOnly": false,
+      "compensatedByCapabilityVersionId": "sha256:2d90000000000000000000000000000000000000000000000000000000d4d4",
+      "irreversibleAfter": false,
+      "secretAlias": "worker.secrets.billingApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_begininvoicesettle0000000000000000000000000000020",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "expectedInvoiceVersion",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "version",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "ownerId": "team_billing"
+    },
+    {
+      "capabilityVersionId": "sha256:2d90000000000000000000000000000000000000000000000000000000d4d4",
+      "identityKey": "billing-api:cancelInvoiceSettlement",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": false,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": false,
+      "secretAlias": "worker.secrets.billingApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_cancelinvoicesettle0000000000000000000000000000021",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "expectedInvoiceVersion",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "version",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "ownerId": "team_billing"
+    },
+    {
+      "capabilityVersionId": "sha256:6c33000000000000000000000000000000000000000000000000000000e5e5",
+      "identityKey": "billing-api:markInvoicePaid",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": false,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": true,
+      "secretAlias": "worker.secrets.billingApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_markinvoicepaid00000000000000000000000000000000022",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paidAt",
+            "type": "string",
+            "required": true,
+            "format": "isoInstant",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "expectedInvoiceVersion",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": {
+        "schemaHash": "sha256:respschema_invoicesnap0000000000000000000000000000000001f",
+        "fields": [
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paidAt",
+            "type": "string",
+            "required": true,
+            "format": "isoInstant",
+            "classification": "internal"
+          }
+        ]
+      },
+      "ownerId": "team_billing"
+    },
+    {
+      "capabilityVersionId": "sha256:1a77000000000000000000000000000000000000000000000000000000f6f6",
+      "identityKey": "domain-events:invoice.paid:InvoicePaid:publishInvoicePaid",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": false,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": true,
+      "secretAlias": null,
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_invoicepaidevent0000000000000000000000000000000023",
+        "fields": [
+          {
+            "fieldPath": "eventId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "eventType",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "eventVersion",
+            "type": "integer",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "occurredAt",
+            "type": "string",
+            "required": true,
+            "format": "isoInstant",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "customerId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "confidential"
+          },
+          {
+            "fieldPath": "amount",
+            "type": "object",
+            "required": true,
+            "classification": "confidential"
+          },
+          {
+            "fieldPath": "atlasWorkflowRunId",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": null,
+      "ownerId": "team_billing"
+    },
+    {
+      "capabilityVersionId": "sha256:5f04000000000000000000000000000000000000000000000000000000a7a7",
+      "identityKey": "ops-notification-api:notifyPaymentOperations",
+      "status": "enabledApproved",
+      "organizationId": "org_atlas_demo",
+      "readOnly": false,
+      "compensatedByCapabilityVersionId": null,
+      "irreversibleAfter": false,
+      "secretAlias": "worker.secrets.opsNotificationApiKey",
+      "requestSchema": {
+        "schemaHash": "sha256:reqschema_notifypaymentops0000000000000000000000000000000024",
+        "fields": [
+          {
+            "fieldPath": "atlasWorkflowRunId",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "invoiceId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "paymentId",
+            "type": "string",
+            "required": true,
+            "format": "opaqueId",
+            "classification": "internal"
+          },
+          {
+            "fieldPath": "completionStatus",
+            "type": "string",
+            "required": true,
+            "classification": "internal"
+          }
+        ]
+      },
+      "responseSchema": null,
+      "ownerId": "team_ops"
+    }
+  ]
+}

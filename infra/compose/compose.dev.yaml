@@ -1,0 +1,25 @@
+services:
+  backend:
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      CHOKIDAR_INTERVAL: '200'
+    command:
+      - node
+      - apps/backend/node_modules/tsx/dist/cli.mjs
+      - watch
+      - --clear-screen=false
+      - apps/backend/src/index.ts
+    volumes:
+      - ../../apps/backend/src:/workspace/apps/backend/src:ro
+  ingest-development:
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      CHOKIDAR_INTERVAL: '200'
+    command:
+      - node
+      - apps/ingest/node_modules/tsx/dist/cli.mjs
+      - watch
+      - --clear-screen=false
+      - apps/ingest/src/index.ts
+    volumes:
+      - ../../apps/ingest/src:/workspace/apps/ingest/src:ro

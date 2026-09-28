@@ -1,0 +1,121 @@
+﻿{
+    "results":  [
+                    {
+                        "testRunId":  1,
+                        "status":  "passed",
+                        "testedBy":  "atlas-admin",
+                        "testedAt":  "2026-09-07T22:27:19.092Z",
+                        "trigger":  "manual",
+                        "triggerDetail":  {
+
+                                          },
+                        "queuedAt":  null,
+                        "startedAt":  null,
+                        "completedAt":  "2026-09-07T22:27:19.092Z",
+                        "executionMethods":  [
+                                                 "remote-sandbox",
+                                                 "static-validation"
+                                             ],
+                        "setupBinding":  {
+                                             "irHash":  "34844ef3ab954632102c837a89aa3237bdd86db281012ac05e575ef7b840da7a",
+                                             "targets":  [
+                                                             {
+                                                                 "hostname":  "host.docker.internal",
+                                                                 "targetKey":  "connected-source",
+                                                                 "healthPath":  "/health",
+                                                                 "secretAlias":  null,
+                                                                 "controlPaths":  {
+                                                                                      "faults":  "/v1/__control/faults",
+                                                                                      "resources":  "/v1/__control/resources",
+                                                                                      "observations":  "/v1/__control/observations"
+                                                                                  },
+                                                                 "targetRevision":  1,
+                                                                 "testDataVersion":  1,
+                                                                 "testDataProfileKey":  "connected-source",
+                                                                 "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5"
+                                                             },
+                                                             {
+                                                                 "hostname":  "host.docker.internal",
+                                                                 "targetKey":  "connected-source",
+                                                                 "healthPath":  "/health",
+                                                                 "secretAlias":  null,
+                                                                 "controlPaths":  {
+                                                                                      "faults":  "/v1/__control/faults",
+                                                                                      "resources":  "/v1/__control/resources",
+                                                                                      "observations":  "/v1/__control/observations"
+                                                                                  },
+                                                                 "targetRevision":  1,
+                                                                 "testDataVersion":  1,
+                                                                 "testDataProfileKey":  "connected-source",
+                                                                 "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f"
+                                                             },
+                                                             {
+                                                                 "hostname":  "host.docker.internal",
+                                                                 "targetKey":  "connected-source",
+                                                                 "healthPath":  "/health",
+                                                                 "secretAlias":  null,
+                                                                 "controlPaths":  {
+                                                                                      "faults":  "/v1/__control/faults",
+                                                                                      "resources":  "/v1/__control/resources",
+                                                                                      "observations":  "/v1/__control/observations"
+                                                                                  },
+                                                                 "targetRevision":  1,
+                                                                 "testDataVersion":  1,
+                                                                 "testDataProfileKey":  "connected-source",
+                                                                 "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd"
+                                                             },
+                                                             {
+                                                                 "hostname":  "host.docker.internal",
+                                                                 "targetKey":  "connected-source",
+                                                                 "healthPath":  "/health",
+                                                                 "secretAlias":  null,
+                                                                 "controlPaths":  {
+                                                                                      "faults":  "/v1/__control/faults",
+                                                                                      "resources":  "/v1/__control/resources",
+                                                                                      "observations":  "/v1/__control/observations"
+                                                                                  },
+                                                                 "targetRevision":  1,
+                                                                 "testDataVersion":  1,
+                                                                 "testDataProfileKey":  "connected-source",
+                                                                 "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af"
+                                                             }
+                                                         ],
+                                             "testedAt":  "2026-09-07T22:27:19.092Z",
+                                             "environmentId":  "development",
+                                             "workerVersion":  "atlas-worker-v2",
+                                             "runtimeVersion":  "temporal-adapter-v1",
+                                             "executionMethods":  [
+                                                                      "remote-sandbox",
+                                                                      "static-validation"
+                                                                  ],
+                                             "suiteFingerprint":  "db8199502d97173301fed9572d72d29ef725b430b1c654018e6aa874d364a694",
+                                             "workflowVersionId":  "workflow-20260907-222502-659",
+                                             "capabilityVersions":  [
+                                                                        {
+                                                                            "secretAlias":  null,
+                                                                            "sourceDocumentHash":  "ea3cb347e97649a5c4d8c5f5a9206d008d7c5fc3d5c7b3358e5bff60e5fe3d8f",
+                                                                            "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5"
+                                                                        },
+                                                                        {
+                                                                            "secretAlias":  null,
+                                                                            "sourceDocumentHash":  "ea3cb347e97649a5c4d8c5f5a9206d008d7c5fc3d5c7b3358e5bff60e5fe3d8f",
+                                                                            "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f"
+                                                                        },
+                                                                        {
+                                                                            "secretAlias":  null,
+                                                                            "sourceDocumentHash":  "ea3cb347e97649a5c4d8c5f5a9206d008d7c5fc3d5c7b3358e5bff60e5fe3d8f",
+                                                                            "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af"
+                                                                        },
+                                                                        {
+                                                                            "secretAlias":  null,
+                                                                            "sourceDocumentHash":  "ea3cb347e97649a5c4d8c5f5a9206d008d7c5fc3d5c7b3358e5bff60e5fe3d8f",
+                                                                            "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd"
+                                                                        }
+                                                                    ]
+                                         }
+                    }
+                ],
+    "automaticRuns":  [
+
+                      ]
+}

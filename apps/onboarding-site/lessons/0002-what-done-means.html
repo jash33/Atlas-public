@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson 2 &middot; How Atlas works</title><link rel="stylesheet" href="../assets/course.css" />
+  <script src="../assets/mermaid.min.js"></script><script src="../assets/mermaid-init.js" defer></script><script src="../assets/lightbox.js" defer></script>
+</head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Lesson 2 &middot; 4 min</p>
+  <h1>How Atlas works</h1>
+  <p class="standfirst">Atlas has four apps. Two manage the product. Two run integrations against test or customer systems.</p>
+
+  <div class="table-scroll"><table><thead><tr><th>App</th><th>Job</th><th>Main tools</th></tr></thead><tbody>
+    <tr><td><code>console</code></td><td>The website people use.</td><td>React, TypeScript, Vite</td></tr>
+    <tr><td><code>backend</code></td><td>Stores data, checks permissions, builds workflows, and sends work to workers.</td><td>Node, Hono, PostgreSQL</td></tr>
+    <tr><td><code>worker</code></td><td>Runs approved workflows and calls APIs. It holds the credentials.</td><td>Node, Temporal</td></tr>
+    <tr><td><code>mock-services</code></td><td>Provides local versions of the APIs used in demos and tests.</td><td>Node, Hono, Zod</td></tr>
+  </tbody></table></div>
+
+  <p>The local Compose topology runs separate Development and Production Workers. Normal <code>pnpm infra:up</code> startup preserves a canonical stack. During the one-time Production-like rename transition, it may instead remove a detected retired Atlas stack's disposable PostgreSQL, Temporal, and Worker-secret state and recreate both environments; unrelated Docker resources remain outside that boundary.</p>
+
+  <figure class="dg"><pre class="mermaid">
+flowchart LR
+  Person["Person"] --> Console["Console"]
+  Console --> Backend["Backend"]
+  Backend --> Database[("PostgreSQL")]
+  Backend --> Sources["Connected API specifications and demo applications"]
+  Worker["Worker"] --> Backend
+  Worker --> Temporal["Temporal"]
+  Worker --> APIs["Customer and provider APIs"]
+  </pre><figcaption>The Console talks to the Backend. The Backend checks connected sources. The Worker asks the Backend for work, then runs it with Temporal.</figcaption></figure>
+
+  <h2>Deployment boundary</h2>
+  <figure class="dg">
+    <img src="../assets/atlas-deployment-boundary.png" alt="Atlas deployment boundary: the Console, Backend, Atlas PostgreSQL, and Temporal infrastructure are separated from a customer-side Atlas Worker and capability sources; the Worker initiates outbound connections to Atlas and Temporal." width="984" height="696" />
+    <figcaption><b>Conceptual hosted split.</b> The Worker and customer systems stay inside customer infrastructure, while the Worker initiates outbound connections to Atlas and Temporal. The current MVP collapses both zones onto one developer machine with the process, network, and trust boundaries preserved.</figcaption>
+  </figure>
+
+  <h2>What happens when you use Atlas</h2>
+  <div class="table-scroll"><table><thead><tr><th>You</th><th>Atlas</th></tr></thead><tbody>
+    <tr><td>Browse a page</td><td>The Console asks the Backend for saved data.</td></tr>
+    <tr><td>Connect an API</td><td>The Backend reads its specification and saves the actions Atlas can use.</td></tr>
+    <tr><td>Create a workflow</td><td>The Backend asks the model for a draft, compiles the editable YAML into typed data, and checks every capability and mapping. The Worker is not involved.</td></tr>
+    <tr><td>Test and approve</td><td>The Backend binds sandbox evidence and Admin approval to the exact plan, then produces a signed <code>.atlas</code> bundle.</td></tr>
+    <tr><td>Start a run</td><td>The Worker verifies the bundle and grant, decrypts the input, and gives the approved plan to the generic Temporal interpreter.</td></tr>
+    <tr><td>Handle a failure</td><td>The Backend offers safe options. The Worker continues the same run.</td></tr>
+  </tbody></table></div>
+
+  <h2>Why the Worker is separate</h2>
+  <p>Credentials and unencrypted customer data stay with the Worker. Temporal history is encrypted and the Backend receives status updates with sensitive values removed. The AI model cannot reach the Worker, credentials, provider network, or running interpreter.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0001-what-atlas-is.html">&larr; Meet Atlas</a><a href="0003-the-payment-flow.html">Home &rarr;</a></div>
+</body>
+</html>

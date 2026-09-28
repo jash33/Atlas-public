@@ -1,0 +1,218 @@
+---
+import { docsUrl } from '../lib/site';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ProductDemo from '../components/ProductDemo.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = 'Atlas — Ship the change. Keep the business running.';
+const description = 'Connect API knowledge to the workflows it powers. Build integrations, understand what a change affects, and review what runs next with Atlas.';
+const faqs = [
+  ['What can I evaluate today?', 'The developer preview connects API definitions, drafts and checks workflows, supports human approval, and runs approved versions on Temporal. The local Payment and Billing demo also shows what happens when a connected contract changes.'],
+  ['Will Atlas find every dependency in my systems?', 'Current change analysis covers connected contracts and the Atlas-managed workflow steps that use them. A broader, continuously maintained map of API capabilities is a future goal, not a claim of complete discovery today.'],
+  ['Does Atlas change running workflows automatically?', 'No. A replacement must pass validation and tests, then receive approval before activation. Existing runs keep the version they started with. Breaking contract changes pause new intake for review.'],
+  ['Can I run Atlas in my own infrastructure?', 'A customer web and company sign-in package is available. The full workflow runtime is evaluated through the developer setup; the complete customer runtime package is still in development. The installation guides explain the two paths.'],
+  ['What does running Atlas involve?', 'Start with one workflow. Measure setup time, recovery effort, model and infrastructure costs, and the work needed to operate it. No savings figure is assumed.'],
+];
+---
+<BaseLayout {title} {description} pathname="/" structuredData={{'@context':'https://schema.org','@type':'SoftwareApplication',name:'Atlas',applicationCategory:'DeveloperApplication',description}}>
+  <SiteHeader current="home" />
+<main id="main">
+<section class="hero shell">
+<p class="eyebrow">Understand your systems. Move forward.</p>
+<h1>Ship the change.<span>Keep the business running.</span>
+</h1>
+<p class="lede">Connect API knowledge to the workflows it powers. Build integrations, understand what a change affects, and review what runs next.</p>
+<div class="actions">
+<a class="button" href="/evaluate/">Evaluate a workflow <span class="arrow" aria-hidden="true">↗</span>
+</a>
+<a class="button secondary" href="/how-it-works/">See how Atlas works</a>
+</div>
+<p class="hero-note">Developer preview · Built for your existing systems</p>
+</section>
+    <ProductDemo />
+<div class="context-strip narrow" aria-label="Atlas foundations">
+<span>FROM KNOWLEDGE TO ACTION</span>
+<b>Connected APIs</b>
+<b>Reviewed workflows</b>
+<b>Durable execution</b>
+<b>Change awareness</b>
+</div>
+<section class="section narrow" id="use-cases">
+<div class="problem-intro">
+<div>
+<p class="eyebrow">The work can't wait.</p>
+<h2>Every integration has<br />a business on the other end.</h2>
+</div>
+<p>A customer waiting to launch. A migration with a deadline. A team pulled back into maintenance.<br />
+<br />The hard part is knowing how your systems fit together—and keeping that knowledge useful when they change.</p>
+</div>
+<div class="problem-grid">
+<article>
+<span class="number">01 / DELIVERY</span>
+<h3>The deal is signed.<br />The integration isn't.</h3>
+<p>Turn a blocked launch into a workflow your team can test, review, and operate. Start with the APIs you already have.</p>
+<a class="text-link" href="/how-it-works/#reference-workflow">Follow one integration <span aria-hidden="true">↗</span>
+</a>
+</article>
+<article>
+<span class="number">02 / MIGRATION</span>
+<h3>Move the system.<br />Understand the impact.</h3>
+<p>Make known workflow dependencies visible. Prove a replacement on one flow before committing the rest of the migration.</p>
+<a class="text-link" href="/how-it-works/#mulesoft">Plan a first migration <span aria-hidden="true">↗</span>
+</a>
+</article>
+<article>
+<span class="number">03 / MAINTENANCE</span>
+<h3>APIs change.<br />Your work shouldn't unravel.</h3>
+<p>Find affected workflow steps when a connected contract is rediscovered. Bring the fix back through testing and approval.</p>
+<a class="text-link" href="/how-it-works/#change">See the recovery path <span aria-hidden="true">↗</span>
+</a>
+</article>
+</div>
+</section>
+<section class="section platform-section" id="platform">
+<div class="narrow">
+<header class="center-heading">
+<p class="eyebrow">One connected understanding</p>
+<h2>Know what you have.<br />Build what comes next.</h2>
+<p>API knowledge, workflow creation, and change review belong together. Atlas connects them in one process.</p>
+</header>
+<div class="platform-grid">
+<article class="feature-panel dark">
+<div class="feature-copy">
+<p class="eyebrow">01 / From systems to workflows</p>
+<h3>Build on what already works.</h3>
+<p>Connect API definitions. Describe the outcome. Draft steps and mappings from the operations your team has approved.</p>
+<a class="text-link" href="/how-it-works/">Explore the workflow lifecycle <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="api-list" aria-label="Example approved API operations">
+<div class="api-row">
+<code>GET</code>
+<span>Read payment</span>
+<span>Payments</span>
+</div>
+<div class="api-row">
+<code>GET</code>
+<span>Get invoice</span>
+<span>Billing</span>
+</div>
+<div class="api-row">
+<code>POST</code>
+<span>Settle invoice</span>
+<span>Billing</span>
+</div>
+</div>
+</article>
+<article class="feature-panel">
+<div class="feature-copy">
+<p class="eyebrow">02 / From changes to decisions</p>
+<h3>See what needs attention.</h3>
+<p>Connect a changed contract to the steps that depend on it. Give your team a specific place to investigate and a reviewed path forward.</p>
+<a class="text-link" href="/how-it-works/#change">Follow a contract change <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="change-mini">
+<div class="change-line">
+<span>CHANGED</span>
+<b>customerId removed</b>
+</div>
+<div class="change-line">
+<span>AFFECTED</span>
+<b>Get invoice</b>
+</div>
+<div class="change-line">
+<span>NEXT</span>
+<b>Test and approve a replacement</b>
+</div>
+</div>
+</article>
+</div>
+<div class="vision-line">
+<p class="eyebrow">Project direction</p>
+<p>A maintained map of what connected systems can do, for engineers and agents alike. Atlas starts with connected APIs and the workflows that depend on them. Broader discovery and agent access are future goals.</p>
+</div>
+</div>
+</section>
+<section class="section proof-section narrow">
+<div>
+<p class="eyebrow">Proof in a workflow</p>
+<h2>An API changes.<br />See the next move.</h2>
+<p>In the local Payment & Billing demo, a removed field puts an invoice step at risk. Atlas connects the change to the workflow and holds new intake while the team reviews a replacement.</p>
+<p>Explore the working lifecycle, including its boundaries, before choosing where Atlas fits.</p>
+<a class="text-link" href="/how-it-works/#reference-workflow">Walk through Payment & Billing <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="proof-card">
+<header>
+<h3>Billing contract changed</h3>
+<span>LOCAL DEMO</span>
+</header>
+<div class="proof-step">
+<span>01</span>
+<div>
+<strong>Find the affected step</strong>
+<p>Get invoice depends on the removed field.</p>
+</div>
+</div>
+<div class="proof-step">
+<span>02</span>
+<div>
+<strong>Hold new work for review</strong>
+<p>Existing runs keep their approved versions.</p>
+</div>
+</div>
+<div class="proof-step">
+<span>03</span>
+<div>
+<strong>Test. Approve. Move forward.</strong>
+<p>A replacement goes through the checks again.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="evaluation-band shell">
+<div>
+<p class="eyebrow">Make the decision on evidence</p>
+<h2>Prove the fit.<br />One workflow at a time.</h2>
+<p>Set the business outcome. Rehearse the hard parts. Compare the effort to build, recover, and maintain before moving real traffic.</p>
+<a class="button light" href="/evaluate/">Evaluate a workflow <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="evaluation-list">
+<div>
+<span>01</span>Choose the workflow blocking progress.</div>
+<div>
+<span>02</span>Check APIs, permissions, and coverage.</div>
+<div>
+<span>03</span>Test failure, recovery, and change.</div>
+<div>
+<span>04</span>Agree what makes the move worthwhile.</div>
+</div>
+</section>
+<section class="section faq-section narrow">
+<div>
+<p class="eyebrow">Before you decide</p>
+<h2>A few practical<br />answers.</h2>
+<p class="muted" style="margin-top:24px">More depth, when you need it.</p>
+<a class="text-link" href="/compare/">Compare approaches <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="faq-list">{faqs.map(([q,a])=>
+<details class="faq">
+<summary>{q}</summary>
+<p>{a}</p>
+</details>)}</div>
+</section>
+<section class="closing">
+<p class="eyebrow">Your next integration starts here</p>
+<h2>Bring one workflow.<br />Make the next decision clear.</h2>
+<div class="actions">
+<a class="button" href="/evaluate/">Evaluate Atlas <span aria-hidden="true">↗</span>
+</a>
+<a class="button secondary" href={docsUrl()}>Read the docs</a>
+</div>
+</section>
+  </main>
+<SiteFooter />
+</BaseLayout>

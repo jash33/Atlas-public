@@ -1,0 +1,4 @@
+- do not use jargon. speak plainly as to a human. Be concise.
+- do not say the word "immutable".
+- you should have access to the github CLI. if you try to use it and encounter a problem, tell the user to set it up.
+- Atlas is a personal software project for detecting API contract changes, explaining which integrations are affected, and running existing services through durable workflows.

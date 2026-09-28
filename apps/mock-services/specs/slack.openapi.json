@@ -1,0 +1,127 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Slack Web API (contract-faithful rehearsal subset)",
+    "version": "bc08db4",
+    "description": "A deterministic local subset of the Slack Web API contract for rehearsal. It does not prove live Slack connectivity."
+  },
+  "servers": [
+    {
+      "url": "http://mock-services:4100"
+    }
+  ],
+  "paths": {
+    "/api/chat.postMessage": {
+      "post": {
+        "operationId": "chat_postMessage",
+        "description": "Sends a message to a channel.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatPostMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatPostMessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "ChatPostMessageRequest": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "client_msg_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "channel",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "ChatPostMessageResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ts": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+          },
+          "message": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "ok",
+          "channel",
+          "ts",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-atlas-connection": {
+    "provider": "Slack",
+    "mode": "contract-faithful-rehearsal",
+    "liveConnectivity": false,
+    "label": "Contract-faithful local rehearsal fallback",
+    "upstreamRepository": "https://github.com/slackapi/slack-api-specs",
+    "upstreamRevision": "bc08db49625630e3585bf2f1322128ea04f2a7f3",
+    "upstreamPath": "web-api/slack_web_openapi_v2.json",
+    "officialSandboxUrl": "https://slack.com/api",
+    "officialSandboxActivation": "SLACK_DEMO_MODE=official-test"
+  }
+}

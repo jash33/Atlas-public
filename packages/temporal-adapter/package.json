@@ -1,0 +1,33 @@
+{
+  "name": "@atlas/temporal-adapter",
+  "private": true,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./testing": "./dist/testing.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@atlas/execution-grant": "workspace:*",
+    "@atlas/runtime-ports": "workspace:*",
+    "@atlas/transformation-runtime": "workspace:*",
+    "@atlas/workflow-artifact": "workspace:*",
+    "@atlas/workflow-ir": "workspace:*",
+    "@temporalio/activity": "1.22.0",
+    "@temporalio/client": "1.22.0",
+    "@temporalio/common": "1.22.0",
+    "@temporalio/worker": "1.22.0",
+    "@temporalio/workflow": "1.22.0"
+  },
+  "devDependencies": {
+    "@temporalio/testing": "1.22.0",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "4.1.10"
+  }
+}

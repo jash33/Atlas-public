@@ -1,0 +1,23 @@
+{
+  "name": "@atlas/ingest",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@atlas/workflow-ir": "workspace:*",
+    "@hono/node-server": "catalog:",
+    "canonicalize": "4.0.0",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "4.1.10"
+  }
+}

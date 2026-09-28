@@ -1,0 +1,2 @@
+No draft/projection mutation; this case is exercised with a policy.json override where the hostAllowlist entry for step_getPayment's capability (payment-api:getPayment) sets allowedHost to '169.254.169.254' (cloud metadata / AWS-GCP-Azure IMDS address).
+Expected diagnostic: policyDenial EXECUTION_HOST_DENIED_PATTERN at steps[step_getPayment] (fires twice: once for the explicit deniedHostPatterns entry, once for the private/metadata literal check — both are valid, expected policy denials).

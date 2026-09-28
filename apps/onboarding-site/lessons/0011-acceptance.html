@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson 11 &middot; From request to run</title><link rel="stylesheet" href="../assets/course.css" />
+  <script src="../assets/mermaid.min.js"></script><script src="../assets/mermaid-init.js" defer></script><script src="../assets/lightbox.js" defer></script>
+</head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas walkthrough &middot; Lesson 11 &middot; 3 min</p>
+  <h1>From request to run</h1>
+  <p class="standfirst">This is the main Atlas workflow from start to finish.</p>
+
+  <figure class="dg"><pre class="mermaid">
+flowchart LR
+  A["Connect APIs"] --> B["Describe"]
+  B --> C["Clarify and compile"]
+  C --> D["Test"]
+  D --> E["Approve and sign"]
+  E --> F["Verify and run"]
+  F --> G["Review evidence"]
+  </pre><figcaption>AI helps create the draft. People control testing and approval. The Worker runs the approved version.</figcaption></figure>
+
+  <ol>
+    <li><strong>Connect APIs.</strong> In Capabilities, add the API definitions Atlas needs.</li>
+    <li><strong>Describe the integration.</strong> In Create Workflow, explain the result you want.</li>
+    <li><strong>Review the draft.</strong> Check the steps, data mappings, retry rules, and credentials.</li>
+    <li><strong>Test and approve.</strong> Run the generated tests. An Admin approves the exact version that passed.</li>
+    <li><strong>Find and invoke it.</strong> In Workflow Catalog, open the workflow in the selected environment. When a version is active, copy the <strong>Invoke via API</strong> sample <code>POST /ingest</code> request and send it to the matching local gateway. Credentials stay with the Worker.</li>
+    <li><strong>Review the result.</strong> Runs shows each attempt and hides sensitive data. If the run stops, Atlas shows the safe recovery options.</li>
+    <li><strong>Check the history.</strong> Activity shows who created, approved, ran, or repaired the workflow.</li>
+  </ol>
+
+  <section>
+    <h2>The incompatible-contract proof</h2>
+    <p>The focused vertical slice maps Payment fields <code>invoice_id</code>,
+      <code>amount_cents</code>, lowercase <code>currency</code>, and a nested customer notification
+      address into Billing's camelCase, nested, decimal, uppercase contract. Create Workflow shows the
+      generated <code>.atlas.yaml</code>, mapping preview, compiled plan, provenance, signature
+      status, and version diff.</p>
+    <p>Approval signs the exact sandbox-tested bundle. The customer worker accepts IR versions 1
+      and 2, verifies integrity and activation before Temporal start, and evaluates the bounded
+      mapping customer-side. The acceptance test records a delayed provider request; after one
+      bundle byte changes, verification fails and the provider side-effect count does not grow.</p>
+    <p>A breaking destination-schema change names affected mappings but never edits an approved
+      bundle. A newly compiled, sandbox-tested, approved, and signed artifact is required.</p>
+  </section>
+
+  <div class="claim"><span class="label">The main idea</span><p>AI can suggest an integration. Deterministic compilation, tests, human approval, and Worker verification decide what may run.</p></div>
+
+  <p class="cite">The <a href="../reference/workflow-artifacts.html">workflow artifacts reference</a> separates editable source, compiled IR, signed bundle, and runtime interpretation.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0010-change-and-migration.html">&larr; Settings</a><a href="0012-current-state.html">API change walkthrough &rarr;</a></div>
+</body>
+</html>

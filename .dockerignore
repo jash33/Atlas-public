@@ -1,0 +1,9 @@
+.git
+.scratch
+node_modules
+**/dist
+**/*.tsbuildinfo
+**/.vite
+.env
+.local
+planner-traces/*.jsonl

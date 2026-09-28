@@ -1,0 +1,38 @@
+{
+  "name": "@atlas/backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "migrate": "tsx src/migrate.ts",
+    "password:set": "tsx src/customer-password-admin.ts",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@asyncapi/parser": "3.6.3",
+    "@atlas/demo-estate": "workspace:*",
+    "@atlas/execution-grant": "workspace:*",
+    "@atlas/runtime-ports": "workspace:*",
+    "@atlas/workflow-artifact": "workspace:*",
+    "@atlas/workflow-ir": "workspace:*",
+    "@hono/node-server": "catalog:",
+    "@scalar/openapi-parser": "0.28.0",
+    "canonicalize": "4.0.0",
+    "hono": "catalog:",
+    "node-pg-migrate": "9.0.0",
+    "openid-client": "6.8.2",
+    "pg": "8.23.0",
+    "yaml": "2.9.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@atlas/mock-services": "workspace:*",
+    "@atlas/temporal-adapter": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/pg": "8.21.0",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "4.1.10"
+  }
+}

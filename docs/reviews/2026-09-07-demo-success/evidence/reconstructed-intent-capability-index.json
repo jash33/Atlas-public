@@ -1,0 +1,5637 @@
+{
+  "projectionFingerprint": "8d35fc9fc07394c30739e7acd9cbe2a4ae37da63fd0a52e111f33d078a77935f",
+  "capabilities": [
+    {
+      "capabilityVersionId": "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "addItem"
+      },
+      "owner": "orders",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Add a line item",
+      "description": "Body: item_id, quantity?, selections?, removed_defaults?, notes?. Required groups, qty caps, 86, incompatibilities.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/check_id",
+          "type": "string",
+          "required": true,
+          "label": "Check Id"
+        },
+        {
+          "direction": "request",
+          "path": "/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "request",
+          "path": "/item_id",
+          "type": "string",
+          "required": true,
+          "label": "Item Id"
+        },
+        {
+          "direction": "request",
+          "path": "/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "request",
+          "path": "/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "request",
+          "path": "/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "request",
+          "path": "/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "request",
+          "path": "/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "request",
+          "path": "/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "request",
+          "path": "/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "request",
+          "path": "/kitchen_note",
+          "type": "string",
+          "required": false,
+          "label": "Kitchen Note"
+        },
+        {
+          "direction": "request",
+          "path": "/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "request",
+          "path": "/idempotency_key",
+          "type": "string",
+          "required": false,
+          "label": "Idempotency Key"
+        },
+        {
+          "direction": "request",
+          "path": "/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/line",
+          "type": "object",
+          "required": false,
+          "label": "Line"
+        },
+        {
+          "direction": "response",
+          "path": "/line/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/line/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/line/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/line/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/line/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/line/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/line/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/line/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/line/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/line/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/line/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/check",
+          "type": "object",
+          "required": false,
+          "label": "Check"
+        },
+        {
+          "direction": "response",
+          "path": "/check/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items",
+          "type": "array",
+          "required": false,
+          "label": "Items"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/check/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals",
+          "type": "object",
+          "required": false,
+          "label": "Totals"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/due_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Due Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/tax_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/subtotal_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Subtotal Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/delivery_fee_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Delivery Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/reward_discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/version",
+          "type": "integer",
+          "required": false,
+          "label": "Version"
+        },
+        {
+          "direction": "response",
+          "path": "/check/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/check/server_id",
+          "type": "string",
+          "required": false,
+          "label": "Server Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/invoice_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/receipt_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/discount_ids",
+          "type": "array",
+          "required": false,
+          "label": "Discount Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/redemption_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/reward_discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Reward Discount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "createCheck"
+      },
+      "owner": "checks",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Open a check",
+      "description": "Body: fulfillment_id, server_id, guest_id? â or location_id + table_id for dine-in compat.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "request",
+          "path": "/table_id",
+          "type": "string",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "request",
+          "path": "/server_id",
+          "type": "string",
+          "required": true,
+          "label": "Server Id"
+        },
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "request",
+          "path": "/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "request",
+          "path": "/idempotency_key",
+          "type": "string",
+          "required": false,
+          "label": "Idempotency Key"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items",
+          "type": "array",
+          "required": false,
+          "label": "Items"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/totals",
+          "type": "object",
+          "required": false,
+          "label": "Totals"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/due_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Due Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/tax_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/subtotal_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Subtotal Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/delivery_fee_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Delivery Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/reward_discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/version",
+          "type": "integer",
+          "required": false,
+          "label": "Version"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/server_id",
+          "type": "string",
+          "required": false,
+          "label": "Server Id"
+        },
+        {
+          "direction": "response",
+          "path": "/invoice_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/receipt_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/discount_ids",
+          "type": "array",
+          "required": false,
+          "label": "Discount Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/redemption_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/reward_discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Reward Discount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "createFulfillment"
+      },
+      "owner": "fulfillment",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Create a fulfillment",
+      "description": "Body: location_id, type, table_id? / address_id? / pickup_at?. Type mismatches 409. Out-of-zone delivery 422.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/type",
+          "type": "string",
+          "required": true,
+          "label": "Type"
+        },
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "request",
+          "path": "/table_id",
+          "type": "string",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "request",
+          "path": "/pickup_at",
+          "type": "string",
+          "required": false,
+          "label": "Pickup At"
+        },
+        {
+          "direction": "request",
+          "path": "/address_id",
+          "type": "string",
+          "required": false,
+          "label": "Address Id"
+        },
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": true,
+          "label": "Location Id"
+        },
+        {
+          "direction": "request",
+          "path": "/idempotency_key",
+          "type": "string",
+          "required": false,
+          "label": "Idempotency Key"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/type",
+          "type": "string",
+          "required": false,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/pickup_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Pickup At"
+        },
+        {
+          "direction": "response",
+          "path": "/address_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Address Id"
+        },
+        {
+          "direction": "response",
+          "path": "/created_at",
+          "type": "string",
+          "required": false,
+          "label": "Created At"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/handoff_code",
+          "type": "unknown",
+          "required": false,
+          "label": "Handoff Code"
+        },
+        {
+          "direction": "response",
+          "path": "/delivery_fee_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Delivery Fee Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "47a50cf4e44e2e6675850fb10f4f07962efc384ddb943561058a8be428c98c8d",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getAddress"
+      },
+      "owner": "addresses",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get an address",
+      "description": "Includes GeoJSON Point coordinates, longitude first.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/address_id",
+          "type": "string",
+          "required": true,
+          "label": "Address Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/city",
+          "type": "string",
+          "required": false,
+          "label": "City"
+        },
+        {
+          "direction": "response",
+          "path": "/line1",
+          "type": "string",
+          "required": false,
+          "label": "Line1"
+        },
+        {
+          "direction": "response",
+          "path": "/region",
+          "type": "string",
+          "required": false,
+          "label": "Region"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/location",
+          "type": "object",
+          "required": false,
+          "label": "Location"
+        },
+        {
+          "direction": "response",
+          "path": "/location/type",
+          "type": "string",
+          "required": true,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/location/coordinates",
+          "type": "array",
+          "required": true,
+          "label": "Coordinates"
+        },
+        {
+          "direction": "response",
+          "path": "/postal_code",
+          "type": "string",
+          "required": false,
+          "label": "Postal Code"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "8159add8cef3b3c5028a6e5aea767971b22756c481a4735f1df33e970b470b31",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getCheck"
+      },
+      "owner": "checks",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a check",
+      "description": "Includes items, version, fulfillment_id, and totals (reward + delivery fee).",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/check_id",
+          "type": "string",
+          "required": true,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items",
+          "type": "array",
+          "required": false,
+          "label": "Items"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/items/-/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/totals",
+          "type": "object",
+          "required": false,
+          "label": "Totals"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/due_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Due Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/tax_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/subtotal_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Subtotal Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/delivery_fee_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Delivery Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/totals/reward_discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/version",
+          "type": "integer",
+          "required": false,
+          "label": "Version"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/server_id",
+          "type": "string",
+          "required": false,
+          "label": "Server Id"
+        },
+        {
+          "direction": "response",
+          "path": "/invoice_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/receipt_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/discount_ids",
+          "type": "array",
+          "required": false,
+          "label": "Discount Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/redemption_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/reward_discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Reward Discount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "a79a6fea13e472665c51ad24719d783f34aa9af7fc5a73cf6acccd1db948b92e",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getCourier"
+      },
+      "owner": "couriers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a courier",
+      "description": "Availability and vehicle.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/courier_id",
+          "type": "string",
+          "required": true,
+          "label": "Courier Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/vehicle",
+          "type": "string",
+          "required": false,
+          "label": "Vehicle"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/rejects_on_accept",
+          "type": "boolean",
+          "required": false,
+          "label": "Rejects On Accept"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "ed36e46194ce11c9ea19e2561897be113dd62cca543eaed24635a410e9bc503f",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getDelivery"
+      },
+      "owner": "delivery",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a delivery",
+      "description": "Job status, courier, quote snapshot.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/delivery_id",
+          "type": "string",
+          "required": true,
+          "label": "Delivery Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/notes",
+          "type": "unknown",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/zone_id",
+          "type": "string",
+          "required": false,
+          "label": "Zone Id"
+        },
+        {
+          "direction": "response",
+          "path": "/quote_id",
+          "type": "string",
+          "required": false,
+          "label": "Quote Id"
+        },
+        {
+          "direction": "response",
+          "path": "/fee_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/courier_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Courier Id"
+        },
+        {
+          "direction": "response",
+          "path": "/fail_reason",
+          "type": "unknown",
+          "required": false,
+          "label": "Fail Reason"
+        },
+        {
+          "direction": "response",
+          "path": "/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/proof_photo_url",
+          "type": "unknown",
+          "required": false,
+          "label": "Proof Photo Url"
+        },
+        {
+          "direction": "response",
+          "path": "/courier_tip_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Courier Tip Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "d00c31831f02cbbeb710cc297d372e5d38e8d5dfbb76acdfdccc222ba6d0e613",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getFulfillment"
+      },
+      "owner": "fulfillment",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a fulfillment",
+      "description": "Includes type, status, table_id or address_id, handoff_code for pickup.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/fulfillment_id",
+          "type": "string",
+          "required": true,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/type",
+          "type": "string",
+          "required": false,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/pickup_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Pickup At"
+        },
+        {
+          "direction": "response",
+          "path": "/address_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Address Id"
+        },
+        {
+          "direction": "response",
+          "path": "/created_at",
+          "type": "string",
+          "required": false,
+          "label": "Created At"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/handoff_code",
+          "type": "unknown",
+          "required": false,
+          "label": "Handoff Code"
+        },
+        {
+          "direction": "response",
+          "path": "/delivery_fee_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Delivery Fee Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "010fb1276749eab0ea3fff4cd09bb7a75bebc2e2c5f4d548e78313d09e35e679",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getGiftCard"
+      },
+      "owner": "gift-cards",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a gift card",
+      "description": "Seeded gf_25 has $25.00.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/gift_card_id",
+          "type": "string",
+          "required": true,
+          "label": "Gift Card Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/last4",
+          "type": "string",
+          "required": false,
+          "label": "Last4"
+        },
+        {
+          "direction": "response",
+          "path": "/balance_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Balance Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "82f6ace01fe03b2d5b219c519aa33a9b48abbe78a4534342a478578cf47ffb8c",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getGuest"
+      },
+      "owner": "guests",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a guest",
+      "description": "Includes dietary_profile.avoid.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": true,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/email",
+          "type": "string",
+          "required": false,
+          "label": "Email"
+        },
+        {
+          "direction": "response",
+          "path": "/phone",
+          "type": "string",
+          "required": false,
+          "label": "Phone"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/dietary_profile",
+          "type": "object",
+          "required": false,
+          "label": "Dietary Profile"
+        },
+        {
+          "direction": "response",
+          "path": "/dietary_profile/avoid",
+          "type": "array",
+          "required": false,
+          "label": "Avoid"
+        },
+        {
+          "direction": "response",
+          "path": "/dietary_profile/strict",
+          "type": "boolean",
+          "required": false,
+          "label": "Strict"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "13821b95b044121cf704ed304b235e710ef3aa0bf504593d2dfbb84d128a033e",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getInventoryItem"
+      },
+      "owner": "inventory",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get stock for an item",
+      "description": "Includes is_86 when the item is pulled from the menu.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/item_id",
+          "type": "string",
+          "required": true,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/is_86",
+          "type": "boolean",
+          "required": false,
+          "label": "Is 86"
+        },
+        {
+          "direction": "response",
+          "path": "/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/on_hand",
+          "type": "integer",
+          "required": false,
+          "label": "On Hand"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "d3e7a6872703b4e29912867fc24944eaa9d5c973067bb748cc431a6dbcbf434b",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getInvoice"
+      },
+      "owner": "invoices",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get an invoice",
+      "description": "Invoice posted back onto the check.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/invoice_id",
+          "type": "string",
+          "required": true,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/posted_at",
+          "type": "string",
+          "required": false,
+          "label": "Posted At"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_id",
+          "type": "string",
+          "required": false,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "269fc9a872252ce26f372563b721f83f98343968a3da9b8f8bc38e321cc935e8",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getItem"
+      },
+      "owner": "catalog",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a catalog item",
+      "description": "Single item including price, tax_ids, and allergen_ids.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/item_id",
+          "type": "string",
+          "required": true,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/tax_ids",
+          "type": "array",
+          "required": false,
+          "label": "Tax Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/is_active",
+          "type": "boolean",
+          "required": false,
+          "label": "Is Active"
+        },
+        {
+          "direction": "response",
+          "path": "/category_id",
+          "type": "string",
+          "required": false,
+          "label": "Category Id"
+        },
+        {
+          "direction": "response",
+          "path": "/description",
+          "type": "string",
+          "required": false,
+          "label": "Description"
+        },
+        {
+          "direction": "response",
+          "path": "/allergen_ids",
+          "type": "array",
+          "required": false,
+          "label": "Allergen Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/modifier_group_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Group Ids"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "8f2cfde1c1e1d983994a8c46ba4f76fe0a4f7c5199d44cf08d2d53629de7e6a4",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getItemAllergens"
+      },
+      "owner": "allergens",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Allergens on an item",
+      "description": "Resolved tags for one catalog item.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/item_id",
+          "type": "string",
+          "required": true,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": false,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "c83604582e1685e82bec96f018c8b363408c84fd3b5359f7ecd4bc151076940d",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getLedger"
+      },
+      "owner": "rewards",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get the points ledger",
+      "description": "Append-only entries. Balance is a rollup of delta.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": true,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/delta",
+          "type": "integer",
+          "required": false,
+          "label": "Delta"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/reason",
+          "type": "string",
+          "required": false,
+          "label": "Reason"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/offer_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Offer Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/created_at",
+          "type": "string",
+          "required": false,
+          "label": "Created At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/payment_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/balance_after",
+          "type": "integer",
+          "required": false,
+          "label": "Balance After"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "baad894a13437f74a5f1aa6c13f6e581e570cb083ed11abb41a5dc8f53484ef5",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getLocation"
+      },
+      "owner": "locations",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a location",
+      "description": "Fetch one store by id.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": true,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/hours",
+          "type": "array",
+          "required": false,
+          "label": "Hours"
+        },
+        {
+          "direction": "response",
+          "path": "/hours/-/label",
+          "type": "string",
+          "required": false,
+          "label": "Label"
+        },
+        {
+          "direction": "response",
+          "path": "/hours/-/value",
+          "type": "string",
+          "required": false,
+          "label": "Value"
+        },
+        {
+          "direction": "response",
+          "path": "/phone",
+          "type": "string",
+          "required": false,
+          "label": "Phone"
+        },
+        {
+          "direction": "response",
+          "path": "/address",
+          "type": "object",
+          "required": false,
+          "label": "Address"
+        },
+        {
+          "direction": "response",
+          "path": "/address/city",
+          "type": "string",
+          "required": false,
+          "label": "City"
+        },
+        {
+          "direction": "response",
+          "path": "/address/region",
+          "type": "string",
+          "required": false,
+          "label": "Region"
+        },
+        {
+          "direction": "response",
+          "path": "/address/street",
+          "type": "string",
+          "required": false,
+          "label": "Street"
+        },
+        {
+          "direction": "response",
+          "path": "/address/postal_code",
+          "type": "string",
+          "required": false,
+          "label": "Postal Code"
+        },
+        {
+          "direction": "response",
+          "path": "/currency",
+          "type": "string",
+          "required": false,
+          "label": "Currency"
+        },
+        {
+          "direction": "response",
+          "path": "/timezone",
+          "type": "string",
+          "required": false,
+          "label": "Timezone"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "690e3a6f0d350cd0c9fa3654c20a7b400c057d95cb3c85e4b9fcde42dbf05832",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getLoyaltyDeprecated"
+      },
+      "owner": "Rewards",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Redirects to rewards",
+      "description": "308 to /v1/rewards/accounts/{guest_id}. Kept for one release.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": true,
+          "label": "Guest Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "7d1d62f673f9b36f38472f010b65589896bf2d72236140656a3d8c4353387055",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getMenu"
+      },
+      "owner": "menus",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a menu with categories",
+      "description": "Full menu tree used before catalog item hydration.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/menu_id",
+          "type": "string",
+          "required": true,
+          "label": "Menu Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/categories",
+          "type": "array",
+          "required": false,
+          "label": "Categories"
+        },
+        {
+          "direction": "response",
+          "path": "/categories/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/categories/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/categories/-/item_ids",
+          "type": "array",
+          "required": false,
+          "label": "Item Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "975fde4236650cde00d77fa853c9ed0bf72941f773d5a3edd4ac8d8f9d72a69f",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getModifierGroup"
+      },
+      "owner": "modifiers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a modifier group",
+      "description": "Rules plus options.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/options",
+          "type": "array",
+          "required": false,
+          "label": "Options"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/is_86",
+          "type": "boolean",
+          "required": false,
+          "label": "Is 86"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/default",
+          "type": "boolean",
+          "required": false,
+          "label": "Default"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/max_qty",
+          "type": "integer",
+          "required": false,
+          "label": "Max Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/allergen_ids",
+          "type": "array",
+          "required": false,
+          "label": "Allergen Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/options/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/required",
+          "type": "boolean",
+          "required": false,
+          "label": "Required"
+        },
+        {
+          "direction": "response",
+          "path": "/max_select",
+          "type": "integer",
+          "required": false,
+          "label": "Max Select"
+        },
+        {
+          "direction": "response",
+          "path": "/min_select",
+          "type": "integer",
+          "required": false,
+          "label": "Min Select"
+        },
+        {
+          "direction": "response",
+          "path": "/selection_type",
+          "type": "string",
+          "required": false,
+          "label": "Selection Type"
+        },
+        {
+          "direction": "response",
+          "path": "/incompatible_with",
+          "type": "array",
+          "required": false,
+          "label": "Incompatible With"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "d69ded0905fdcff691708f9770328a1e3cba59b6eeb38a2c37e1835633a506e3",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getOffer"
+      },
+      "owner": "offers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get an offer",
+      "description": "Even expired offers are fetchable by id.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/offer_id",
+          "type": "string",
+          "required": true,
+          "label": "Offer Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/kind",
+          "type": "string",
+          "required": false,
+          "label": "Kind"
+        },
+        {
+          "direction": "response",
+          "path": "/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/item_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/percent",
+          "type": "number",
+          "required": false,
+          "label": "Percent"
+        },
+        {
+          "direction": "response",
+          "path": "/min_tier",
+          "type": "string",
+          "required": false,
+          "label": "Min Tier"
+        },
+        {
+          "direction": "response",
+          "path": "/expires_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Expires At"
+        },
+        {
+          "direction": "response",
+          "path": "/points_cost",
+          "type": "integer",
+          "required": false,
+          "label": "Points Cost"
+        },
+        {
+          "direction": "response",
+          "path": "/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "971b3700d4c89d5c7f72dac1ce39b8808b3578a32be8603a9f99b86a0573d54c",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getPayment"
+      },
+      "owner": "payments",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a payment",
+      "description": "Includes processor_charge_id after capture.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/payment_id",
+          "type": "string",
+          "required": true,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/method",
+          "type": "string",
+          "required": false,
+          "label": "Method"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/tip_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tip Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/gift_card_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Gift Card Id"
+        },
+        {
+          "direction": "response",
+          "path": "/processor_charge_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Processor Charge Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "0cf645c390be57a6e9317ae7b9ef3d3d0626eb6171ff1704c3cca91f4ee3af57",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getReceipt"
+      },
+      "owner": "receipts",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a receipt",
+      "description": "Itemized totals plus tip_eligible.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/receipt_id",
+          "type": "string",
+          "required": true,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/lines",
+          "type": "array",
+          "required": false,
+          "label": "Lines"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/tax_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/tip_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tip Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/invoice_id",
+          "type": "string",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_id",
+          "type": "string",
+          "required": false,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/total_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Total Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/tip_eligible",
+          "type": "boolean",
+          "required": false,
+          "label": "Tip Eligible"
+        },
+        {
+          "direction": "response",
+          "path": "/discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/subtotal_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Subtotal Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "48864c7886a4250f2d79fa3dcb5a598703bd9c0c1de6ec171ea92135a976776d",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getReceiptByCheck"
+      },
+      "owner": "receipts",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get receipt for a check",
+      "description": "Receipt for a check, if one has been posted.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/check_id",
+          "type": "string",
+          "required": true,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/lines",
+          "type": "array",
+          "required": false,
+          "label": "Lines"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/lines/-/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/tax_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/tip_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tip Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/invoice_id",
+          "type": "string",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_id",
+          "type": "string",
+          "required": false,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/total_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Total Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/tip_eligible",
+          "type": "boolean",
+          "required": false,
+          "label": "Tip Eligible"
+        },
+        {
+          "direction": "response",
+          "path": "/discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/subtotal_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Subtotal Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "f296741ec0930dff0464d10395e772ae7270962295b7c056c7e7ebf0b9cc92dd",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getRedemption"
+      },
+      "owner": "redemptions",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a redemption",
+      "description": "Applied offer on a check.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/redemption_id",
+          "type": "string",
+          "required": true,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/offer_id",
+          "type": "string",
+          "required": false,
+          "label": "Offer Id"
+        },
+        {
+          "direction": "response",
+          "path": "/created_at",
+          "type": "string",
+          "required": false,
+          "label": "Created At"
+        },
+        {
+          "direction": "response",
+          "path": "/points_spent",
+          "type": "integer",
+          "required": false,
+          "label": "Points Spent"
+        },
+        {
+          "direction": "response",
+          "path": "/discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Discount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "14ba710e8b02e22fa3dbc77a1b768c4b2e626cc1749081ec1826b2f20cbd0152",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getRefund"
+      },
+      "owner": "refunds",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a refund",
+      "description": "Includes processor_refund_id after reverse.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/refund_id",
+          "type": "string",
+          "required": true,
+          "label": "Refund Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/payment_id",
+          "type": "string",
+          "required": false,
+          "label": "Payment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/processor_refund_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Processor Refund Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "f958932978296cd1806db5d8ddf836d64eb848a1b218c33016e8c58af3c968b9",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getRewards"
+      },
+      "owner": "rewards",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a rewards account",
+      "description": "Balance, punches, tier. Maya is gold at 1240 points.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": true,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/tier",
+          "type": "string",
+          "required": false,
+          "label": "Tier"
+        },
+        {
+          "direction": "response",
+          "path": "/earned",
+          "type": "integer",
+          "required": false,
+          "label": "Earned"
+        },
+        {
+          "direction": "response",
+          "path": "/points",
+          "type": "integer",
+          "required": false,
+          "label": "Points"
+        },
+        {
+          "direction": "response",
+          "path": "/punches",
+          "type": "integer",
+          "required": false,
+          "label": "Punches"
+        },
+        {
+          "direction": "response",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/ledger_id",
+          "type": "string",
+          "required": false,
+          "label": "Ledger Id"
+        },
+        {
+          "direction": "response",
+          "path": "/points_balance",
+          "type": "integer",
+          "required": false,
+          "label": "Points Balance"
+        },
+        {
+          "direction": "response",
+          "path": "/trailing_spend_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Trailing Spend Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "8be27db101f63b781466e8610c86aa28d37630560bc25cdeaf86e0881834ec51",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getTable"
+      },
+      "owner": "floor",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get a table",
+      "description": "Includes current check_id when the table is occupied.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/table_id",
+          "type": "string",
+          "required": true,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/label",
+          "type": "string",
+          "required": false,
+          "label": "Label"
+        },
+        {
+          "direction": "response",
+          "path": "/seats",
+          "type": "integer",
+          "required": false,
+          "label": "Seats"
+        },
+        {
+          "direction": "response",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "f20d7e38aecf644bacb58a90ecfdc01d156a1cff84609df07bae75b96a03733f",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "getTracking"
+      },
+      "owner": "tracking",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Get tracking trail",
+      "description": "Point trail for a delivery.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/delivery_id",
+          "type": "string",
+          "required": true,
+          "label": "Delivery Id"
+        },
+        {
+          "direction": "response",
+          "path": "/pings",
+          "type": "array",
+          "required": false,
+          "label": "Pings"
+        },
+        {
+          "direction": "response",
+          "path": "/pings/-/at",
+          "type": "string",
+          "required": false,
+          "label": "At"
+        },
+        {
+          "direction": "response",
+          "path": "/pings/-/location",
+          "type": "object",
+          "required": false,
+          "label": "Location"
+        },
+        {
+          "direction": "response",
+          "path": "/pings/-/location/type",
+          "type": "string",
+          "required": true,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/pings/-/location/coordinates",
+          "type": "array",
+          "required": true,
+          "label": "Coordinates"
+        },
+        {
+          "direction": "response",
+          "path": "/delivery_id",
+          "type": "string",
+          "required": false,
+          "label": "Delivery Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "c80aea897cf287c0ce629640603bc3b86425d47cf6a1dc6873c0e5e68beb00d6",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "health"
+      },
+      "owner": "Meta",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Health",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/ok",
+          "type": "boolean",
+          "required": false,
+          "label": "Ok"
+        },
+        {
+          "direction": "response",
+          "path": "/apis",
+          "type": "integer",
+          "required": false,
+          "label": "Apis"
+        },
+        {
+          "direction": "response",
+          "path": "/company",
+          "type": "string",
+          "required": false,
+          "label": "Company"
+        },
+        {
+          "direction": "response",
+          "path": "/product",
+          "type": "string",
+          "required": false,
+          "label": "Product"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "fef84148b30dc1d23d3086625a390e523ac0bb77177702a7686ddcc889721d33",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listAllergens"
+      },
+      "owner": "allergens",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List allergens",
+      "description": "Merchant allergen dictionary.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "61e2054ee4f05ccae9f71bfe998313071632dacac008732b455cb2b9f67ce6d2",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listApis"
+      },
+      "owner": "Meta",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List the 35 Burgertown APIs and which APIs they depend on",
+      "description": "Atlas import companion. Each API includes depends_on and operations. Prefer /openapi.json for the full contract.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/apis",
+          "type": "array",
+          "required": false,
+          "label": "Apis"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/domain",
+          "type": "string",
+          "required": false,
+          "label": "Domain"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/depends_on",
+          "type": "array",
+          "required": false,
+          "label": "Depends On"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/operations",
+          "type": "array",
+          "required": false,
+          "label": "Operations"
+        },
+        {
+          "direction": "response",
+          "path": "/apis/-/description",
+          "type": "string",
+          "required": false,
+          "label": "Description"
+        },
+        {
+          "direction": "response",
+          "path": "/count",
+          "type": "integer",
+          "required": false,
+          "label": "Count"
+        },
+        {
+          "direction": "response",
+          "path": "/company",
+          "type": "string",
+          "required": false,
+          "label": "Company"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "6db655470bf7aae7f4c9afc726d389817186eff3dfefcda457b9f5d1b7b3b0c5",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listChecks"
+      },
+      "owner": "checks",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List checks",
+      "description": "Filter with status=open|paid|voided.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items",
+          "type": "array",
+          "required": false,
+          "label": "Items"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/items/-/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals",
+          "type": "object",
+          "required": false,
+          "label": "Totals"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/due_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Due Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/tax_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/subtotal_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Subtotal Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/delivery_fee_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Delivery Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/totals/reward_discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/version",
+          "type": "integer",
+          "required": false,
+          "label": "Version"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/server_id",
+          "type": "string",
+          "required": false,
+          "label": "Server Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/invoice_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/receipt_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/discount_ids",
+          "type": "array",
+          "required": false,
+          "label": "Discount Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/redemption_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/reward_discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Reward Discount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "c1e84dd26abe6c900a8ed06689069ebb5107d78dbfe146f5c32a8f6f9c709f37",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listCouriers"
+      },
+      "owner": "couriers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List couriers",
+      "description": "Filter with location_id= and status=.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "request",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/vehicle",
+          "type": "string",
+          "required": false,
+          "label": "Vehicle"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/rejects_on_accept",
+          "type": "boolean",
+          "required": false,
+          "label": "Rejects On Accept"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "fae67d6b3801e53a4a6d78e9c5189784cfaa9e8bbf177ae34cc7f0e32ee6a537",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listDiscounts"
+      },
+      "owner": "discounts",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List discounts",
+      "description": "Available comps and promo codes.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/code",
+          "type": "string",
+          "required": false,
+          "label": "Code"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/percent",
+          "type": "number",
+          "required": false,
+          "label": "Percent"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "9de62cc74fd8db236af7bc4dae127d91001897b5cdf34ccd65d0356626e63095",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listEmployees"
+      },
+      "owner": "employees",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List employees",
+      "description": "Active staff at a location.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/role",
+          "type": "string",
+          "required": false,
+          "label": "Role"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/clocked_in",
+          "type": "boolean",
+          "required": false,
+          "label": "Clocked In"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "b9ae218ad0c717f2af4826db87528ed5f62d92fc02a8c56d02f896c46a284201",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listFulfillments"
+      },
+      "owner": "fulfillment",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List fulfillments",
+      "description": "Filter with status= and type=.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "request",
+          "path": "/type",
+          "type": "string",
+          "required": false,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/type",
+          "type": "string",
+          "required": false,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/pickup_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Pickup At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Address Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/created_at",
+          "type": "string",
+          "required": false,
+          "label": "Created At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/handoff_code",
+          "type": "unknown",
+          "required": false,
+          "label": "Handoff Code"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/delivery_fee_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Delivery Fee Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "22f7b5fc761b0ebfca621199868289d2ed02343c61fa452702fae0522d49e768",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listGuestAddresses"
+      },
+      "owner": "guests",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List guest addresses",
+      "description": "Saved drop-off addresses.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": true,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/city",
+          "type": "string",
+          "required": false,
+          "label": "City"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/line1",
+          "type": "string",
+          "required": false,
+          "label": "Line1"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/region",
+          "type": "string",
+          "required": false,
+          "label": "Region"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location",
+          "type": "object",
+          "required": false,
+          "label": "Location"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location/type",
+          "type": "string",
+          "required": true,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location/coordinates",
+          "type": "array",
+          "required": true,
+          "label": "Coordinates"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/postal_code",
+          "type": "string",
+          "required": false,
+          "label": "Postal Code"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "45ed7a45c03aca76f2612ac6246e3a910eca89323dfe87249f7da6f19cb411a0",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listGuests"
+      },
+      "owner": "guests",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List guests",
+      "description": "Filter with email= to look up a punch card.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/email",
+          "type": "string",
+          "required": false,
+          "label": "Email"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/email",
+          "type": "string",
+          "required": false,
+          "label": "Email"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/phone",
+          "type": "string",
+          "required": false,
+          "label": "Phone"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/dietary_profile",
+          "type": "object",
+          "required": false,
+          "label": "Dietary Profile"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/dietary_profile/avoid",
+          "type": "array",
+          "required": false,
+          "label": "Avoid"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/dietary_profile/strict",
+          "type": "boolean",
+          "required": false,
+          "label": "Strict"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "4ba0bac205f5f9938f1801c8c9d787b5dc64a36e85cd9e82fbd03ef9fa1b9e4d",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listInventory"
+      },
+      "owner": "inventory",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List inventory",
+      "description": "Stock levels keyed by item_id or modifier id.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/is_86",
+          "type": "boolean",
+          "required": false,
+          "label": "Is 86"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/on_hand",
+          "type": "integer",
+          "required": false,
+          "label": "On Hand"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "a505d9d6bdde1ef0555edb0e7a31161d8e4d52d9a3437314b7dfcd3bf17ead3c",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listItems"
+      },
+      "owner": "catalog",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List catalog items",
+      "description": "Optional exclude_allergens=alg_dairy hides dairy-tagged items.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/exclude_allergens",
+          "type": "string",
+          "required": false,
+          "label": "Exclude Allergens"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/tax_ids",
+          "type": "array",
+          "required": false,
+          "label": "Tax Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/is_active",
+          "type": "boolean",
+          "required": false,
+          "label": "Is Active"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/category_id",
+          "type": "string",
+          "required": false,
+          "label": "Category Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/description",
+          "type": "string",
+          "required": false,
+          "label": "Description"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/allergen_ids",
+          "type": "array",
+          "required": false,
+          "label": "Allergen Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/modifier_group_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Group Ids"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "45151bec2503a034eb07faf25229386dfc3ab90f2db19eddf24289723b07cd61",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listLocations"
+      },
+      "owner": "locations",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List locations",
+      "description": "Returns every restaurant this merchant operates.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/hours",
+          "type": "array",
+          "required": false,
+          "label": "Hours"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/hours/-/label",
+          "type": "string",
+          "required": false,
+          "label": "Label"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/hours/-/value",
+          "type": "string",
+          "required": false,
+          "label": "Value"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/phone",
+          "type": "string",
+          "required": false,
+          "label": "Phone"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address",
+          "type": "object",
+          "required": false,
+          "label": "Address"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address/city",
+          "type": "string",
+          "required": false,
+          "label": "City"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address/region",
+          "type": "string",
+          "required": false,
+          "label": "Region"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address/street",
+          "type": "string",
+          "required": false,
+          "label": "Street"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/address/postal_code",
+          "type": "string",
+          "required": false,
+          "label": "Postal Code"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/currency",
+          "type": "string",
+          "required": false,
+          "label": "Currency"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/timezone",
+          "type": "string",
+          "required": false,
+          "label": "Timezone"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "754bfd7e20c6a12be635130968f0e833b41795dbfcc006e749d8110a64f4eea0",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listMenus"
+      },
+      "owner": "menus",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List menus",
+      "description": "Menus for a location. Pass location_id as a query param.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/categories",
+          "type": "array",
+          "required": false,
+          "label": "Categories"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/categories/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/categories/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/categories/-/item_ids",
+          "type": "array",
+          "required": false,
+          "label": "Item Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "62721b5e7896d4428cee552494bdc3f6a18118b5584e0b0f63774a19a25339cf",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listModifierGroups"
+      },
+      "owner": "modifiers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List modifier groups",
+      "description": "Filter with item_id= to get groups attached to one item.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options",
+          "type": "array",
+          "required": false,
+          "label": "Options"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/is_86",
+          "type": "boolean",
+          "required": false,
+          "label": "Is 86"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/default",
+          "type": "boolean",
+          "required": false,
+          "label": "Default"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/max_qty",
+          "type": "integer",
+          "required": false,
+          "label": "Max Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/allergen_ids",
+          "type": "array",
+          "required": false,
+          "label": "Allergen Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/options/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/required",
+          "type": "boolean",
+          "required": false,
+          "label": "Required"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/max_select",
+          "type": "integer",
+          "required": false,
+          "label": "Max Select"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/min_select",
+          "type": "integer",
+          "required": false,
+          "label": "Min Select"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/selection_type",
+          "type": "string",
+          "required": false,
+          "label": "Selection Type"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/incompatible_with",
+          "type": "array",
+          "required": false,
+          "label": "Incompatible With"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "7f3e6b1f27c1dca2528d03dad2387864de17252262a0975d0be010dc229f321b",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listModifiers"
+      },
+      "owner": "modifiers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List modifiers (flat)",
+      "description": "Legacy flat list derived from groups. Prefer modifier-groups.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/group_id",
+          "type": "string",
+          "required": false,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/group_name",
+          "type": "string",
+          "required": false,
+          "label": "Group Name"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "065f66a81740e9d6e20eeaf5c65516b58299b19de1e8d3fbe85a4bc539d34b18",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listOffers"
+      },
+      "owner": "offers",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List offers",
+      "description": "With guest_id, only currently eligible offers. off_expired is omitted.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/guest_id",
+          "type": "string",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/kind",
+          "type": "string",
+          "required": false,
+          "label": "Kind"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/item_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/percent",
+          "type": "number",
+          "required": false,
+          "label": "Percent"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/min_tier",
+          "type": "string",
+          "required": false,
+          "label": "Min Tier"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/expires_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Expires At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/points_cost",
+          "type": "integer",
+          "required": false,
+          "label": "Points Cost"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/amount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Amount Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "4c51fefb58bb4e9d2643e8205fb03a6322cd8dc4cfb08c9e768f3ff940ac5c12",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listSettlements"
+      },
+      "owner": "settlements",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List settlements",
+      "description": "Daily batches.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/closed_at",
+          "type": "unknown",
+          "required": false,
+          "label": "Closed At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/courier_tips_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Courier Tips Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "1e5cb2f1e8f8922fac336acc4bc0d982e5a4676dad25fa546321d7c4fe16fbdc",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listTables"
+      },
+      "owner": "floor",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List tables",
+      "description": "Floor plan tables for a location.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": true,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/label",
+          "type": "string",
+          "required": false,
+          "label": "Label"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/seats",
+          "type": "integer",
+          "required": false,
+          "label": "Seats"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/check_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "26d449205ecca6f11283d376fb345a6bdfb27241c82df4ea8e07934dfccf6f3e",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listTaxes"
+      },
+      "owner": "taxes",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List tax rates",
+      "description": "Location tax configuration.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/rate",
+          "type": "number",
+          "required": false,
+          "label": "Rate"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "e973a55a730f0ce13d302c4e3c3a1f634ed586f43d966e0fe502047001bd4080",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listTickets"
+      },
+      "owner": "kitchen",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List kitchen tickets",
+      "description": "Open and fired tickets.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/item_ids",
+          "type": "array",
+          "required": false,
+          "label": "Item Ids"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "757138f2b4efa07ed29bbe897fffb13bc3a8efbb9b211549240f16049c6873c9",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listWebhooks"
+      },
+      "owner": "webhooks",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List webhook endpoints",
+      "description": "Merchant callback URLs.",
+      "fields": [
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/url",
+          "type": "string",
+          "required": false,
+          "label": "Url"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/events",
+          "type": "array",
+          "required": false,
+          "label": "Events"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "0cddd066d0d294776ce9435eb8a4bfaf9b58d79bc36de8820b2b97357338de38",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "listZones"
+      },
+      "owner": "zones",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "List delivery zones",
+      "description": "Zones with fee_cents and eta_minutes.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/location_id",
+          "type": "string",
+          "required": true,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data",
+          "type": "array",
+          "required": true,
+          "label": "Data"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/fee_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/eta_minutes",
+          "type": "integer",
+          "required": false,
+          "label": "Eta Minutes"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/postal_codes",
+          "type": "array",
+          "required": false,
+          "label": "Postal Codes"
+        },
+        {
+          "direction": "response",
+          "path": "/data/-/requires_proof",
+          "type": "boolean",
+          "required": false,
+          "label": "Requires Proof"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "9fc75194acf03f11fc2bc168d5f77a5ddb9035e1013b48d7c4e0f08f29eb2fc4",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "salesReport"
+      },
+      "owner": "reports",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Sales report",
+      "description": "Net sales, tips, refunds, check counts. Optional group_by=fulfillment_type.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/group_by",
+          "type": "string",
+          "required": false,
+          "label": "Group By"
+        },
+        {
+          "direction": "response",
+          "path": "/currency",
+          "type": "string",
+          "required": false,
+          "label": "Currency"
+        },
+        {
+          "direction": "response",
+          "path": "/tips_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Tips Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/checks_paid",
+          "type": "integer",
+          "required": false,
+          "label": "Checks Paid"
+        },
+        {
+          "direction": "response",
+          "path": "/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/checks_voided",
+          "type": "integer",
+          "required": false,
+          "label": "Checks Voided"
+        },
+        {
+          "direction": "response",
+          "path": "/refunds_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Refunds Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/net_sales_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Net Sales Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/courier_tips_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Courier Tips Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/by_fulfillment_type",
+          "type": "array",
+          "required": false,
+          "label": "By Fulfillment Type"
+        },
+        {
+          "direction": "response",
+          "path": "/by_fulfillment_type/-/type",
+          "type": "string",
+          "required": false,
+          "label": "Type"
+        },
+        {
+          "direction": "response",
+          "path": "/by_fulfillment_type/-/checks_paid",
+          "type": "integer",
+          "required": false,
+          "label": "Checks Paid"
+        },
+        {
+          "direction": "response",
+          "path": "/by_fulfillment_type/-/net_sales_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Net Sales Cents"
+        }
+      ]
+    },
+    {
+      "capabilityVersionId": "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+      "identity": {
+        "kind": "openapi",
+        "serviceId": "burger-town",
+        "operationId": "sendOrder"
+      },
+      "owner": "orders",
+      "businessSemantics": {
+        "provider": "Burger Town",
+        "sourceType": "internal"
+      },
+      "summary": "Send order to kitchen",
+      "description": "Confirms unsent lines, depletes inventory, opens KDS tickets, fulfillment â sent.",
+      "fields": [
+        {
+          "direction": "request",
+          "path": "/check_id",
+          "type": "string",
+          "required": true,
+          "label": "Check Id"
+        },
+        {
+          "direction": "request",
+          "path": "/idempotency_key",
+          "type": "string",
+          "required": false,
+          "label": "Idempotency Key"
+        },
+        {
+          "direction": "response",
+          "path": "/check",
+          "type": "object",
+          "required": false,
+          "label": "Check"
+        },
+        {
+          "direction": "response",
+          "path": "/check/id",
+          "type": "string",
+          "required": true,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items",
+          "type": "array",
+          "required": false,
+          "label": "Items"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/sent",
+          "type": "boolean",
+          "required": false,
+          "label": "Sent"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/notes",
+          "type": "string",
+          "required": false,
+          "label": "Notes"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/price",
+          "type": "integer",
+          "required": false,
+          "label": "Price"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/item_id",
+          "type": "string",
+          "required": false,
+          "label": "Item Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/quantity",
+          "type": "integer",
+          "required": false,
+          "label": "Quantity"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/warnings",
+          "type": "array",
+          "required": false,
+          "label": "Warnings"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections",
+          "type": "array",
+          "required": false,
+          "label": "Selections"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/qty",
+          "type": "integer",
+          "required": false,
+          "label": "Qty"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/name",
+          "type": "string",
+          "required": false,
+          "label": "Name"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/group_id",
+          "type": "string",
+          "required": true,
+          "label": "Group Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/option_id",
+          "type": "string",
+          "required": true,
+          "label": "Option Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/selections/-/price_delta_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Price Delta Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/modifier_ids",
+          "type": "array",
+          "required": false,
+          "label": "Modifier Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/items/-/removed_defaults",
+          "type": "array",
+          "required": false,
+          "label": "Removed Defaults"
+        },
+        {
+          "direction": "response",
+          "path": "/check/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals",
+          "type": "object",
+          "required": false,
+          "label": "Totals"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/due_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Due Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/tax_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Tax Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/subtotal_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Subtotal Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/delivery_fee_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Delivery Fee Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/totals/reward_discount_cents",
+          "type": "integer",
+          "required": true,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/check/version",
+          "type": "integer",
+          "required": false,
+          "label": "Version"
+        },
+        {
+          "direction": "response",
+          "path": "/check/guest_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Guest Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/table_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Table Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/opened_at",
+          "type": "string",
+          "required": false,
+          "label": "Opened At"
+        },
+        {
+          "direction": "response",
+          "path": "/check/server_id",
+          "type": "string",
+          "required": false,
+          "label": "Server Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/invoice_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Invoice Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/receipt_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Receipt Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/location_id",
+          "type": "string",
+          "required": false,
+          "label": "Location Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/payment_ids",
+          "type": "array",
+          "required": false,
+          "label": "Payment Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/discount_ids",
+          "type": "array",
+          "required": false,
+          "label": "Discount Ids"
+        },
+        {
+          "direction": "response",
+          "path": "/check/redemption_id",
+          "type": "unknown",
+          "required": false,
+          "label": "Redemption Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/fulfillment_id",
+          "type": "string",
+          "required": false,
+          "label": "Fulfillment Id"
+        },
+        {
+          "direction": "response",
+          "path": "/check/reward_discount_cents",
+          "type": "integer",
+          "required": false,
+          "label": "Reward Discount Cents"
+        },
+        {
+          "direction": "response",
+          "path": "/ticket",
+          "type": "object",
+          "required": false,
+          "label": "Ticket"
+        },
+        {
+          "direction": "response",
+          "path": "/ticket/id",
+          "type": "string",
+          "required": false,
+          "label": "Id"
+        },
+        {
+          "direction": "response",
+          "path": "/ticket/status",
+          "type": "string",
+          "required": false,
+          "label": "Status"
+        },
+        {
+          "direction": "response",
+          "path": "/ticket/check_id",
+          "type": "string",
+          "required": false,
+          "label": "Check Id"
+        },
+        {
+          "direction": "response",
+          "path": "/ticket/item_ids",
+          "type": "array",
+          "required": false,
+          "label": "Item Ids"
+        }
+      ]
+    }
+  ]
+}

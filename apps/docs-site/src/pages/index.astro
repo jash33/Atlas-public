@@ -1,0 +1,12 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { guides } from '../lib/guides';
+---
+<DocsLayout title="Documentation" description="Learn Atlas's core concepts, install your environment, and connect company sign-in.">
+  <div class="docs-home">
+    <header class="docs-intro"><p class="eyebrow">The Atlas field guide</p><h1>Understand the pieces.<br /><span>Build with confidence.</span></h1><p class="lede">Learn the concepts, connect your APIs, and put Atlas to work. Practical guides for the systems you connect and the workflows you run.</p><div class="actions"><a class="button" href="/concepts/capabilities/">Start with the concepts <span aria-hidden="true">→</span></a><a class="button secondary" href="/self-host/">Install Atlas <span aria-hidden="true">↗</span></a></div></header>
+    <aside class="preview-note"><span class="note-label">Developer preview</span><p>The customer web and sign-in package is available. Evaluate workflows with the local developer stack; the full customer runtime package is still in development. <a href="/self-host/">Choose your setup <span aria-hidden="true">→</span></a></p></aside>
+    <section class="docs-topics" aria-labelledby="topics-title"><div class="topic-heading"><h2 id="topics-title">Find your starting point.</h2><span class="eyebrow">01 — Learn & connect</span></div><div class="topic-grid">{guides.map((guide, index) => <a class="topic-card" href={`/${guide.slug}/`}><div class="card-top"><span class="card-number">0{index + 1} / {guide.section}</span><span aria-hidden="true">↗</span></div><h3>{guide.title}</h3><p>{guide.description}</p><span class="card-link">Read the guide <span aria-hidden="true">→</span></span></a>)}</div></section>
+    <section class="docs-sequence" aria-labelledby="sequence-title"><p class="eyebrow">The pieces, connected</p><h2 id="sequence-title">An API action. A plan. A run.</h2><div class="sequence-grid"><div><span>01</span><h3>Capability</h3><p>One action your API exposes, reviewed for Atlas to use.</p></div><div><span>02</span><h3>Workflow</h3><p>A plan connecting approved actions, data, and recovery rules.</p></div><div><span>03</span><h3>Run</h3><p>One execution of an approved version, with its own progress.</p></div></div><a class="text-link" href="/concepts/workflows/">Follow the workflow lifecycle <span aria-hidden="true">→</span></a></section>
+  </div>
+</DocsLayout>

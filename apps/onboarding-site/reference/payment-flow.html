@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Atlas demo workflows &middot; Cheat sheet</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="../lessons/index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas &middot; Reference</p>
+  <h1>Demo workflows</h1>
+
+  <h2>Payment demo</h2>
+  <pre class="flow">receive a payment ID
+  &rarr; get the payment
+  &rarr; create a Stripe payment
+  &rarr; publish an invoice-paid event
+  &rarr; notify Operations</pre>
+  <div class="table-scroll"><table><thead><tr><th>Payment ID</th><th>Result</th></tr></thead><tbody>
+    <tr><td><code>payment_demo_001</code></td><td>Completes normally.</td></tr>
+    <tr><td><code>payment_retry_demo_001</code></td><td>Fails twice, retries, then succeeds.</td></tr>
+    <tr><td><code>payment_repair_demo_001</code></td><td>Stops and waits for repair, then continues.</td></tr>
+  </tbody></table></div>
+
+  <h2>Incompatible API mapping proof</h2>
+  <pre class="flow">Payment API response
+  &rarr; rename invoice_id to invoiceId
+  &rarr; divide amount_cents by 100
+  &rarr; uppercase currency
+  &rarr; project customer email
+  &rarr; Billing API request</pre>
+  <p>The approved mapping is compiled into typed data and signed inside the <code>.atlas</code> bundle. The Worker verifies the bundle, evaluates the mapping customer-side, and records provider-observed timing and side-effect evidence. Changing one bundle byte prevents the Billing call.</p>
+
+  <h2>API change demo</h2>
+  <pre class="flow">change the Billing API
+  &rarr; find the affected workflow
+  &rarr; stop new runs
+  &rarr; create and test a fix
+  &rarr; approve the fix
+  &rarr; run the new version</pre>
+  <p>Earlier runs keep their original workflow version when a replacement version is activated.</p>
+
+  <p class="cite">Sources: <a href="https://github.com/jash33/Atlas-public/tree/main/apps/mock-services">demo services</a> and <a href="https://github.com/jash33/Atlas-public/tree/main/packages/workflow-artifact">workflow artifact implementation</a>.</p>
+  <div class="nav"><a href="../lessons/0007-trust-boundaries.html">Runs lesson</a><a href="../lessons/0012-current-state.html">API change lesson</a><a href="workflow-artifacts.html">Workflow artifacts</a><a href="glossary.html">Glossary</a></div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "01-capability-not-found",
+    "expectedKind": "policyDenial",
+    "expectedCode": "CAPABILITY_NOT_FOUND_IN_PROJECTION"
+  },
+  {
+    "id": "02-capability-not-enabled",
+    "expectedKind": "policyDenial",
+    "expectedCode": "CAPABILITY_NOT_ENABLED_APPROVED"
+  },
+  {
+    "id": "03-capability-org-mismatch",
+    "expectedKind": "policyDenial",
+    "expectedCode": "CAPABILITY_ORGANIZATION_MISMATCH"
+  },
+  {
+    "id": "04-unmapped-required-field",
+    "expectedKind": "policyDenial",
+    "expectedCode": "UNMAPPED_REQUIRED_FIELD"
+  },
+  {
+    "id": "05-schema-type-mismatch",
+    "expectedKind": "policyDenial",
+    "expectedCode": "SCHEMA_TYPE_MISMATCH"
+  },
+  {
+    "id": "06-secret-value-leak",
+    "expectedKind": "policyDenial",
+    "expectedCode": "SECRET_VALUE_OR_NON_ALIAS_LEAK"
+  },
+  {
+    "id": "07-rbac-denied",
+    "expectedKind": "policyDenial",
+    "expectedCode": "RBAC_APPROVER_ROLE_DENIED"
+  },
+  {
+    "id": "08-org-environment-mismatch",
+    "expectedKind": "policyDenial",
+    "expectedCode": "ORGANIZATION_NOT_AUTHORIZED_FOR_ENVIRONMENT"
+  },
+  {
+    "id": "09-data-classification-downgrade",
+    "expectedKind": "policyDenial",
+    "expectedCode": "DATA_CLASSIFICATION_DOWNGRADE"
+  },
+  {
+    "id": "10-execution-host-not-allowlisted",
+    "expectedKind": "policyDenial",
+    "expectedCode": "EXECUTION_HOST_NOT_ALLOWLISTED"
+  },
+  {
+    "id": "11-execution-host-metadata-denied",
+    "expectedKind": "policyDenial",
+    "expectedCode": "EXECUTION_HOST_DENIED_PATTERN"
+  },
+  {
+    "id": "12-retry-idempotency-missing",
+    "expectedKind": "policyDenial",
+    "expectedCode": "MISSING_IDEMPOTENCY_KEY_FOR_RETRYABLE_STEP"
+  },
+  {
+    "id": "13-compensation-incomplete",
+    "expectedKind": "policyDenial",
+    "expectedCode": "COMPENSATION_INCOMPLETE"
+  },
+  {
+    "id": "14-irreversible-boundary-violation",
+    "expectedKind": "policyDenial",
+    "expectedCode": "IRREVERSIBLE_BOUNDARY_VIOLATION"
+  },
+  {
+    "id": "15-revalidation-slice-unsafe",
+    "expectedKind": "policyDenial",
+    "expectedCode": "REVALIDATION_SLICE_CROSSES_IRREVERSIBLE_BOUNDARY"
+  },
+  {
+    "id": "16-invalid-cycle",
+    "expectedKind": "compileError",
+    "expectedCode": "TICKET_007_STRUCTURAL_INVALID"
+  },
+  {
+    "id": "17-tampered-backend-hash",
+    "expectedKind": "compileError",
+    "expectedCode": "TICKET_007_STRUCTURAL_INVALID"
+  },
+  {
+    "id": "18-projection-fingerprint-mismatch",
+    "expectedKind": "policyDenial",
+    "expectedCode": "PROJECTION_FINGERPRINT_MISMATCH"
+  }
+]

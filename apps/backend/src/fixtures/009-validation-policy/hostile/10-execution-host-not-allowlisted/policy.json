@@ -1,0 +1,81 @@
+{
+  "policyVersion": "policy_v1_2026_08_04",
+  "rbacRules": [
+    {
+      "action": "activateCompiledWorkflowVersion",
+      "allowedRoles": [
+        "admin"
+      ]
+    }
+  ],
+  "orgEnvironmentRules": [
+    {
+      "organizationId": "org_atlas_demo",
+      "allowedEnvironmentIds": [
+        "env_staging",
+        "env_production"
+      ]
+    }
+  ],
+  "hostAllowlist": [
+    {
+      "capabilityVersionId": "sha256:9f2c000000000000000000000000000000000000000000000000000000a1a1",
+      "environmentId": "env_production",
+      "allowedHost": "payment-api.internal.atlas-demo.com",
+      "allowRedirects": false
+    },
+    {
+      "capabilityVersionId": "sha256:4b7e000000000000000000000000000000000000000000000000000000c3c3",
+      "environmentId": "env_production",
+      "allowedHost": "billing-api.internal.atlas-demo.com",
+      "allowRedirects": false
+    },
+    {
+      "capabilityVersionId": "sha256:2d90000000000000000000000000000000000000000000000000000000d4d4",
+      "environmentId": "env_production",
+      "allowedHost": "billing-api.internal.atlas-demo.com",
+      "allowRedirects": false
+    },
+    {
+      "capabilityVersionId": "sha256:6c33000000000000000000000000000000000000000000000000000000e5e5",
+      "environmentId": "env_production",
+      "allowedHost": "billing-api.internal.atlas-demo.com",
+      "allowRedirects": false
+    },
+    {
+      "capabilityVersionId": "sha256:1a77000000000000000000000000000000000000000000000000000000f6f6",
+      "environmentId": "env_production",
+      "allowedHost": "events.internal.atlas-demo.com",
+      "allowRedirects": false
+    },
+    {
+      "capabilityVersionId": "sha256:5f04000000000000000000000000000000000000000000000000000000a7a7",
+      "environmentId": "env_production",
+      "allowedHost": "ops-notification-api.internal.atlas-demo.com",
+      "allowRedirects": false
+    }
+  ],
+  "deniedHostPatterns": [
+    {
+      "pattern": "169.254.169.254",
+      "reason": "cloud metadata endpoint (AWS/GCP/Azure IMDS) \u2014 OWASP SSRF Prevention Cheat Sheet"
+    },
+    {
+      "pattern": "metadata.google.internal",
+      "reason": "GCP metadata DNS alias \u2014 OWASP SSRF Prevention Cheat Sheet"
+    },
+    {
+      "pattern": "*.internal.corp",
+      "reason": "example internal-only suffix reserved for non-capability infrastructure"
+    }
+  ],
+  "dataClassificationRule": {
+    "maxAllowedDowngradeRank": 0
+  },
+  "warningDispositions": {
+    "WARN_NO_COMPENSATION_FOR_REVERSIBLE_STEP": "blocksApproval",
+    "WARN_HIGH_RETRY_ATTEMPT_COUNT": "blocksApproval",
+    "WARN_WIDE_TIMEOUT_WINDOW": "blocksApproval",
+    "WARN_CAPABILITY_APPROACHING_SUPERSESSION": "blocksApproval"
+  }
+}

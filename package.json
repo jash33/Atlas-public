@@ -1,0 +1,31 @@
+{
+  "name": "atlas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup:local": "node tooling/setup-local.mjs",
+    "build": "vp run -r build",
+    "check": "vp check && node tooling/dependency-guard.mjs && node tooling/retired-environment-reference-guard.mjs",
+    "dev": "node tooling/dev.mjs",
+    "infra:config": "docker compose --env-file .env -f infra/compose/compose.yaml config --quiet",
+    "prepare-demo": "node tooling/prepare-demo.mjs",
+    "prototype:repository-analysis-sidebar": "pnpm --filter @atlas/console dev",
+    "infra:down": "docker compose --env-file .env -f infra/compose/compose.yaml down",
+    "infra:clean:docker-cache": "node tooling/docker-storage.mjs",
+    "infra:test:e2e": "node tooling/compose-smoke.mjs",
+    "infra:up": "node tooling/compose-up.mjs",
+    "test": "node --env-file-if-exists=.env node_modules/vite-plus/bin/vp test --run",
+    "typecheck": "tsc -b && pnpm --filter @atlas/marketing-site typecheck && pnpm --filter @atlas/docs-site typecheck"
+  },
+  "devDependencies": {
+    "@voidzero-dev/vite-plus-core": "0.2.6",
+    "happy-dom": "^20.14.5",
+    "typescript": "catalog:",
+    "vite-plus": "0.2.6"
+  },
+  "engines": {
+    "node": "24.19.0",
+    "pnpm": "11.19.0"
+  },
+  "packageManager": "pnpm@11.19.0"
+}

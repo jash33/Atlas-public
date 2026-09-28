@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 6 &middot; Workflow Catalog and approval</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas Console &middot; Lesson 6 &middot; 3 min</p>
+  <h1>Workflow Catalog and approval</h1>
+  <p class="standfirst">Find a saved workflow in the selected environment, then run checks and approve that version in ordinary language.</p>
+
+  <h2>Find a saved workflow</h2>
+  <p><strong>Workflow Catalog</strong> is for browsing; <strong>Create Workflow</strong> is where you write, review, and approve a version. The Catalog shows one row per stable workflow, including its active version, latest version and status, last run, and updated time.</p>
+  <p>Search by workflow name or ID, filter by lifecycle status, sort by updated time, or move through pages of results. Changing the environment replaces the complete result set. Each row links by stable workflow identity, not a version ID.</p>
+
+  <h2>Inspect one workflow</h2>
+  <p>Open a Catalog row to see that workflow in the selected environment. The detail overview separates the active version used by new runs from the latest saved version, which may still be a draft or awaiting approval. Version history lists immutable versions, lifecycle state, approval evidence, and which version is active. Recent runs show their trigger, state, start time, duration and outcome when present, and link into the existing Runs timeline.</p>
+  <p>If an active version exists, the detail page shows an <strong>Invoke via API</strong> panel with the ingest gateway URL, the request body shape, the required payload fields from that version&rsquo;s input schema, and a sample <code>POST /ingest</code> request for the selected environment&rsquo;s local gateway (Development on port 4300, Production on 4301). Copy that request and send it to start the workflow. If none exists, the panel explains that the workflow cannot be invoked until a version is approved and active. The Catalog list has no Run control. Editing, checks, and approval stay in <strong>Create Workflow</strong>; the detail page links there instead of duplicating those controls. Switching environments clears the prior workflow detail and run history before loading the new scope.</p>
+
+  <h2>Run the checks</h2>
+  <p>On Create Workflow, Draft runs checks automatically once a draft exists, as the last step in the same drafting progress. An Author or Admin who can Draft can trigger those checks that way; Atlas does not ask for a second Run checks click on that path. Atlas does not show a list of individual tests. A passing run says this version is ready to approve. If a check fails, Atlas repairs the draft once from that contract problem and runs checks again. If they still fail, the chat explains the exact error, why it happened, and a suggested fix, and the graph marks the failed step.</p>
+  <p>Results belong to one workflow version. If you edit the workflow or change an API action, Draft again so checks run on the new version.</p>
+
+  <h2>Keep runtime fixtures intentional</h2>
+  <p>Each sandbox check replaces its selected mock-provider resources with the test-data profile so the runtime sees a repeatable starting point. Ordinary <code>pnpm infra:up</code> is different: it merges named mock-provider fixtures and leaves hand-seeded resources in place. <code>pnpm infra:test:e2e</code> uses the checked-in capability fixtures, while <code>pnpm prepare-demo</code> recreates Atlas with an empty capability catalog.</p>
+
+  <h2>Execute approved API actions</h2>
+  <p>The customer Worker does not contain a switch for named Payment, Billing, or Operations actions. Its Temporal activities load the approved capability fragment from Atlas, then map step input into the fragment&rsquo;s path, query, header, and request-body fields. Required values are checked before the provider request. The workflow remains deterministic because HTTP calls happen only inside activities.</p>
+  <p>Before sending a request for a new run, the Worker requires the selected hostname to be an allowed host for the capability and to appear in the signed execution grant. A run admitted before grants carried allowed hosts may finish only against the Worker&rsquo;s fixed local provider while that provider remains allowed; it cannot acquire a newly allowed remote host. Redirects are not followed. A JSON provider error keeps its declared <code>error.type</code>, so the interpreter can apply the approved retry or landing rule. Slack and HubSpot keep narrow explicit connectors only in official-test modes, where worker-held credentials are required; local rehearsal uses the generic binding.</p>
+
+  <h2>Approve and activate</h2>
+  <p>An Admin selects <strong>Approve this version</strong> only after checks pass. The button stays blocked until then, with a short reason such as switching to Admin, saving YAML changes, or fixing a failed check. Atlas packages the plan, required schemas, sandbox evidence, provenance, and approval binding into a canonical UTF-8 JSON document with the <code>.atlas</code> suffix, then signs it. It contains data for the interpreter, not generated workflow code.</p>
+  <p>Activation makes that signed bundle the version used by new runs.</p>
+  <p>Activation can be blocked when the Worker is offline or missing a required credential, host rule, or supported workflow version. The page shows the reason.</p>
+
+  <h2>Compare or roll back</h2>
+  <p>The version list shows who approved each version and when. Compare versions to see changed steps. Rolling back selects an older approved version for future runs; it does not change runs that already started.</p>
+
+  <div class="claim"><span class="label">One simple rule</span><p>New runs use the active signed bundle. Existing runs keep the immutable plan and capability pins they started with.</p></div>
+
+  <p class="cite">See the <a href="../reference/workflow-artifacts.html">workflow artifacts reference</a> for the fields and trust checks carried into execution.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0005-the-ir.html">&larr; Create Workflow</a><a href="0007-trust-boundaries.html">Runs &rarr;</a></div>
+</body>
+</html>

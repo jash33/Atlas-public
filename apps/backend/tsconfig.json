@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../mock-services" },
+    { "path": "../../packages/demo-estate" },
+    { "path": "../../packages/execution-grant" },
+    { "path": "../../packages/runtime-ports" },
+    { "path": "../../packages/workflow-artifact" },
+    { "path": "../../packages/workflow-ir" }
+  ]
+}

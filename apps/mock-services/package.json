@@ -1,0 +1,27 @@
+{
+  "name": "@atlas/mock-services",
+  "private": true,
+  "type": "module",
+  "types": "./dist/app.d.ts",
+  "exports": "./dist/app.js",
+  "scripts": {
+    "build": "pnpm specs:check && tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "specs:check": "tsx src/generate-specs.ts --check",
+    "specs:generate": "tsx src/generate-specs.ts",
+    "test": "vp test --run --passWithNoTests"
+  },
+  "dependencies": {
+    "@atlas/demo-estate": "workspace:*",
+    "@hono/node-server": "catalog:",
+    "hono": "catalog:",
+    "pg": "8.23.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "8.21.0",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,2 @@
+No draft/projection mutation; this case is exercised with a policy.json override that DROPS the fixtures/valid policy's hostAllowlist entry for step_getInvoice's capability (billing-api:getInvoice) while keeping every other entry, then calling validateWorkflowVersion with the default env_production context.
+Expected diagnostic: policyDenial EXECUTION_HOST_NOT_ALLOWLISTED at steps[step_getInvoice].

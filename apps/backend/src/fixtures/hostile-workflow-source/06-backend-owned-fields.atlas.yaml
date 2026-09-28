@@ -1,0 +1,11 @@
+formatVersion: atlas-source/v1
+projectionFingerprint: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+irHash: 0000000000000000000000000000000000000000000000000000000000000000
+executionRequirements:
+  organizationId: org_forged
+  workflowVersionId: forged@1
+workflow:
+  steps:
+    - id: done
+      kind: terminal
+      state: completed

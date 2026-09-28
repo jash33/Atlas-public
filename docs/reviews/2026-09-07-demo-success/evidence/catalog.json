@@ -1,0 +1,69 @@
+﻿{
+    "workflowId":  "workflow_ce16e294-ab6d-42fe-8742-7b4c6513f726",
+    "name":  "demo",
+    "activeVersion":  {
+                          "workflowVersionId":  "workflow-20260907-222502-659"
+                      },
+    "invocationExample":  {
+                              "item_id":  "itm_fries",
+                              "server_id":  "emp_jon",
+                              "location_id":  "loc_oak"
+                          },
+    "inputSchema":  {
+                        "required":  {
+                                         "item_id":  {
+                                                         "type":  "string"
+                                                     },
+                                         "server_id":  {
+                                                           "type":  "string"
+                                                       },
+                                         "location_id":  {
+                                                             "type":  "string"
+                                                         }
+                                     }
+                    },
+    "latestVersion":  {
+                          "workflowVersionId":  "workflow-20260907-222502-659",
+                          "status":  "active"
+                      },
+    "updatedAt":  "2026-09-07T22:29:20.787Z",
+    "versions":  [
+                     {
+                         "workflowVersionId":  "workflow-20260907-222502-659",
+                         "status":  "active",
+                         "isActive":  true,
+                         "createdAt":  "2026-09-07T22:26:36.373Z",
+                         "updatedAt":  "2026-09-07T22:28:19.139Z",
+                         "approval":  {
+                                          "approvedBy":  "atlas-admin",
+                                          "approvedAt":  "2026-09-07T22:28:19.139Z"
+                                      }
+                     }
+                 ],
+    "recentRuns":  [
+                       {
+                           "runId":  "atlas:run:atlas.workflow-run-id:cec9d641a205be5f07267d317e3c0bfb9765d3a4eda546541203ce9904d7c4dd",
+                           "workflowVersionId":  "workflow-20260907-222502-659",
+                           "trigger":  {
+                                           "type":  "api",
+                                           "deliveryId":  "a0675185-af0f-4c30-b6ba-44babd831a7d:0:0"
+                                       },
+                           "state":  "completed",
+                           "startedAt":  "2026-09-07T22:29:19.421Z",
+                           "durationMs":  1371,
+                           "outcome":  "succeeded"
+                       },
+                       {
+                           "runId":  "atlas:run:atlas.workflow-run-id:ae7e889789c62b68d05385a3b6f79e323b6009db61687650304aca6447b0e774",
+                           "workflowVersionId":  "workflow-20260907-222502-659",
+                           "trigger":  {
+                                           "type":  "api",
+                                           "deliveryId":  "82f4ed27-053f-43b5-9d50-6cd97e807a6d:0:0"
+                                       },
+                           "state":  "completed",
+                           "startedAt":  "2026-09-07T22:28:47.418Z",
+                           "durationMs":  1331,
+                           "outcome":  "succeeded"
+                       }
+                   ]
+}

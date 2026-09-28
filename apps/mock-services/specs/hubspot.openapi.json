@@ -1,0 +1,190 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HubSpot CRM API (contract-faithful rehearsal subset)",
+    "version": "424",
+    "description": "A deterministic local subset of the HubSpot CRM API for rehearsal. It does not prove live HubSpot connectivity."
+  },
+  "servers": [
+    {
+      "url": "http://mock-services:4100"
+    }
+  ],
+  "paths": {
+    "/crm/v3/objects/contacts": {
+      "post": {
+        "operationId": "createContact",
+        "description": "Creates a CRM contact.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimplePublicObjectInputForCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "HubSpot API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SimplePublicObjectInputForCreate": {
+        "type": "object",
+        "properties": {
+          "properties": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "firstname": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lastname": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "email",
+              "firstname",
+              "lastname"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "properties"
+        ],
+        "additionalProperties": false
+      },
+      "SimplePublicObject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "firstname": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lastname": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "email",
+              "firstname",
+              "lastname"
+            ],
+            "additionalProperties": false
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "archived": {
+            "type": "boolean",
+            "const": false
+          }
+        },
+        "required": [
+          "id",
+          "properties",
+          "createdAt",
+          "updatedAt",
+          "archived"
+        ],
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "error"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "status",
+          "category",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-atlas-connection": {
+    "provider": "HubSpot",
+    "mode": "contract-faithful-rehearsal",
+    "liveConnectivity": false,
+    "label": "Contract-faithful local rehearsal fallback",
+    "upstreamRepository": "https://github.com/HubSpot/HubSpot-public-api-spec-collection",
+    "upstreamRevision": "ab9ffa9c6f456fd8fce017f3d36fe619cbe88315",
+    "upstreamPath": "PublicApiSpecs/CRM/Contacts/Rollouts/424/v3/contacts.json",
+    "officialSandboxUrl": "https://api.hubapi.com",
+    "officialSandboxActivation": "HUBSPOT_DEMO_MODE=official-test"
+  }
+}

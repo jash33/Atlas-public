@@ -1,0 +1,90 @@
+name: atlas-customer
+
+x-backend: &backend
+  image: ${ATLAS_BACKEND_IMAGE:-atlas-customer-backend:local}
+  build:
+    context: ../..
+    dockerfile: infra/customer/Dockerfile
+    target: backend
+  env_file: ${ATLAS_CUSTOMER_ENV_FILE:-.env}
+  environment:
+    NODE_ENV: production
+    ATLAS_AUTH_MODE: customer
+    ATLAS_BACKEND_PORT: 4000
+    DATABASE_URL: postgresql://atlas:${ATLAS_DATABASE_PASSWORD:?Set ATLAS_DATABASE_PASSWORD to a generated hex password}@postgres:5432/atlas
+    ATLAS_PUBLIC_ORIGIN: ${ATLAS_PUBLIC_ORIGIN:?Set the public HTTPS origin}
+  volumes:
+    - ./.local/secrets:/run/secrets:ro
+  networks: [web, data]
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:17.6-bookworm
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_DB: atlas
+      POSTGRES_PASSWORD: ${ATLAS_DATABASE_PASSWORD:?Set ATLAS_DATABASE_PASSWORD to a generated hex password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U atlas -d atlas']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  init:
+    <<: *backend
+    profiles: [setup]
+    command: [node, apps/backend/dist/customer-install.js]
+    restart: 'no'
+
+  backend:
+    <<: *backend
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+
+  console:
+    image: ${ATLAS_CONSOLE_IMAGE:-atlas-customer-console:local}
+    build:
+      context: ../..
+      dockerfile: infra/customer/Dockerfile
+      target: console
+    environment:
+      ATLAS_PUBLIC_ORIGIN: ${ATLAS_PUBLIC_ORIGIN:?Set the public HTTPS origin}
+    networks: [web]
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  web:
+  data:
+    internal: true

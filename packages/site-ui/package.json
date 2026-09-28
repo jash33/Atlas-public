@@ -1,0 +1,9 @@
+{
+  "name": "@atlas/site-ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./styles.css": "./styles.css",
+    "./AtlasMark.astro": "./AtlasMark.astro"
+  }
+}

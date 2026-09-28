@@ -1,0 +1,591 @@
+﻿{
+    "runId":  "atlas:run:atlas.workflow-run-id:ae7e889789c62b68d05385a3b6f79e323b6009db61687650304aca6447b0e774",
+    "temporalWorkflowId":  "atlas:run:atlas.workflow-run-id:ae7e889789c62b68d05385a3b6f79e323b6009db61687650304aca6447b0e774",
+    "workflowVersionId":  "workflow-20260907-222502-659",
+    "artifactId":  "4af86597f6129f861269a4723e30de3081f7e8812fd0d28e1d276c1779d10f06",
+    "trigger":  {
+                    "type":  "api",
+                    "deliveryId":  "82f4ed27-053f-43b5-9d50-6cd97e807a6d:0:0"
+                },
+    "intakeReference":  "redacted-intake-reference",
+    "state":  "completed",
+    "disposition":  "active",
+    "startedAt":  "2026-09-07T22:28:47.418Z",
+    "updatedAt":  "2026-09-07T22:28:48.742Z",
+    "lifecycle":  {
+                      "workflowName":  "demo",
+                      "startedAt":  "2026-09-07T22:28:47.413Z",
+                      "endedAt":  "2026-09-07T22:28:48.744Z",
+                      "durationMs":  1331,
+                      "retryCount":  0,
+                      "outcome":  "succeeded",
+                      "inProgress":  false
+                  },
+    "failure":  null,
+    "steps":  [
+                  {
+                      "stepId":  "create_fulfillment",
+                      "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+                      "irreversible":  true,
+                      "idempotency":  {
+                                          "protected":  true,
+                                          "businessKeySource":  "input",
+                                          "evidence":  "The worker reuses one stable derived key for every attempt."
+                                      },
+                      "retry":  null,
+                      "attempts":  [
+                                       {
+                                           "attempt":  1,
+                                           "durationMs":  32,
+                                           "status":  "succeeded",
+                                           "redactedInput":  {
+                                                                 "type":  "[REDACTED]",
+                                                                 "location_id":  "[REDACTED]",
+                                                                 "idempotencyKey":  "[REDACTED]"
+                                                             },
+                                           "redactedOutput":  {
+                                                                  "id":  "[REDACTED]",
+                                                                  "type":  "[REDACTED]",
+                                                                  "status":  "[REDACTED]",
+                                                                  "check_id":  "[REDACTED]",
+                                                                  "guest_id":  "[REDACTED]",
+                                                                  "table_id":  "[REDACTED]",
+                                                                  "pickup_at":  "[REDACTED]",
+                                                                  "address_id":  "[REDACTED]",
+                                                                  "created_at":  "[REDACTED]",
+                                                                  "location_id":  "[REDACTED]",
+                                                                  "handoff_code":  "[REDACTED]",
+                                                                  "delivery_fee_cents":  "[REDACTED]"
+                                                              },
+                                           "recordedAt":  "2026-09-07T22:28:47.784Z"
+                                       }
+                                   ]
+                  },
+                  {
+                      "stepId":  "create_check",
+                      "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                      "irreversible":  true,
+                      "idempotency":  {
+                                          "protected":  true,
+                                          "businessKeySource":  "stepOutput",
+                                          "evidence":  "The worker reuses one stable derived key for every attempt."
+                                      },
+                      "retry":  null,
+                      "attempts":  [
+                                       {
+                                           "attempt":  1,
+                                           "durationMs":  18,
+                                           "status":  "succeeded",
+                                           "redactedInput":  {
+                                                                 "server_id":  "[REDACTED]",
+                                                                 "fulfillment_id":  "[REDACTED]",
+                                                                 "idempotencyKey":  "[REDACTED]"
+                                                             },
+                                           "redactedOutput":  {
+                                                                  "id":  "[REDACTED]",
+                                                                  "items":  [
+
+                                                                            ],
+                                                                  "status":  "[REDACTED]",
+                                                                  "totals":  {
+                                                                                 "due_cents":  "[REDACTED]",
+                                                                                 "tax_cents":  "[REDACTED]",
+                                                                                 "discount_cents":  "[REDACTED]",
+                                                                                 "subtotal_cents":  "[REDACTED]",
+                                                                                 "delivery_fee_cents":  "[REDACTED]",
+                                                                                 "reward_discount_cents":  "[REDACTED]"
+                                                                             },
+                                                                  "version":  "[REDACTED]",
+                                                                  "guest_id":  "[REDACTED]",
+                                                                  "table_id":  "[REDACTED]",
+                                                                  "opened_at":  "[REDACTED]",
+                                                                  "server_id":  "[REDACTED]",
+                                                                  "invoice_id":  "[REDACTED]",
+                                                                  "receipt_id":  "[REDACTED]",
+                                                                  "location_id":  "[REDACTED]",
+                                                                  "payment_ids":  [
+
+                                                                                  ],
+                                                                  "discount_ids":  [
+
+                                                                                   ],
+                                                                  "redemption_id":  "[REDACTED]",
+                                                                  "fulfillment_id":  "[REDACTED]",
+                                                                  "reward_discount_cents":  "[REDACTED]"
+                                                              },
+                                           "recordedAt":  "2026-09-07T22:28:48.076Z"
+                                       }
+                                   ]
+                  },
+                  {
+                      "stepId":  "add_item",
+                      "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                      "irreversible":  true,
+                      "idempotency":  {
+                                          "protected":  true,
+                                          "businessKeySource":  "stepOutput",
+                                          "evidence":  "The worker reuses one stable derived key for every attempt."
+                                      },
+                      "retry":  null,
+                      "attempts":  [
+                                       {
+                                           "attempt":  1,
+                                           "durationMs":  35,
+                                           "status":  "succeeded",
+                                           "redactedInput":  {
+                                                                 "item_id":  "[REDACTED]",
+                                                                 "check_id":  "[REDACTED]",
+                                                                 "idempotencyKey":  "[REDACTED]"
+                                                             },
+                                           "redactedOutput":  {
+                                                                  "line":  {
+                                                                               "id":  "[REDACTED]",
+                                                                               "name":  "[REDACTED]",
+                                                                               "sent":  "[REDACTED]",
+                                                                               "notes":  "[REDACTED]",
+                                                                               "price":  "[REDACTED]",
+                                                                               "item_id":  "[REDACTED]",
+                                                                               "quantity":  "[REDACTED]",
+                                                                               "warnings":  [
+
+                                                                                            ],
+                                                                               "selections":  [
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "qty":  "[REDACTED]",
+                                                                                                      "name":  "[REDACTED]",
+                                                                                                      "group_id":  "[REDACTED]",
+                                                                                                      "option_id":  "[REDACTED]",
+                                                                                                      "price_delta_cents":  "[REDACTED]"
+                                                                                                  }
+                                                                                              ],
+                                                                               "modifier_ids":  [
+                                                                                                    "[REDACTED]",
+                                                                                                    "[REDACTED]",
+                                                                                                    "[REDACTED]",
+                                                                                                    "[REDACTED]",
+                                                                                                    "[REDACTED]",
+                                                                                                    "[REDACTED]"
+                                                                                                ],
+                                                                               "removed_defaults":  [
+
+                                                                                                    ]
+                                                                           },
+                                                                  "check":  {
+                                                                                "id":  "[REDACTED]",
+                                                                                "items":  [
+                                                                                              {
+                                                                                                  "id":  "[REDACTED]",
+                                                                                                  "name":  "[REDACTED]",
+                                                                                                  "sent":  "[REDACTED]",
+                                                                                                  "notes":  "[REDACTED]",
+                                                                                                  "price":  "[REDACTED]",
+                                                                                                  "item_id":  "[REDACTED]",
+                                                                                                  "quantity":  "[REDACTED]",
+                                                                                                  "warnings":  [
+
+                                                                                                               ],
+                                                                                                  "selections":  [
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                  "modifier_ids":  [
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]"
+                                                                                                                   ],
+                                                                                                  "removed_defaults":  [
+
+                                                                                                                       ]
+                                                                                              }
+                                                                                          ],
+                                                                                "status":  "[REDACTED]",
+                                                                                "totals":  {
+                                                                                               "due_cents":  "[REDACTED]",
+                                                                                               "tax_cents":  "[REDACTED]",
+                                                                                               "discount_cents":  "[REDACTED]",
+                                                                                               "subtotal_cents":  "[REDACTED]",
+                                                                                               "delivery_fee_cents":  "[REDACTED]",
+                                                                                               "reward_discount_cents":  "[REDACTED]"
+                                                                                           },
+                                                                                "version":  "[REDACTED]",
+                                                                                "guest_id":  "[REDACTED]",
+                                                                                "table_id":  "[REDACTED]",
+                                                                                "opened_at":  "[REDACTED]",
+                                                                                "server_id":  "[REDACTED]",
+                                                                                "invoice_id":  "[REDACTED]",
+                                                                                "receipt_id":  "[REDACTED]",
+                                                                                "location_id":  "[REDACTED]",
+                                                                                "payment_ids":  [
+
+                                                                                                ],
+                                                                                "discount_ids":  [
+
+                                                                                                 ],
+                                                                                "redemption_id":  "[REDACTED]",
+                                                                                "fulfillment_id":  "[REDACTED]",
+                                                                                "reward_discount_cents":  "[REDACTED]"
+                                                                            }
+                                                              },
+                                           "recordedAt":  "2026-09-07T22:28:48.416Z"
+                                       }
+                                   ]
+                  },
+                  {
+                      "stepId":  "send_order",
+                      "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                      "irreversible":  true,
+                      "idempotency":  {
+                                          "protected":  true,
+                                          "businessKeySource":  "stepOutput",
+                                          "evidence":  "The worker reuses one stable derived key for every attempt."
+                                      },
+                      "retry":  null,
+                      "attempts":  [
+                                       {
+                                           "attempt":  1,
+                                           "durationMs":  16,
+                                           "status":  "succeeded",
+                                           "redactedInput":  {
+                                                                 "check_id":  "[REDACTED]",
+                                                                 "idempotencyKey":  "[REDACTED]"
+                                                             },
+                                           "redactedOutput":  {
+                                                                  "check":  {
+                                                                                "id":  "[REDACTED]",
+                                                                                "items":  [
+                                                                                              {
+                                                                                                  "id":  "[REDACTED]",
+                                                                                                  "name":  "[REDACTED]",
+                                                                                                  "sent":  "[REDACTED]",
+                                                                                                  "notes":  "[REDACTED]",
+                                                                                                  "price":  "[REDACTED]",
+                                                                                                  "item_id":  "[REDACTED]",
+                                                                                                  "quantity":  "[REDACTED]",
+                                                                                                  "warnings":  [
+
+                                                                                                               ],
+                                                                                                  "selections":  [
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "qty":  "[REDACTED]",
+                                                                                                                         "name":  "[REDACTED]",
+                                                                                                                         "group_id":  "[REDACTED]",
+                                                                                                                         "option_id":  "[REDACTED]",
+                                                                                                                         "price_delta_cents":  "[REDACTED]"
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                  "modifier_ids":  [
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]",
+                                                                                                                       "[REDACTED]"
+                                                                                                                   ],
+                                                                                                  "removed_defaults":  [
+
+                                                                                                                       ]
+                                                                                              }
+                                                                                          ],
+                                                                                "status":  "[REDACTED]",
+                                                                                "totals":  {
+                                                                                               "due_cents":  "[REDACTED]",
+                                                                                               "tax_cents":  "[REDACTED]",
+                                                                                               "discount_cents":  "[REDACTED]",
+                                                                                               "subtotal_cents":  "[REDACTED]",
+                                                                                               "delivery_fee_cents":  "[REDACTED]",
+                                                                                               "reward_discount_cents":  "[REDACTED]"
+                                                                                           },
+                                                                                "version":  "[REDACTED]",
+                                                                                "guest_id":  "[REDACTED]",
+                                                                                "table_id":  "[REDACTED]",
+                                                                                "opened_at":  "[REDACTED]",
+                                                                                "server_id":  "[REDACTED]",
+                                                                                "invoice_id":  "[REDACTED]",
+                                                                                "receipt_id":  "[REDACTED]",
+                                                                                "location_id":  "[REDACTED]",
+                                                                                "payment_ids":  [
+
+                                                                                                ],
+                                                                                "discount_ids":  [
+
+                                                                                                 ],
+                                                                                "redemption_id":  "[REDACTED]",
+                                                                                "fulfillment_id":  "[REDACTED]",
+                                                                                "reward_discount_cents":  "[REDACTED]"
+                                                                            },
+                                                                  "ticket":  {
+                                                                                 "id":  "[REDACTED]",
+                                                                                 "status":  "[REDACTED]",
+                                                                                 "check_id":  "[REDACTED]",
+                                                                                 "item_ids":  [
+                                                                                                  "[REDACTED]"
+                                                                                              ]
+                                                                             }
+                                                              },
+                                           "recordedAt":  "2026-09-07T22:28:48.715Z"
+                                       }
+                                   ]
+                  }
+              ],
+    "saga":  [
+
+             ],
+    "controls":  {
+                     "retryStep":  {
+                                       "enabled":  false,
+                                       "stepId":  null,
+                                       "repairedCapabilityVersionId":  null,
+                                       "safetyBasis":  "unsafe-operation",
+                                       "priorStepsNotRerun":  [
+
+                                                              ],
+                                       "committedIrreversibleEffects":  [
+                                                                            "create_fulfillment",
+                                                                            "create_check",
+                                                                            "add_item",
+                                                                            "send_order"
+                                                                        ]
+                                   },
+                     "resumeRun":  {
+                                       "enabled":  false,
+                                       "priorStepsNotRerun":  [
+
+                                                              ],
+                                       "committedIrreversibleEffects":  [
+                                                                            "create_fulfillment",
+                                                                            "create_check",
+                                                                            "add_item",
+                                                                            "send_order"
+                                                                        ]
+                                   },
+                     "abandonRun":  {
+                                        "enabled":  false,
+                                        "priorStepsNotRerun":  [
+
+                                                               ],
+                                        "committedIrreversibleEffects":  [
+                                                                             "create_fulfillment",
+                                                                             "create_check",
+                                                                             "add_item",
+                                                                             "send_order"
+                                                                         ]
+                                    }
+                 },
+    "repairHistory":  [
+
+                      ],
+    "traceHistory":  [
+                         {
+                             "type":  "workflow.started",
+                             "recordedAt":  "2026-09-07T22:28:47.418Z",
+                             "workflowVersionId":  "workflow-20260907-222502-659",
+                             "artifactId":  "4af86597f6129f861269a4723e30de3081f7e8812fd0d28e1d276c1779d10f06"
+                         },
+                         {
+                             "type":  "step.attempt",
+                             "recordedAt":  "2026-09-07T22:28:47.784Z",
+                             "stepId":  "create_fulfillment",
+                             "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+                             "attempt":  1,
+                             "status":  "succeeded",
+                             "durationMs":  32
+                         },
+                         {
+                             "type":  "step.attempt",
+                             "recordedAt":  "2026-09-07T22:28:48.076Z",
+                             "stepId":  "create_check",
+                             "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                             "attempt":  1,
+                             "status":  "succeeded",
+                             "durationMs":  18
+                         },
+                         {
+                             "type":  "step.attempt",
+                             "recordedAt":  "2026-09-07T22:28:48.416Z",
+                             "stepId":  "add_item",
+                             "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                             "attempt":  1,
+                             "status":  "succeeded",
+                             "durationMs":  35
+                         },
+                         {
+                             "type":  "step.attempt",
+                             "recordedAt":  "2026-09-07T22:28:48.715Z",
+                             "stepId":  "send_order",
+                             "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                             "attempt":  1,
+                             "status":  "succeeded",
+                             "durationMs":  16
+                         },
+                         {
+                             "type":  "workflow.finished",
+                             "recordedAt":  "2026-09-07T22:28:48.742Z",
+                             "state":  "completed"
+                         }
+                     ],
+    "effects":  [
+                    {
+                        "stepId":  "create_fulfillment",
+                        "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+                        "status":  "confirmed",
+                        "evidence":  "Customer worker reported the declared side effect succeeded."
+                    },
+                    {
+                        "stepId":  "create_check",
+                        "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                        "status":  "confirmed",
+                        "evidence":  "Customer worker reported the declared side effect succeeded."
+                    },
+                    {
+                        "stepId":  "add_item",
+                        "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                        "status":  "confirmed",
+                        "evidence":  "Customer worker reported the declared side effect succeeded."
+                    },
+                    {
+                        "stepId":  "send_order",
+                        "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                        "status":  "confirmed",
+                        "evidence":  "Customer worker reported the declared side effect succeeded."
+                    }
+                ],
+    "privacy":  {
+                    "payloadsRedactedAt":  "customer-worker",
+                    "plaintextStoredByAtlas":  false
+                },
+    "idempotencyEvidence":  {
+                                "duplicateSubmissions":  0,
+                                "durableRunIdentities":  1,
+                                "effectExecutions":  [
+                                                         {
+                                                             "stepId":  "create_fulfillment",
+                                                             "successfulAttempts":  1
+                                                         },
+                                                         {
+                                                             "stepId":  "create_check",
+                                                             "successfulAttempts":  1
+                                                         },
+                                                         {
+                                                             "stepId":  "add_item",
+                                                             "successfulAttempts":  1
+                                                         },
+                                                         {
+                                                             "stepId":  "send_order",
+                                                             "successfulAttempts":  1
+                                                         }
+                                                     ]
+                            }
+}

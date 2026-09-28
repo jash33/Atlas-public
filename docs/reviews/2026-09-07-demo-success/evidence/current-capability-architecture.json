@@ -1,0 +1,1341 @@
+{
+  "status": "ready",
+  "title": "Burgertown workflows",
+  "sourceUrl": "http://host.docker.internal:43123/arazzo.yaml",
+  "notices": [
+    "These connections come from the provider Arazzo recipes. They are not Atlas blast radius."
+  ],
+  "workflows": [
+    {
+      "workflowId": "payAtTable",
+      "summary": "A. Pay at table",
+      "description": "Seeded tbl_4 / chk_ok. Read the due, tender card, capture, invoice.\nTable frees; optional tip and rewards earn."
+    },
+    {
+      "workflowId": "refundThenVoid",
+      "summary": "B. Refund then void",
+      "description": "Fixture chk_paid / pay_paid / ch_paid. Accept a refund, reverse the\nprocessor charge, then void. Void without a reversed refund is 409\nvoid_not_allowed. API only — no restaurant screen."
+    },
+    {
+      "workflowId": "orderThenKitchen",
+      "summary": "C. Order then kitchen",
+      "description": "Read the dinner board, open a dine-in check on an empty table, add a\nTownie with selections[], send, bump the ticket. Last ticket done\nmarks the fulfillment ready. itm_86 on add is 409. Send with nothing\nunsent is 409 nothing_to_send."
+    },
+    {
+      "workflowId": "localDiscountThenPay",
+      "summary": "D. Local discount then pay",
+      "description": "Apply LOCAL10 to chk_ok, re-read due_cents, pay the new due.\nPaying the pre-discount 1736 after the code is 422 amount_mismatch."
+    },
+    {
+      "workflowId": "deliveryEndToEnd",
+      "summary": "E. Delivery end to end",
+      "description": "Nine hops with three branch points — zone check, courier availability,\nready-gate on pickup. Creates a new delivery fulfillment; does not\nreuse dlv_pending."
+    },
+    {
+      "workflowId": "buildABurger",
+      "summary": "F. Build a burger",
+      "description": "Same write endpoint as C. Each step below expects a distinct 4xx from\naddItem, then the last step is the valid Townie. Five options in\nmodg_add is in HANDOFF but the live group only has three options, so\nthat row is not a step."
+    },
+    {
+      "workflowId": "rewardsRedeemThenPay",
+      "summary": "G. Rewards redemption then pay",
+      "description": "The stale-due trap. Redeem off_free_fries on chk_ok, re-fetch the\ncheck, pay the new due. Skipping the re-fetch and paying 1736 is\n422 amount_mismatch. Passing a stale check_version is 409\ncheck_version_stale."
+    },
+    {
+      "workflowId": "deliveryFailedThenRefund",
+      "summary": "H. Delivery failed then refund",
+      "description": "Fixture dlv_enroute. Fail the job; fulfillment stays ready.\nThe seeded check chk_enroute is unpaid, so the live path is cancel\nfulfillment — inventory is not restocked. HANDOFF also describes a\npaid recovery (refund → processor refund → void). That branch needs\na paid enroute fixture the seed does not have, so it is not a step."
+    },
+    {
+      "workflowId": "guestDietaryFilter",
+      "summary": "I. Guest dietary filter",
+      "description": "Read-only filter plus one add that warns. Maya avoids alg_dairy and\nis not strict, so a shake still 201s with warnings[]. 409\nallergen_conflict only fires when dietary_profile.strict is true.\nNo guest on the seed is strict, so that 409 is not a step."
+    }
+  ],
+  "nodes": [
+    {
+      "operationId": "acceptDispatch",
+      "capabilityIdentityId": "51",
+      "capabilityVersionId": "ce77d0c6cd388fe2f9d5b98ad58eb129e79189c17126a18f130250f011f75363",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "addCourierTip",
+      "capabilityIdentityId": "64",
+      "capabilityVersionId": "5a3c140b7cd346017e7597e451573a59161df210abf0ba98e076a21fd8719eed",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "addItem",
+      "capabilityIdentityId": "37",
+      "capabilityVersionId": "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "addTip",
+      "capabilityIdentityId": "63",
+      "capabilityVersionId": "b9e1cf327a46156b0d97035535d4c63edfedb6e6ec7dd279fe6ac567f2c821d1",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "applyDiscount",
+      "capabilityIdentityId": "19",
+      "capabilityVersionId": "eeba16d2e31afbb4f12a674813f824a1e1f905acc7d5df036c2b70945a74b132",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "cancelFulfillment",
+      "capabilityIdentityId": "33",
+      "capabilityVersionId": "8f3b57fd2249c44bab1750bd9c9f1eee10f597b3e479b0ab115d5944a2830af7",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "checkZone",
+      "capabilityIdentityId": "6",
+      "capabilityVersionId": "a515f48576315d78672c6caafa9f56ef20fdf144ff1233c8d6103c99ad3ffc77",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "completeTicket",
+      "capabilityIdentityId": "40",
+      "capabilityVersionId": "042e2c3fa4cc949a94de97ff32f1a03eb6a4181bee9046592ce50277d340e1df",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createCharge",
+      "capabilityIdentityId": "57",
+      "capabilityVersionId": "7f355e4e89049b2737acfb24eefbdad2ce2a58b0a32c37d0b8396df619b01c90",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createCheck",
+      "capabilityIdentityId": "35",
+      "capabilityVersionId": "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createDelivery",
+      "capabilityIdentityId": "44",
+      "capabilityVersionId": "04cd1b80a364e297788e46292be497c9d2dd39068453241366e5f9477da4a446",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createFulfillment",
+      "capabilityIdentityId": "29",
+      "capabilityVersionId": "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createInvoice",
+      "capabilityIdentityId": "59",
+      "capabilityVersionId": "db38f2810c99fe60f1c922c43ceafc44ae18760e87e1ce795c9d83f47b785468",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createPayment",
+      "capabilityIdentityId": "55",
+      "capabilityVersionId": "a71beaec0f86d829582bda27ae4d949eab5a05fa0981bc9e3c019bc567d7af90",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createProcessorRefund",
+      "capabilityIdentityId": "58",
+      "capabilityVersionId": "37a527bc14a30b61fde53e3938758e72b79dc20b8eb90a9fd790706e98db738d",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createRedemption",
+      "capabilityIdentityId": "75",
+      "capabilityVersionId": "b0565579484bf0072d309731d61e84f972e8edcfd791e315d78f681052526ef5",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "createRefund",
+      "capabilityIdentityId": "65",
+      "capabilityVersionId": "fa66b61905d26a78bdc7cc83dc86d93703bb1ca0d101ba0138ba00b86aff1443",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "deliverDelivery",
+      "capabilityIdentityId": "47",
+      "capabilityVersionId": "ab5701ca5f126235b71cfe289636c74b0d2fefe2d83c4a59e11b330c124c36c2",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "dispatchDelivery",
+      "capabilityIdentityId": "50",
+      "capabilityVersionId": "69c57f352315ad73b27bff1a88e8817fe07f3f00e59fcee0203c7876201a7e73",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "earnRewards",
+      "capabilityIdentityId": "72",
+      "capabilityVersionId": "654b027e8ad376e98fd05179b496c107fc1c949a5f0b6bf59ee2ed1bbbd15ade",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "failDelivery",
+      "capabilityIdentityId": "48",
+      "capabilityVersionId": "a64b70fce5dd7459c455b4eae2ee3d1a5d70681108a67f2cb7770db0e7ba3c70",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getCheck",
+      "capabilityIdentityId": "36",
+      "capabilityVersionId": "8159add8cef3b3c5028a6e5aea767971b22756c481a4735f1df33e970b470b31",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getFulfillment",
+      "capabilityIdentityId": "31",
+      "capabilityVersionId": "d00c31831f02cbbeb710cc297d372e5d38e8d5dfbb76acdfdccc222ba6d0e613",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getGuest",
+      "capabilityIdentityId": "24",
+      "capabilityVersionId": "82f6ace01fe03b2d5b219c519aa33a9b48abbe78a4534342a478578cf47ffb8c",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getMenu",
+      "capabilityIdentityId": "8",
+      "capabilityVersionId": "7d1d62f673f9b36f38472f010b65589896bf2d72236140656a3d8c4353387055",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getReceiptByCheck",
+      "capabilityIdentityId": "62",
+      "capabilityVersionId": "48864c7886a4250f2d79fa3dcb5a598703bd9c0c1de6ec171ea92135a976776d",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getRewards",
+      "capabilityIdentityId": "70",
+      "capabilityVersionId": "f958932978296cd1806db5d8ddf836d64eb848a1b218c33016e8c58af3c968b9",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "getTable",
+      "capabilityIdentityId": "4",
+      "capabilityVersionId": "8be27db101f63b781466e8610c86aa28d37630560bc25cdeaf86e0881834ec51",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listAllergens",
+      "capabilityIdentityId": "15",
+      "capabilityVersionId": "fef84148b30dc1d23d3086625a390e523ac0bb77177702a7686ddcc889721d33",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listInventory",
+      "capabilityIdentityId": "20",
+      "capabilityVersionId": "4ba0bac205f5f9938f1801c8c9d787b5dc64a36e85cd9e82fbd03ef9fa1b9e4d",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listItems",
+      "capabilityIdentityId": "9",
+      "capabilityVersionId": "a505d9d6bdde1ef0555edb0e7a31161d8e4d52d9a3437314b7dfcd3bf17ead3c",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listModifierGroups",
+      "capabilityIdentityId": "12",
+      "capabilityVersionId": "62721b5e7896d4428cee552494bdc3f6a18118b5584e0b0f63774a19a25339cf",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listOffers",
+      "capabilityIdentityId": "73",
+      "capabilityVersionId": "065f66a81740e9d6e20eeaf5c65516b58299b19de1e8d3fbe85a4bc539d34b18",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "listTickets",
+      "capabilityIdentityId": "39",
+      "capabilityVersionId": "e973a55a730f0ce13d302c4e3c3a1f634ed586f43d966e0fe502047001bd4080",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "pickupDelivery",
+      "capabilityIdentityId": "46",
+      "capabilityVersionId": "e1344683b5766815db620a07a956d2991cdb9d0c18464b100faac0d3eefa356f",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "pingTracking",
+      "capabilityIdentityId": "53",
+      "capabilityVersionId": "ea332c42e0b32cdabdb7765ccb54cc873d8d224df3eb65991c106a85071db721",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "quoteDelivery",
+      "capabilityIdentityId": "43",
+      "capabilityVersionId": "bdc6e13f96b94b5a29c07ecf4336a540793cffc175b60996493561b07590519f",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "sendOrder",
+      "capabilityIdentityId": "38",
+      "capabilityVersionId": "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+      "serviceId": "burger-town"
+    },
+    {
+      "operationId": "voidCheck",
+      "capabilityIdentityId": "67",
+      "capabilityVersionId": "0c5fecfb9d6a76a28f6a1cb634b5f8201c5b89d6283a52ddf1d9723b996a8445",
+      "serviceId": "burger-town"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "arazzo-0767401891646b04ffdca5be22af8c449e5c899e9e9ed79b4c4e9c6fef52ad48",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getTable",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "getTable",
+      "targetStepId": "getCheck"
+    },
+    {
+      "id": "arazzo-b845185f8ebd5d54f382c6fdd30ed252a10f6b4b6e919a9ca47f86829a3e042d",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment"
+    },
+    {
+      "id": "arazzo-76e03eba396e9a520aa3a325082474613a08e5b4ca309c012c6cceb65113c9f2",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge"
+    },
+    {
+      "id": "arazzo-675e2a6b246498fc47e88a2bbde0aa47273eb469d3deb437fe9d5e7d6af15ed2",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createCharge",
+      "targetStepId": "createInvoice"
+    },
+    {
+      "id": "arazzo-187a90d9c051cdcb0de76eb0fae16d3ad123ff0dad5f0d48bc1a24059b9a5a73",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "getReceiptByCheck",
+      "sourceStepId": "createInvoice",
+      "targetStepId": "getReceipt"
+    },
+    {
+      "id": "arazzo-d37fb2c0a8c96f6ba9181a2f0a44007f7c004d9bbf48c61f300bf3f3e5442d52",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getReceiptByCheck",
+      "targetOperationId": "addTip",
+      "sourceStepId": "getReceipt",
+      "targetStepId": "addTip"
+    },
+    {
+      "id": "arazzo-df289e269a53fde3b3cde2876a79041e74c67c8e3e58482f95d66e8a340bd16f",
+      "kind": "execution-order",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "addTip",
+      "targetOperationId": "earnRewards",
+      "sourceStepId": "addTip",
+      "targetStepId": "earnRewards"
+    },
+    {
+      "id": "arazzo-2e21acaf5cf0f0216b96715b3eb34557e9f9574f9b89f402c8ab2f0d82525fb0",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getTable",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "getTable",
+      "targetStepId": "getCheck",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-56f47251a547007a3457e0a141ab88f751d00647f19e80e6f54309bffede2274",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-963574f8a62e94be55466199870d5ac23b7ea66cc7d1cf09bb627ba060a1e55e",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "id": "arazzo-0347fe54f1cceae600e691074bcb27d900e5ed74e7d85440ac7a789eff082491",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-4e8bab7010b13ce9d57c29c5109fbea47926e6b8098f86e9d29441ec68d119ca",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-6e3eb5f02655a49b619bbe34edf586cfe94b26e6c0fc9324f1df89efaca7fdaa",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "getReceiptByCheck",
+      "sourceStepId": "getCheck",
+      "targetStepId": "getReceipt",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-8d453b1ab36c313b20906e3ef5e41db720900c5cca95eacd9b92f7ad23b00375",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "addTip",
+      "sourceStepId": "createPayment",
+      "targetStepId": "addTip",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-a8ba9bc690f506df7b64e31ac936d002545b6db06bcb5bea93bdc8ab8cd7768c",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "earnRewards",
+      "sourceStepId": "getCheck",
+      "targetStepId": "earnRewards",
+      "destinationField": "guest_id"
+    },
+    {
+      "id": "arazzo-20e07ac9ab02dda96917f3cf5b143be03e4bd866ab2d0f15418f2c5cb1140e99",
+      "kind": "data-flow",
+      "workflowId": "payAtTable",
+      "workflowName": "A. Pay at table",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "earnRewards",
+      "sourceStepId": "createPayment",
+      "targetStepId": "earnRewards",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-7febdae72343524eae2354e3c11e91794db58828fdd73cbf523bb054fea25db5",
+      "kind": "execution-order",
+      "workflowId": "refundThenVoid",
+      "workflowName": "B. Refund then void",
+      "sourceOperationId": "createRefund",
+      "targetOperationId": "createProcessorRefund",
+      "sourceStepId": "createRefund",
+      "targetStepId": "createProcessorRefund"
+    },
+    {
+      "id": "arazzo-e0ef259af689c6193149c6145e48b3f87c474a9e20e9c14ceee2fe59ebe0ae76",
+      "kind": "execution-order",
+      "workflowId": "refundThenVoid",
+      "workflowName": "B. Refund then void",
+      "sourceOperationId": "createProcessorRefund",
+      "targetOperationId": "voidCheck",
+      "sourceStepId": "createProcessorRefund",
+      "targetStepId": "voidCheck"
+    },
+    {
+      "id": "arazzo-914bb838114c86109df2020d357742658d4f578d2822edcbb7d1a74b2bcec52a",
+      "kind": "data-flow",
+      "workflowId": "refundThenVoid",
+      "workflowName": "B. Refund then void",
+      "sourceOperationId": "createRefund",
+      "targetOperationId": "createProcessorRefund",
+      "sourceStepId": "createRefund",
+      "targetStepId": "createProcessorRefund",
+      "destinationField": "refund_id"
+    },
+    {
+      "id": "arazzo-05afb656ced268fdd6ae88afca8822e5b4119a904514689bc233a2c24f1fe22d",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "getMenu",
+      "targetOperationId": "listItems",
+      "sourceStepId": "getMenu",
+      "targetStepId": "listItems"
+    },
+    {
+      "id": "arazzo-5b773c57a0687c56d1790a490c579c3f0282d05ffe7c175ddb1fc3ddd64d77af",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "listItems",
+      "targetOperationId": "listInventory",
+      "sourceStepId": "listItems",
+      "targetStepId": "listInventory"
+    },
+    {
+      "id": "arazzo-70da559b9b6b5b342155f86fe59b66f2ffcafc81c3033f685fac434741643b54",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "listInventory",
+      "targetOperationId": "listModifierGroups",
+      "sourceStepId": "listInventory",
+      "targetStepId": "listModifierGroups"
+    },
+    {
+      "id": "arazzo-0b37f55dd5ba0ca202b789bd471b787c8334c8552afb68ff628bd7a41371dd5a",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "listModifierGroups",
+      "targetOperationId": "createCheck",
+      "sourceStepId": "listModifierGroups",
+      "targetStepId": "createCheck"
+    },
+    {
+      "id": "arazzo-12f3b28de9c5aba28593c5e8ad86272adcb1bc732e5bc24e411e87ce52bf0ed3",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "addItem"
+    },
+    {
+      "id": "arazzo-bf2c0d91cd0b8ed9e4f1bfa0f5e33a62d32ab85a635972586ba9d4da90448fee",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "addItem",
+      "targetOperationId": "sendOrder",
+      "sourceStepId": "addItem",
+      "targetStepId": "sendOrder"
+    },
+    {
+      "id": "arazzo-84bc6ce3fd5c6ba922bfbe2043f507e5edd295e4ee5f707c05abd2dcab62a010",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "listTickets",
+      "sourceStepId": "sendOrder",
+      "targetStepId": "listTickets"
+    },
+    {
+      "id": "arazzo-ccaf07c265d532e86cb270ef604e7ea523f5e9894adae1367a4ead1628c44957",
+      "kind": "execution-order",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "listTickets",
+      "targetOperationId": "completeTicket",
+      "sourceStepId": "listTickets",
+      "targetStepId": "fireTicket"
+    },
+    {
+      "id": "arazzo-d94de471af3cc3ad3384cfed1bb9b5c64229fc5615de02045457e0a71328fbbf",
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-014da48d6fb62522201141f646486548801eace779f26454f40040a6ce223773",
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "sendOrder",
+      "sourceStepId": "createCheck",
+      "targetStepId": "sendOrder",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-4187ece234275b879bde213fb55a382fd181e4404ef4c817c0de8b55d9901764",
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "sourceStepId": "sendOrder",
+      "targetStepId": "fireTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "id": "arazzo-ad8726b436a26db5f447e618143ef53f718efa1ed7d163f9f163f0b936db8e0e",
+      "kind": "data-flow",
+      "workflowId": "orderThenKitchen",
+      "workflowName": "C. Order then kitchen",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "sourceStepId": "sendOrder",
+      "targetStepId": "doneTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "id": "arazzo-45cc0a66cb6a4460a331566d23b66a08f943bdccee860e99a87a94c184f6f2d0",
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "applyDiscount",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "applyDiscount",
+      "targetStepId": "getCheck"
+    },
+    {
+      "id": "arazzo-cc22c3c2236aad10a626855b60767cf0cdad4cb741278f90de97cb9648f397b4",
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment"
+    },
+    {
+      "id": "arazzo-6e2684af860d5ecfd256a52f4d867f50ec752e153666110cab228b7aaa5b8da5",
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge"
+    },
+    {
+      "id": "arazzo-e9000f9eaa3c962b91d4a4c4cf26eb809cc5653791a8e6cddd0bdbac869b991a",
+      "kind": "execution-order",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createCharge",
+      "targetStepId": "createInvoice"
+    },
+    {
+      "id": "arazzo-2525276c3ab4f574d589cfb5ea23e4448cbe578f5b4f370457d7e6034cbc147e",
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "id": "arazzo-3b8bcd0de3ef85e2eadb2d3d96459658a63003235d87e3d420aa69110e084316",
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-8e3d64625457db89caa8db7f5d8958e5b03a246752e392c6c0ee95c19ab00329",
+      "kind": "data-flow",
+      "workflowId": "localDiscountThenPay",
+      "workflowName": "D. Local discount then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-855b7613a78becfcdd3d9d213a28787f9d2e2818254cd8df2e5bb44912ad9c4e",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "checkZone",
+      "targetOperationId": "quoteDelivery",
+      "sourceStepId": "checkZone",
+      "targetStepId": "quoteDelivery"
+    },
+    {
+      "id": "arazzo-6c1e101c39b72a0d5ec079137aec0d97ad46d30bc1412970696995c251798f9f",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "quoteDelivery",
+      "targetOperationId": "createFulfillment",
+      "sourceStepId": "quoteDelivery",
+      "targetStepId": "createFulfillment"
+    },
+    {
+      "id": "arazzo-a374ee97f38b01ff99dce1ee4e5585fd64afc62338b4d5d215c8614b79ee1fa6",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createCheck",
+      "sourceStepId": "createFulfillment",
+      "targetStepId": "createCheck"
+    },
+    {
+      "id": "arazzo-8ca87e53808139bba159a5f3d97e2c6737fe29967eaf2f4e38450b502dc8f21a",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "addItem"
+    },
+    {
+      "id": "arazzo-3045a51ffe6a8377d4cad3c0c0909cc75ed62e725da76e5ae90a87d28d1a894c",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "addItem",
+      "targetOperationId": "sendOrder",
+      "sourceStepId": "addItem",
+      "targetStepId": "sendOrder"
+    },
+    {
+      "id": "arazzo-ac8d3c799227f4a0268a295f4a34d83a5f5d23678615e2f2db6d1cf695b71287",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "createDelivery",
+      "sourceStepId": "sendOrder",
+      "targetStepId": "createDelivery"
+    },
+    {
+      "id": "arazzo-8ec8bfb37e726d85079f61cb4c2897b27c6c46a5ffa60e37612c89883648f984",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "dispatchDelivery",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "dispatchDelivery"
+    },
+    {
+      "id": "arazzo-f3975943994fac151086d08c09c01c8cc34064b28be9cd444feee19fa5cbfeea",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "dispatchDelivery",
+      "targetOperationId": "acceptDispatch",
+      "sourceStepId": "dispatchDelivery",
+      "targetStepId": "acceptDispatch"
+    },
+    {
+      "id": "arazzo-77a527c77fbd162fb7137da56ebd1aa3549fb506ce13b47cc4beb047f81e2995",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "acceptDispatch",
+      "targetOperationId": "completeTicket",
+      "sourceStepId": "acceptDispatch",
+      "targetStepId": "doneTicket"
+    },
+    {
+      "id": "arazzo-454ee9b812a9385cdd3cc98507ba7bb845a542cf67e487b60706b2843a6d99ba",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "completeTicket",
+      "targetOperationId": "pickupDelivery",
+      "sourceStepId": "doneTicket",
+      "targetStepId": "pickupDelivery"
+    },
+    {
+      "id": "arazzo-728d93f6b50834ce7b7afb4f3118415370f8b43cd6f84e98cc4a0b0608ae2033",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "pickupDelivery",
+      "targetOperationId": "pingTracking",
+      "sourceStepId": "pickupDelivery",
+      "targetStepId": "pingTracking"
+    },
+    {
+      "id": "arazzo-828fe77afbaba633284e457d7397d34ded04663055ab9dcd02eb18ce2830ed12",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "pingTracking",
+      "targetOperationId": "deliverDelivery",
+      "sourceStepId": "pingTracking",
+      "targetStepId": "deliverDelivery"
+    },
+    {
+      "id": "arazzo-ff09a38e0481fb53df45c372aa0761c290b59509b8b068a00d93379c7964bd57",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "deliverDelivery",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "deliverDelivery",
+      "targetStepId": "getCheck"
+    },
+    {
+      "id": "arazzo-d2f5030ecaa73c35c78188f330f582580c4d999b13f09be3902605bc5a79476f",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment"
+    },
+    {
+      "id": "arazzo-a70f1871ba943863a14e98653584ee4c3331a1dd1fca1691a669e3faa2c3fc83",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge"
+    },
+    {
+      "id": "arazzo-06b273b3cef947cec4b2a1804631e94b2087a6384a258211fab60e4dd719be95",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createCharge",
+      "targetStepId": "createInvoice"
+    },
+    {
+      "id": "arazzo-0222a8b13041de6319ed792ec9a0e4948e492238f410295658357284ca371594",
+      "kind": "execution-order",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "addCourierTip",
+      "sourceStepId": "createInvoice",
+      "targetStepId": "addCourierTip"
+    },
+    {
+      "id": "arazzo-30cab8a71e62a35521f79187f62374b828feab1acb9aabc00ee1f0ac078c412e",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createCheck",
+      "sourceStepId": "createFulfillment",
+      "targetStepId": "createCheck",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "id": "arazzo-d72f357913903df74317ccd99d9043b97c8a9c6ea3c94ab0692700f81b75fec4",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "addItem",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-c6e397ec57ee5578b55f9fdf69d468e68d82a06f486d9b99251f4b2b0f4ce8a9",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "sendOrder",
+      "sourceStepId": "createCheck",
+      "targetStepId": "sendOrder",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-b97e484efe4a6417b21afdc54788f22eddc262de40d0770274cd4f9500c7b21b",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createFulfillment",
+      "targetOperationId": "createDelivery",
+      "sourceStepId": "createFulfillment",
+      "targetStepId": "createDelivery",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "id": "arazzo-5aba3d204d1555897b9985a389a749b10296a12fa725e9976bea3d7d44563e4a",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "quoteDelivery",
+      "targetOperationId": "createDelivery",
+      "sourceStepId": "quoteDelivery",
+      "targetStepId": "createDelivery",
+      "destinationField": "quote_id"
+    },
+    {
+      "id": "arazzo-d1714765c13e1db1cadbd16de66cc98c493f97f2b5a11c7f99294942564bffe2",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "dispatchDelivery",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "dispatchDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-d78b902abf957f2acc9a41bdc97db562651cd275829099e5a2f545b11a1daff0",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "acceptDispatch",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "acceptDispatch",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-e17474c5beac241b79dc04c0caa95ade2180e2d9f30fa654ad06675ea9300fd2",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "sendOrder",
+      "targetOperationId": "completeTicket",
+      "sourceStepId": "sendOrder",
+      "targetStepId": "doneTicket",
+      "destinationField": "ticket_id"
+    },
+    {
+      "id": "arazzo-d8de77e817c41b54b8f4ad7664540a2e882c56561490b196f45766564d5594f8",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "pickupDelivery",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "pickupDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-211b15f1b72fd617daf96d063d97217917964f9f3a45dc7b4b6410ca1442857e",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "pingTracking",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "pingTracking",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-30e7b57899b361cb188407257352588921679a8b27f04332b7de0c2ac19a9e45",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "deliverDelivery",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "deliverDelivery",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-375e49d030b1670b28a1d355e7390c0a124a1fe8387f89319b98157e9b73398f",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "createCheck",
+      "targetStepId": "getCheck",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-4741b4974e91f5f93b938ebf1f261f89b8c3dc5829f68b043d11265553dbd478",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "createCheck",
+      "targetStepId": "createPayment",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-f40a1167cb357d974c9038b3f3a2020783db9523bed28d184b577b01671d6dc4",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheck",
+      "targetStepId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "id": "arazzo-659278e5037c5cc9427febca5d1d661d3e42767a4dcb43528e00a716dca5cd63",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-847c1ed1be3c24710944084956681adf78d607631d0d57ce4e58b0a051d97ff3",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-018e90af4712798a0a5a88000af54e60c39b5efb98240dc6d62f1600befbcc70",
+      "kind": "data-flow",
+      "workflowId": "deliveryEndToEnd",
+      "workflowName": "E. Delivery end to end",
+      "sourceOperationId": "createDelivery",
+      "targetOperationId": "addCourierTip",
+      "sourceStepId": "createDelivery",
+      "targetStepId": "addCourierTip",
+      "destinationField": "delivery_id"
+    },
+    {
+      "id": "arazzo-586aa88ce16e95e621f136744b12257a5a8253c811a0214a2070438eb87688c4",
+      "kind": "execution-order",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "omitPatty"
+    },
+    {
+      "id": "arazzo-c609a4b90b47c2769913bc939b9b7bd598b824dfaf2c653bb5e71cfe302b845f",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "omitPatty",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-3f540f2352618baab9fc2214747b5efec2b54fe6a1aca3b605282e40cb279bdc",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "twoPatties",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-54a7a1ff1861e9cc93a77a7a8d6a069857bfb04c97e097121ac4ffdfcbbe94bb",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "baconQty",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-626ee4aa1ee240a9532d5030824bf0be59c7b125d85249821552fc4b730e5d28",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "avocado86",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-7686f803da125a2ca17e96ff111bc5eaa442ed20202797489fa224e0bbc50bc6",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "incompatiblePair",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-90477a47d0ef16b256471273b7880246b01ebd7560d6eaba96c1ebbead2ef894",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "notADefault",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-c2b740db10552652027f6832f0f94394a18754c627e04b9de32b221f9f675e78",
+      "kind": "data-flow",
+      "workflowId": "buildABurger",
+      "workflowName": "F. Build a burger",
+      "sourceOperationId": "createCheck",
+      "targetOperationId": "addItem",
+      "sourceStepId": "createCheck",
+      "targetStepId": "addValid",
+      "destinationField": "check_id"
+    },
+    {
+      "id": "arazzo-ef2bdf63709091daca82874d6cb554f0ff8d256f3242aa2efe5458773e2766c8",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "getRewards",
+      "targetOperationId": "listOffers",
+      "sourceStepId": "getRewards",
+      "targetStepId": "listOffers"
+    },
+    {
+      "id": "arazzo-8eb974111f029eb7f9009e71d582bdcbcad49a0798778010067354b5cd3512e6",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "listOffers",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "listOffers",
+      "targetStepId": "getCheckBefore"
+    },
+    {
+      "id": "arazzo-685db2cc7151f5c72cb5e07b2a3ff78d59acdd20dc44df73fc4e239530fa5679",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createRedemption",
+      "sourceStepId": "getCheckBefore",
+      "targetStepId": "createRedemption"
+    },
+    {
+      "id": "arazzo-ffa1cac8bd63888dce9b9fb6ba4d6cc3c51607f9c121ff8e63e585a4ae54d85b",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createRedemption",
+      "targetOperationId": "getCheck",
+      "sourceStepId": "createRedemption",
+      "targetStepId": "getCheckAfter"
+    },
+    {
+      "id": "arazzo-eef1ac10093fc7002fb4ceefc0905b59b9ba35242533f91eb717112fc2c5321e",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheckAfter",
+      "targetStepId": "createPayment"
+    },
+    {
+      "id": "arazzo-a9c4bae74054222c43a5b976920a6afc1797afd6f1bb37edbc18634dfd19c7d5",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge"
+    },
+    {
+      "id": "arazzo-9b9eb24ed22d3bf3753d972294e18323d7c8fb3ae32dea5ed472ee1f47d6e788",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createCharge",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createCharge",
+      "targetStepId": "createInvoice"
+    },
+    {
+      "id": "arazzo-60f5b4500f3a83f0628ccb09111ea6e995b96ea624d9963a41146d83ed74e565",
+      "kind": "execution-order",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createInvoice",
+      "targetOperationId": "earnRewards",
+      "sourceStepId": "createInvoice",
+      "targetStepId": "earnRewards"
+    },
+    {
+      "id": "arazzo-d5eb1a3a8288fb5e6e2ada8ac1547bcf15b3dc86286acb85b8c35f507f8650c5",
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheckAfter",
+      "targetStepId": "createPayment",
+      "destinationField": "amount_cents"
+    },
+    {
+      "id": "arazzo-e917affc4eff4f5e7492811d6e8848908b8d85f0e97c407975116bde32d77917",
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "getCheck",
+      "targetOperationId": "createPayment",
+      "sourceStepId": "getCheckAfter",
+      "targetStepId": "createPayment",
+      "destinationField": "check_version"
+    },
+    {
+      "id": "arazzo-0c6317e1b21ab22252277f490752670b514e253acebb5f2981b4b3036b1f0e13",
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createCharge",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createCharge",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-28f7f737333724fd40bcc8e71c60e0909d99e886f5395461ce7db022803633e3",
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "createInvoice",
+      "sourceStepId": "createPayment",
+      "targetStepId": "createInvoice",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-609b82855578b3607474ac49b89945d5eb3121d37ccefc013797f76c4bb73d0e",
+      "kind": "data-flow",
+      "workflowId": "rewardsRedeemThenPay",
+      "workflowName": "G. Rewards redemption then pay",
+      "sourceOperationId": "createPayment",
+      "targetOperationId": "earnRewards",
+      "sourceStepId": "createPayment",
+      "targetStepId": "earnRewards",
+      "destinationField": "payment_id"
+    },
+    {
+      "id": "arazzo-bfb5e627daf87e0059134a94558e2ea13771ddfbf79728310e64b8d787d7cfca",
+      "kind": "execution-order",
+      "workflowId": "deliveryFailedThenRefund",
+      "workflowName": "H. Delivery failed then refund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "getFulfillment",
+      "sourceStepId": "failDelivery",
+      "targetStepId": "getFulfillment"
+    },
+    {
+      "id": "arazzo-fb9deb1e34666f8d362c92a1084823cf6cee3eb311035bbaecde5578e8dac13d",
+      "kind": "execution-order",
+      "workflowId": "deliveryFailedThenRefund",
+      "workflowName": "H. Delivery failed then refund",
+      "sourceOperationId": "getFulfillment",
+      "targetOperationId": "cancelFulfillment",
+      "sourceStepId": "getFulfillment",
+      "targetStepId": "cancelFulfillment"
+    },
+    {
+      "id": "arazzo-1101c81df65c84623942653aa8b8f2625369c5b8dc104bab6b3a6a4428f5252c",
+      "kind": "data-flow",
+      "workflowId": "deliveryFailedThenRefund",
+      "workflowName": "H. Delivery failed then refund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "getFulfillment",
+      "sourceStepId": "failDelivery",
+      "targetStepId": "getFulfillment",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "id": "arazzo-0867024532d1b34f414cc365d61aa6fb46a850ba089fdb36d6f4390605f00564",
+      "kind": "data-flow",
+      "workflowId": "deliveryFailedThenRefund",
+      "workflowName": "H. Delivery failed then refund",
+      "sourceOperationId": "failDelivery",
+      "targetOperationId": "cancelFulfillment",
+      "sourceStepId": "failDelivery",
+      "targetStepId": "cancelFulfillment",
+      "destinationField": "fulfillment_id"
+    },
+    {
+      "id": "arazzo-1567e67ab56f601125d0089499362e018703e6029d0a0203921c7aea2fa0eb83",
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "workflowName": "I. Guest dietary filter",
+      "sourceOperationId": "getGuest",
+      "targetOperationId": "listAllergens",
+      "sourceStepId": "getGuest",
+      "targetStepId": "listAllergens"
+    },
+    {
+      "id": "arazzo-99b7f293e6d931686a21038012e48a8af5e108130d9a4814fea775410a2164e2",
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "workflowName": "I. Guest dietary filter",
+      "sourceOperationId": "listAllergens",
+      "targetOperationId": "listItems",
+      "sourceStepId": "listAllergens",
+      "targetStepId": "listItems"
+    },
+    {
+      "id": "arazzo-ac1b670442361fe6748c32b174aa85f4b83c1433c71babf5929aa1ad3d449cc0",
+      "kind": "execution-order",
+      "workflowId": "guestDietaryFilter",
+      "workflowName": "I. Guest dietary filter",
+      "sourceOperationId": "listItems",
+      "targetOperationId": "addItem",
+      "sourceStepId": "listItems",
+      "targetStepId": "addAnyway"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 8 &middot; Changes</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas Console &middot; Lesson 8 &middot; 3 min</p>
+  <h1>Changes</h1>
+  <p class="standfirst">Changes shows when an API has changed and which workflows may need an update.</p>
+
+  <h2>How Atlas labels a change</h2>
+  <div class="table-scroll"><table><thead><tr><th>Label</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td>Incompatible contract</td><td>The declared contract removes or retypes a field, or adds a required field.</td></tr>
+    <tr><td>Compatible contract</td><td>The declared contract has only structurally compatible additions.</td></tr>
+    <tr><td>Metadata changed</td><td>Only descriptive annotations in the declared contract changed.</td></tr>
+    <tr><td>Needs review</td><td>The structural change is ambiguous, or Atlas has runtime evidence without a declared-contract diff.</td></tr>
+  </tbody></table></div>
+  <p>An incompatible declared contract quarantines new affected intake until an approved migration is activated. Runtime-only evidence awaits source rediscovery. Runs that already started continue with their original version.</p>
+  <p>Atlas compares the registered OpenAPI or AsyncAPI operation fragment and referenced schemas. It does not inspect service source code, prove runtime behavior, or prove that a deployment matches its declared contract.</p>
+
+  <h2>Review the impact</h2>
+  <p>A change shows the old and new API action, the fields that changed, and every workflow step that uses it.</p>
+
+  <h2>Create a fix</h2>
+  <p><strong>Create migration</strong> makes a proposed workflow update. Review, test, approve, and activate it in Create Workflow just like any other version.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0007-trust-boundaries.html">&larr; Runs</a><a href="0009-the-frontier.html">Activity &rarr;</a></div>
+</body>
+</html>

@@ -1,0 +1,797 @@
+﻿{
+    "workflowVersionId":  "workflow-20260907-222502-659",
+    "artifact":  {
+                     "workflowVersionId":  "workflow-20260907-222502-659",
+                     "irHash":  "34844ef3ab954632102c837a89aa3237bdd86db281012ac05e575ef7b840da7a",
+                     "executionRequirements":  {
+                                                   "organizationId":  "org_atlas",
+                                                   "workflowVersionId":  "workflow-20260907-222502-659",
+                                                   "irHash":  "34844ef3ab954632102c837a89aa3237bdd86db281012ac05e575ef7b840da7a",
+                                                   "requiredCapabilityVersionIds":  [
+                                                                                        "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                                                                                        "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                                                                                        "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                                                                                        "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af"
+                                                                                    ]
+                                               },
+                     "executable":  {
+                                        "irVersion":  2,
+                                        "inputSchema":  {
+                                                            "required":  {
+                                                                             "item_id":  {
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                             "server_id":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                             "location_id":  {
+                                                                                                 "type":  "string"
+                                                                                             }
+                                                                         }
+                                                        },
+                                        "steps":  [
+                                                      {
+                                                          "kind":  "capabilityCall",
+                                                          "id":  "create_fulfillment",
+                                                          "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+                                                          "arguments":  {
+                                                                            "type":  {
+                                                                                         "source":  "literal",
+                                                                                         "value":  "pickup"
+                                                                                     },
+                                                                            "location_id":  {
+                                                                                                "source":  "input",
+                                                                                                "path":  [
+                                                                                                             "location_id"
+                                                                                                         ]
+                                                                                            }
+                                                                        },
+                                                          "result":  "fulfillment",
+                                                          "idempotency":  {
+                                                                              "businessKey":  {
+                                                                                                  "source":  "input",
+                                                                                                  "path":  [
+                                                                                                               "item_id"
+                                                                                                           ]
+                                                                                              }
+                                                                          },
+                                                          "responseSchema":  {
+                                                                                 "required":  {
+                                                                                                  "id":  {
+                                                                                                             "type":  "string"
+                                                                                                         }
+                                                                                              }
+                                                                             },
+                                                          "irreversibleAfter":  true,
+                                                          "inputSchema":  {
+                                                                              "required":  {
+                                                                                               "type":  {
+                                                                                                            "type":  "string"
+                                                                                                        },
+                                                                                               "location_id":  {
+                                                                                                                   "type":  "string"
+                                                                                                               }
+                                                                                           }
+                                                                          }
+                                                      },
+                                                      {
+                                                          "kind":  "capabilityCall",
+                                                          "id":  "create_check",
+                                                          "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                                                          "arguments":  {
+                                                                            "server_id":  {
+                                                                                              "source":  "input",
+                                                                                              "path":  [
+                                                                                                           "server_id"
+                                                                                                       ]
+                                                                                          },
+                                                                            "fulfillment_id":  {
+                                                                                                   "source":  "stepOutput",
+                                                                                                   "stepId":  "create_fulfillment",
+                                                                                                   "path":  [
+                                                                                                                "id"
+                                                                                                            ]
+                                                                                               }
+                                                                        },
+                                                          "result":  "check",
+                                                          "idempotency":  {
+                                                                              "businessKey":  {
+                                                                                                  "source":  "stepOutput",
+                                                                                                  "stepId":  "create_fulfillment",
+                                                                                                  "path":  [
+                                                                                                               "id"
+                                                                                                           ]
+                                                                                              }
+                                                                          },
+                                                          "responseSchema":  {
+                                                                                 "required":  {
+                                                                                                  "id":  {
+                                                                                                             "type":  "string"
+                                                                                                         }
+                                                                                              }
+                                                                             },
+                                                          "irreversibleAfter":  true,
+                                                          "inputSchema":  {
+                                                                              "required":  {
+                                                                                               "server_id":  {
+                                                                                                                 "type":  "string"
+                                                                                                             }
+                                                                                           }
+                                                                          }
+                                                      },
+                                                      {
+                                                          "kind":  "capabilityCall",
+                                                          "id":  "add_item",
+                                                          "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                                                          "arguments":  {
+                                                                            "item_id":  {
+                                                                                            "source":  "input",
+                                                                                            "path":  [
+                                                                                                         "item_id"
+                                                                                                     ]
+                                                                                        },
+                                                                            "check_id":  {
+                                                                                             "source":  "stepOutput",
+                                                                                             "stepId":  "create_check",
+                                                                                             "path":  [
+                                                                                                          "id"
+                                                                                                      ]
+                                                                                         }
+                                                                        },
+                                                          "result":  "line_and_check",
+                                                          "idempotency":  {
+                                                                              "businessKey":  {
+                                                                                                  "source":  "stepOutput",
+                                                                                                  "stepId":  "create_check",
+                                                                                                  "path":  [
+                                                                                                               "id"
+                                                                                                           ]
+                                                                                              }
+                                                                          },
+                                                          "responseSchema":  {
+                                                                                 "required":  {
+
+                                                                                              }
+                                                                             },
+                                                          "irreversibleAfter":  true,
+                                                          "inputSchema":  {
+                                                                              "required":  {
+                                                                                               "item_id":  {
+                                                                                                               "type":  "string"
+                                                                                                           },
+                                                                                               "check_id":  {
+                                                                                                                "type":  "string"
+                                                                                                            }
+                                                                                           }
+                                                                          }
+                                                      },
+                                                      {
+                                                          "kind":  "capabilityCall",
+                                                          "id":  "send_order",
+                                                          "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                                                          "arguments":  {
+                                                                            "check_id":  {
+                                                                                             "source":  "stepOutput",
+                                                                                             "stepId":  "create_check",
+                                                                                             "path":  [
+                                                                                                          "id"
+                                                                                                      ]
+                                                                                         }
+                                                                        },
+                                                          "result":  "send_result",
+                                                          "idempotency":  {
+                                                                              "businessKey":  {
+                                                                                                  "source":  "stepOutput",
+                                                                                                  "stepId":  "create_check",
+                                                                                                  "path":  [
+                                                                                                               "id"
+                                                                                                           ]
+                                                                                              }
+                                                                          },
+                                                          "responseSchema":  {
+                                                                                 "required":  {
+
+                                                                                              }
+                                                                             },
+                                                          "irreversibleAfter":  true,
+                                                          "inputSchema":  {
+                                                                              "required":  {
+                                                                                               "check_id":  {
+                                                                                                                "type":  "string"
+                                                                                                            }
+                                                                                           }
+                                                                          }
+                                                      },
+                                                      {
+                                                          "kind":  "terminal",
+                                                          "id":  "completed",
+                                                          "state":  "completed"
+                                                      }
+                                                  ]
+                                    },
+                     "mappingOrigins":  [
+                                            {
+                                                "stepId":  "create_fulfillment",
+                                                "destinationPath":  [
+                                                                        "type"
+                                                                    ],
+                                                "origin":  "inferred"
+                                            },
+                                            {
+                                                "stepId":  "create_fulfillment",
+                                                "destinationPath":  [
+                                                                        "location_id"
+                                                                    ],
+                                                "origin":  "requested"
+                                            },
+                                            {
+                                                "stepId":  "create_check",
+                                                "destinationPath":  [
+                                                                        "server_id"
+                                                                    ],
+                                                "origin":  "requested"
+                                            },
+                                            {
+                                                "stepId":  "add_item",
+                                                "destinationPath":  [
+                                                                        "check_id"
+                                                                    ],
+                                                "origin":  "inferred"
+                                            },
+                                            {
+                                                "stepId":  "add_item",
+                                                "destinationPath":  [
+                                                                        "item_id"
+                                                                    ],
+                                                "origin":  "requested"
+                                            },
+                                            {
+                                                "stepId":  "send_order",
+                                                "destinationPath":  [
+                                                                        "check_id"
+                                                                    ],
+                                                "origin":  "inferred"
+                                            }
+                                        ]
+                 },
+    "source":  {
+                   "filename":  "workflow-20260907-222502-659.atlas.yaml",
+                   "yaml":  "formatVersion: atlas-source/v1\nprojectionFingerprint: 8d35fc9fc07394c30739e7acd9cbe2a4ae37da63fd0a52e111f33d078a77935f\nworkflow:\n  irVersion: 2\n  inputSchema:\n    required:\n      item_id:\n        type: string\n      server_id:\n        type: string\n      location_id:\n        type: string\n  steps:\n    - kind: capabilityCall\n      id: create_fulfillment\n      arguments:\n        type:\n          source: literal\n          value: pickup\n        location_id:\n          source: input\n          path:\n            - location_id\n      result: fulfillment\n      idempotency:\n        businessKey:\n          source: input\n          path:\n            - item_id\n      responseSchema:\n        required:\n          id:\n            type: string\n      irreversibleAfter: true\n      inputSchema:\n        required:\n          type:\n            type: string\n          location_id:\n            type: string\n      capability: b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af\n    - kind: capabilityCall\n      id: create_check\n      arguments:\n        server_id:\n          source: input\n          path:\n            - server_id\n        fulfillment_id:\n          source: stepOutput\n          stepId: create_fulfillment\n          path:\n            - id\n      result: check\n      idempotency:\n        businessKey:\n          source: stepOutput\n          stepId: create_fulfillment\n          path:\n            - id\n      responseSchema:\n        required:\n          id:\n            type: string\n      irreversibleAfter: true\n      inputSchema:\n        required:\n          server_id:\n            type: string\n      capability: a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f\n    - kind: capabilityCall\n      id: add_item\n      arguments:\n        item_id:\n          source: input\n          path:\n            - item_id\n        check_id:\n          source: stepOutput\n          stepId: create_check\n          path:\n            - id\n      result: line_and_check\n      idempotency:\n        businessKey:\n          source: stepOutput\n          stepId: create_check\n          path:\n            - id\n      responseSchema:\n        required: {}\n      irreversibleAfter: true\n      inputSchema:\n        required:\n          item_id:\n            type: string\n          check_id:\n            type: string\n      capability: 9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5\n    - kind: capabilityCall\n      id: send_order\n      arguments:\n        check_id:\n          source: stepOutput\n          stepId: create_check\n          path:\n            - id\n      result: send_result\n      idempotency:\n        businessKey:\n          source: stepOutput\n          stepId: create_check\n          path:\n            - id\n      responseSchema:\n        required: {}\n      irreversibleAfter: true\n      inputSchema:\n        required:\n          check_id:\n            type: string\n      capability: a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd\n    - kind: terminal\n      id: completed\n      state: completed\n"
+               },
+    "irHash":  "34844ef3ab954632102c837a89aa3237bdd86db281012ac05e575ef7b840da7a",
+    "binding":  {
+                    "irHash":  "34844ef3ab954632102c837a89aa3237bdd86db281012ac05e575ef7b840da7a",
+                    "policyVersion":  "mvp-validation-v1",
+                    "projectionFingerprint":  "8d35fc9fc07394c30739e7acd9cbe2a4ae37da63fd0a52e111f33d078a77935f"
+                },
+    "migration":  null,
+    "irreversibleBoundary":  "create_fulfillment",
+    "steps":  [
+                  {
+                      "stepId":  "create_fulfillment",
+                      "capabilityId":  {
+                                           "kind":  "openapi",
+                                           "serviceId":  "burger-town",
+                                           "messageKey":  null,
+                                           "operationId":  "createFulfillment",
+                                           "channelAddress":  null
+                                       },
+                      "capabilityVersionId":  "b6b33a1b322ae59f10edbc24f31e9c102a5fdc839a705225b365a6d5c4f119af",
+                      "verified":  true,
+                      "provenance":  {
+                                         "evidence":  {
+                                                          "kind":  "human-confirmed",
+                                                          "label":  "Burger Town OpenAPI",
+                                                          "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                          "confirmedBy":  "atlas-admin"
+                                                      },
+                                         "manifest":  {
+                                                          "evidence":  {
+                                                                           "kind":  "human-confirmed",
+                                                                           "label":  "Burger Town prepared safety settings",
+                                                                           "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                                           "confirmedBy":  "atlas-admin"
+                                                                       },
+                                                          "sourceDocumentId":  2
+                                                      },
+                                         "sourceDocumentId":  1
+                                     },
+                      "inputSchema":  {
+                                          "parameters":  [
+
+                                                         ],
+                                          "body":  {
+                                                       "type":  "object",
+                                                       "required":  [
+                                                                        "location_id",
+                                                                        "type"
+                                                                    ],
+                                                       "properties":  {
+                                                                          "type":  {
+                                                                                       "enum":  [
+                                                                                                    "dine_in",
+                                                                                                    "pickup",
+                                                                                                    "delivery"
+                                                                                                ],
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                          "guest_id":  {
+                                                                                           "$ref":  "#/components/schemas/GuestId"
+                                                                                       },
+                                                                          "table_id":  {
+                                                                                           "$ref":  "#/components/schemas/TableId",
+                                                                                           "description":  "Required for dine_in."
+                                                                                       },
+                                                                          "pickup_at":  {
+                                                                                            "type":  "string",
+                                                                                            "format":  "date-time"
+                                                                                        },
+                                                                          "address_id":  {
+                                                                                             "$ref":  "#/components/schemas/AddressId",
+                                                                                             "description":  "Required for delivery. addr_far is out of zone."
+                                                                                         },
+                                                                          "location_id":  {
+                                                                                              "$ref":  "#/components/schemas/LocationId"
+                                                                                          },
+                                                                          "idempotency_key":  {
+                                                                                                  "type":  "string",
+                                                                                                  "description":  "Worker-injected per-step idempotency key; successful identical requests replay, conflicting reuse returns 409. The demo ordering workflow derives this key from the step ID and workflow input order_id. Use a new order_id for each new submission and preserve it for retries; order_id is a workflow input, not a required field on this capability."
+                                                                                              }
+                                                                      }
+                                                   }
+                                      },
+                      "outputSchema":  {
+                                           "required":  {
+                                                            "id":  {
+                                                                       "type":  "string"
+                                                                   }
+                                                        }
+                                       },
+                      "inputMappings":  {
+                                            "type":  {
+                                                         "source":  "literal",
+                                                         "value":  "pickup"
+                                                     },
+                                            "location_id":  {
+                                                                "source":  "input",
+                                                                "path":  [
+                                                                             "location_id"
+                                                                         ]
+                                                            }
+                                        },
+                      "httpCall":  {
+                                       "method":  "post",
+                                       "path":  "/v1/fulfillments"
+                                   },
+                      "conditions":  null,
+                      "retryPolicy":  null,
+                      "timeout":  {
+                                      "startToClose":  "30 seconds",
+                                      "source":  "runtime-default"
+                                  },
+                      "idempotency":  {
+                                          "businessKey":  {
+                                                              "source":  "input",
+                                                              "path":  [
+                                                                           "item_id"
+                                                                       ]
+                                                          }
+                                      },
+                      "secretReference":  null,
+                      "compensation":  null,
+                      "irreversible":  true
+                  },
+                  {
+                      "stepId":  "create_check",
+                      "capabilityId":  {
+                                           "kind":  "openapi",
+                                           "serviceId":  "burger-town",
+                                           "messageKey":  null,
+                                           "operationId":  "createCheck",
+                                           "channelAddress":  null
+                                       },
+                      "capabilityVersionId":  "a4a3321c8d98da951a807b24987b00b5dbd535f5175a356cffb7054a7d7dd24f",
+                      "verified":  true,
+                      "provenance":  {
+                                         "evidence":  {
+                                                          "kind":  "human-confirmed",
+                                                          "label":  "Burger Town OpenAPI",
+                                                          "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                          "confirmedBy":  "atlas-admin"
+                                                      },
+                                         "manifest":  {
+                                                          "evidence":  {
+                                                                           "kind":  "human-confirmed",
+                                                                           "label":  "Burger Town prepared safety settings",
+                                                                           "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                                           "confirmedBy":  "atlas-admin"
+                                                                       },
+                                                          "sourceDocumentId":  2
+                                                      },
+                                         "sourceDocumentId":  1
+                                     },
+                      "inputSchema":  {
+                                          "parameters":  [
+
+                                                         ],
+                                          "body":  {
+                                                       "type":  "object",
+                                                       "required":  [
+                                                                        "server_id"
+                                                                    ],
+                                                       "properties":  {
+                                                                          "guest_id":  {
+                                                                                           "$ref":  "#/components/schemas/GuestId"
+                                                                                       },
+                                                                          "table_id":  {
+                                                                                           "$ref":  "#/components/schemas/TableId",
+                                                                                           "description":  "Compat: auto-creates a dine-in fulfillment."
+                                                                                       },
+                                                                          "server_id":  {
+                                                                                            "$ref":  "#/components/schemas/EmployeeId"
+                                                                                        },
+                                                                          "location_id":  {
+                                                                                              "$ref":  "#/components/schemas/LocationId"
+                                                                                          },
+                                                                          "fulfillment_id":  {
+                                                                                                 "$ref":  "#/components/schemas/FulfillmentId",
+                                                                                                 "description":  "Preferred. Open against an existing fulfillment."
+                                                                                             },
+                                                                          "idempotency_key":  {
+                                                                                                  "type":  "string",
+                                                                                                  "description":  "Worker-injected per-step idempotency key; successful identical requests replay, conflicting reuse returns 409. The demo ordering workflow derives this key from the step ID and workflow input order_id. Use a new order_id for each new submission and preserve it for retries; order_id is a workflow input, not a required field on this capability."
+                                                                                              }
+                                                                      }
+                                                   }
+                                      },
+                      "outputSchema":  {
+                                           "required":  {
+                                                            "id":  {
+                                                                       "type":  "string"
+                                                                   }
+                                                        }
+                                       },
+                      "inputMappings":  {
+                                            "server_id":  {
+                                                              "source":  "input",
+                                                              "path":  [
+                                                                           "server_id"
+                                                                       ]
+                                                          },
+                                            "fulfillment_id":  {
+                                                                   "source":  "stepOutput",
+                                                                   "stepId":  "create_fulfillment",
+                                                                   "path":  [
+                                                                                "id"
+                                                                            ]
+                                                               }
+                                        },
+                      "httpCall":  {
+                                       "method":  "post",
+                                       "path":  "/v1/checks"
+                                   },
+                      "conditions":  null,
+                      "retryPolicy":  null,
+                      "timeout":  {
+                                      "startToClose":  "30 seconds",
+                                      "source":  "runtime-default"
+                                  },
+                      "idempotency":  {
+                                          "businessKey":  {
+                                                              "source":  "stepOutput",
+                                                              "stepId":  "create_fulfillment",
+                                                              "path":  [
+                                                                           "id"
+                                                                       ]
+                                                          }
+                                      },
+                      "secretReference":  null,
+                      "compensation":  null,
+                      "irreversible":  true
+                  },
+                  {
+                      "stepId":  "add_item",
+                      "capabilityId":  {
+                                           "kind":  "openapi",
+                                           "serviceId":  "burger-town",
+                                           "messageKey":  null,
+                                           "operationId":  "addItem",
+                                           "channelAddress":  null
+                                       },
+                      "capabilityVersionId":  "9c0d71b6ed1853d54ddfc7d28de8b84b2f9fe3cdd66b694c491fd43d16db5aa5",
+                      "verified":  true,
+                      "provenance":  {
+                                         "evidence":  {
+                                                          "kind":  "human-confirmed",
+                                                          "label":  "Burger Town OpenAPI",
+                                                          "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                          "confirmedBy":  "atlas-admin"
+                                                      },
+                                         "manifest":  {
+                                                          "evidence":  {
+                                                                           "kind":  "human-confirmed",
+                                                                           "label":  "Burger Town prepared safety settings",
+                                                                           "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                                           "confirmedBy":  "atlas-admin"
+                                                                       },
+                                                          "sourceDocumentId":  2
+                                                      },
+                                         "sourceDocumentId":  1
+                                     },
+                      "inputSchema":  {
+                                          "parameters":  [
+                                                             {
+                                                                 "in":  "path",
+                                                                 "name":  "check_id",
+                                                                 "schema":  {
+                                                                                "$ref":  "#/components/schemas/CheckId"
+                                                                            },
+                                                                 "required":  true
+                                                             }
+                                                         ],
+                                          "body":  {
+                                                       "type":  "object",
+                                                       "required":  [
+                                                                        "item_id"
+                                                                    ],
+                                                       "properties":  {
+                                                                          "notes":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                          "item_id":  {
+                                                                                          "$ref":  "#/components/schemas/ItemId"
+                                                                                      },
+                                                                          "quantity":  {
+                                                                                           "type":  "integer",
+                                                                                           "default":  1
+                                                                                       },
+                                                                          "selections":  {
+                                                                                             "type":  "array",
+                                                                                             "items":  {
+                                                                                                           "$ref":  "#/components/schemas/Selection"
+                                                                                                       },
+                                                                                             "description":  "When present, required groups must be included. Empty array 422s on burgers."
+                                                                                         },
+                                                                          "kitchen_note":  {
+                                                                                               "type":  "string",
+                                                                                               "description":  "Required only while the Atlas contract-change demo is enabled."
+                                                                                           },
+                                                                          "modifier_ids":  {
+                                                                                               "type":  "array",
+                                                                                               "items":  {
+                                                                                                             "type":  "string"
+                                                                                                         },
+                                                                                               "description":  "Legacy. Infers groups and fills required defaults."
+                                                                                           },
+                                                                          "idempotency_key":  {
+                                                                                                  "type":  "string",
+                                                                                                  "description":  "Worker-injected per-step idempotency key; successful identical requests replay, conflicting reuse returns 409. The demo ordering workflow derives this key from the step ID and workflow input order_id. Use a new order_id for each new submission and preserve it for retries; order_id is a workflow input, not a required field on this capability."
+                                                                                              },
+                                                                          "removed_defaults":  {
+                                                                                                   "type":  "array",
+                                                                                                   "items":  {
+                                                                                                                 "type":  "string"
+                                                                                                             }
+                                                                                               }
+                                                                      }
+                                                   }
+                                      },
+                      "outputSchema":  {
+                                           "required":  {
+
+                                                        }
+                                       },
+                      "inputMappings":  {
+                                            "item_id":  {
+                                                            "source":  "input",
+                                                            "path":  [
+                                                                         "item_id"
+                                                                     ]
+                                                        },
+                                            "check_id":  {
+                                                             "source":  "stepOutput",
+                                                             "stepId":  "create_check",
+                                                             "path":  [
+                                                                          "id"
+                                                                      ]
+                                                         }
+                                        },
+                      "httpCall":  {
+                                       "method":  "post",
+                                       "path":  "/v1/checks/{check_id}/items"
+                                   },
+                      "conditions":  null,
+                      "retryPolicy":  null,
+                      "timeout":  {
+                                      "startToClose":  "30 seconds",
+                                      "source":  "runtime-default"
+                                  },
+                      "idempotency":  {
+                                          "businessKey":  {
+                                                              "source":  "stepOutput",
+                                                              "stepId":  "create_check",
+                                                              "path":  [
+                                                                           "id"
+                                                                       ]
+                                                          }
+                                      },
+                      "secretReference":  null,
+                      "compensation":  null,
+                      "irreversible":  true
+                  },
+                  {
+                      "stepId":  "send_order",
+                      "capabilityId":  {
+                                           "kind":  "openapi",
+                                           "serviceId":  "burger-town",
+                                           "messageKey":  null,
+                                           "operationId":  "sendOrder",
+                                           "channelAddress":  null
+                                       },
+                      "capabilityVersionId":  "a7b263ceb18a4baa1da71b59ebc28ccc96efa6fc0e7d69cc3389e0284b7807cd",
+                      "verified":  true,
+                      "provenance":  {
+                                         "evidence":  {
+                                                          "kind":  "human-confirmed",
+                                                          "label":  "Burger Town OpenAPI",
+                                                          "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                          "confirmedBy":  "atlas-admin"
+                                                      },
+                                         "manifest":  {
+                                                          "evidence":  {
+                                                                           "kind":  "human-confirmed",
+                                                                           "label":  "Burger Town prepared safety settings",
+                                                                           "confirmedAt":  "2026-09-07T22:12:57.756Z",
+                                                                           "confirmedBy":  "atlas-admin"
+                                                                       },
+                                                          "sourceDocumentId":  2
+                                                      },
+                                         "sourceDocumentId":  1
+                                     },
+                      "inputSchema":  {
+                                          "parameters":  [
+                                                             {
+                                                                 "in":  "path",
+                                                                 "name":  "check_id",
+                                                                 "schema":  {
+                                                                                "$ref":  "#/components/schemas/CheckId"
+                                                                            },
+                                                                 "required":  true
+                                                             }
+                                                         ],
+                                          "body":  {
+                                                       "type":  "object",
+                                                       "properties":  {
+                                                                          "idempotency_key":  {
+                                                                                                  "type":  "string",
+                                                                                                  "description":  "Worker-injected per-step idempotency key; successful identical requests replay, conflicting reuse returns 409. The demo ordering workflow derives this key from the step ID and workflow input order_id. Use a new order_id for each new submission and preserve it for retries; order_id is a workflow input, not a required field on this capability."
+                                                                                              }
+                                                                      }
+                                                   }
+                                      },
+                      "outputSchema":  {
+                                           "required":  {
+
+                                                        }
+                                       },
+                      "inputMappings":  {
+                                            "check_id":  {
+                                                             "source":  "stepOutput",
+                                                             "stepId":  "create_check",
+                                                             "path":  [
+                                                                          "id"
+                                                                      ]
+                                                         }
+                                        },
+                      "httpCall":  {
+                                       "method":  "post",
+                                       "path":  "/v1/checks/{check_id}/send"
+                                   },
+                      "conditions":  null,
+                      "retryPolicy":  null,
+                      "timeout":  {
+                                      "startToClose":  "30 seconds",
+                                      "source":  "runtime-default"
+                                  },
+                      "idempotency":  {
+                                          "businessKey":  {
+                                                              "source":  "stepOutput",
+                                                              "stepId":  "create_check",
+                                                              "path":  [
+                                                                           "id"
+                                                                       ]
+                                                          }
+                                      },
+                      "secretReference":  null,
+                      "compensation":  null,
+                      "irreversible":  true
+                  }
+              ],
+    "graph":  {
+                  "nodes":  [
+                                {
+                                    "stepId":  "create_fulfillment",
+                                    "kind":  "capabilityCall",
+                                    "irreversible":  true,
+                                    "retryPolicy":  null,
+                                    "terminalState":  null
+                                },
+                                {
+                                    "stepId":  "create_check",
+                                    "kind":  "capabilityCall",
+                                    "irreversible":  true,
+                                    "retryPolicy":  null,
+                                    "terminalState":  null
+                                },
+                                {
+                                    "stepId":  "add_item",
+                                    "kind":  "capabilityCall",
+                                    "irreversible":  true,
+                                    "retryPolicy":  null,
+                                    "terminalState":  null
+                                },
+                                {
+                                    "stepId":  "send_order",
+                                    "kind":  "capabilityCall",
+                                    "irreversible":  true,
+                                    "retryPolicy":  null,
+                                    "terminalState":  null
+                                },
+                                {
+                                    "stepId":  "completed",
+                                    "kind":  "terminal",
+                                    "irreversible":  false,
+                                    "retryPolicy":  null,
+                                    "terminalState":  "completed"
+                                }
+                            ],
+                  "edges":  [
+                                {
+                                    "fromStepId":  "create_fulfillment",
+                                    "toStepId":  "create_check",
+                                    "kind":  "next"
+                                },
+                                {
+                                    "fromStepId":  "create_check",
+                                    "toStepId":  "add_item",
+                                    "kind":  "next"
+                                },
+                                {
+                                    "fromStepId":  "add_item",
+                                    "toStepId":  "send_order",
+                                    "kind":  "next"
+                                },
+                                {
+                                    "fromStepId":  "send_order",
+                                    "toStepId":  "completed",
+                                    "kind":  "next"
+                                },
+                                {
+                                    "fromStepId":  "create_fulfillment",
+                                    "toStepId":  "create_check",
+                                    "kind":  "mapping",
+                                    "label":  "fulfillment_id"
+                                },
+                                {
+                                    "fromStepId":  "create_check",
+                                    "toStepId":  "add_item",
+                                    "kind":  "mapping",
+                                    "label":  "check_id",
+                                    "origin":  "inferred"
+                                },
+                                {
+                                    "fromStepId":  "create_check",
+                                    "toStepId":  "send_order",
+                                    "kind":  "mapping",
+                                    "label":  "check_id",
+                                    "origin":  "inferred"
+                                }
+                            ]
+              },
+    "approval":  {
+                     "enabled":  true,
+                     "diagnostics":  [
+
+                                     ]
+                 }
+}

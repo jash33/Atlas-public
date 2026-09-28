@@ -1,0 +1,1001 @@
+arazzo: '1.0.1'
+info:
+  title: Burgertown workflows
+  version: '1.0.0'
+  summary: How Burgertown APIs connect, as Arazzo 1.0.1 recipes.
+  description: |
+    Burgertown is the dummy merchant. These workflows describe the live
+    OpenAPI operations — they do not change restaurant behavior.
+
+    Letters match HANDOFF.md. Each mutating recipe starts with resetSandbox
+    so it can run on its own. That reset is a sandbox convenience, not
+    restaurant architecture.
+
+    Phase 1: payAtTable (A), refundThenVoid (B), orderThenKitchen (C),
+    localDiscountThenPay (D).
+    Phase 2: deliveryEndToEnd (E), buildABurger (F), rewardsRedeemThenPay (G),
+    deliveryFailedThenRefund (H), guestDietaryFilter (I).
+
+    Operation ids are the live catalog ids: createFulfillment, createCheck,
+    addItem, sendOrder. Atlas already depends on those names.
+sourceDescriptions:
+  - name: burgertown
+    url: ./openapi.json
+    type: openapi
+workflows:
+  - workflowId: payAtTable
+    summary: A. Pay at table
+    description: |
+      Seeded tbl_4 / chk_ok. Read the due, tender card, capture, invoice.
+      Table frees; optional tip and rewards earn.
+    inputs:
+      type: object
+      properties:
+        table_id:
+          type: string
+          description: Occupied picnic table. Seed default is tbl_4.
+          default: tbl_4
+        payment_method:
+          type: string
+          enum: [pm_ok, pm_decline, pm_timeout]
+          default: pm_ok
+        tip_cents:
+          type: integer
+          default: 200
+    steps:
+      - stepId: reset
+        description: Restore Oak Street so chk_ok is open and due is 1736.
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getTable
+        operationId: getTable
+        parameters:
+          - name: table_id
+            in: path
+            value: $inputs.table_id
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          checkId: $response.body#/check_id
+      - stepId: getCheck
+        operationId: getCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.getTable.outputs.checkId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          checkId: $response.body#/id
+          dueCents: $response.body#/totals/due_cents
+          guestId: $response.body#/guest_id
+          version: $response.body#/version
+      - stepId: createPayment
+        operationId: createPayment
+        requestBody:
+          contentType: application/json
+          payload:
+            check_id: $steps.getCheck.outputs.checkId
+            method: card
+            amount_cents: $steps.getCheck.outputs.dueCents
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          paymentId: $response.body#/id
+      - stepId: createCharge
+        description: pm_ok captures. pm_decline → 402 card_declined. pm_timeout → 504 processor_timeout.
+        operationId: createCharge
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+            payment_method: $inputs.payment_method
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          chargeId: $response.body#/id
+      - stepId: createInvoice
+        operationId: createInvoice
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          invoiceId: $response.body#/id
+      - stepId: getReceipt
+        operationId: getReceiptByCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.getCheck.outputs.checkId
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: addTip
+        operationId: addTip
+        parameters:
+          - name: payment_id
+            in: path
+            value: $steps.createPayment.outputs.paymentId
+        requestBody:
+          contentType: application/json
+          payload:
+            amount_cents: $inputs.tip_cents
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: earnRewards
+        operationId: earnRewards
+        parameters:
+          - name: guest_id
+            in: path
+            value: $steps.getCheck.outputs.guestId
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 200
+    outputs:
+      checkId: $steps.getCheck.outputs.checkId
+      paymentId: $steps.createPayment.outputs.paymentId
+      invoiceId: $steps.createInvoice.outputs.invoiceId
+
+  - workflowId: refundThenVoid
+    summary: B. Refund then void
+    description: |
+      Fixture chk_paid / pay_paid / ch_paid. Accept a refund, reverse the
+      processor charge, then void. Void without a reversed refund is 409
+      void_not_allowed. API only — no restaurant screen.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: createRefund
+        operationId: createRefund
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: pay_paid
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          refundId: $response.body#/id
+      - stepId: createProcessorRefund
+        operationId: createProcessorRefund
+        requestBody:
+          contentType: application/json
+          payload:
+            charge_id: ch_paid
+            refund_id: $steps.createRefund.outputs.refundId
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: voidCheck
+        operationId: voidCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_paid
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          confirmation: $response.body#/confirmation
+
+  - workflowId: orderThenKitchen
+    summary: C. Order then kitchen
+    description: |
+      Read the dinner board, open a dine-in check on an empty table, add a
+      Townie with selections[], send, bump the ticket. Last ticket done
+      marks the fulfillment ready. itm_86 on add is 409. Send with nothing
+      unsent is 409 nothing_to_send.
+    inputs:
+      type: object
+      properties:
+        table_id:
+          type: string
+          default: tbl_1
+        item_id:
+          type: string
+          default: itm_townie
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getMenu
+        operationId: getMenu
+        parameters:
+          - name: menu_id
+            in: path
+            value: menu_dinner
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listItems
+        operationId: listItems
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listInventory
+        operationId: listInventory
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listModifierGroups
+        operationId: listModifierGroups
+        parameters:
+          - name: item_id
+            in: query
+            value: $inputs.item_id
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: createCheck
+        operationId: createCheck
+        requestBody:
+          contentType: application/json
+          payload:
+            location_id: loc_oak
+            table_id: $inputs.table_id
+            server_id: emp_jon
+            guest_id: gst_maya
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          checkId: $response.body#/id
+          fulfillmentId: $response.body#/fulfillment_id
+      - stepId: addItem
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: $inputs.item_id
+            quantity: 1
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: sendOrder
+        operationId: sendOrder
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          ticketId: $response.body#/ticket/id
+      - stepId: listTickets
+        operationId: listTickets
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: fireTicket
+        operationId: completeTicket
+        parameters:
+          - name: ticket_id
+            in: path
+            value: $steps.sendOrder.outputs.ticketId
+        requestBody:
+          contentType: application/json
+          payload:
+            status: fired
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: doneTicket
+        operationId: completeTicket
+        parameters:
+          - name: ticket_id
+            in: path
+            value: $steps.sendOrder.outputs.ticketId
+        requestBody:
+          contentType: application/json
+          payload:
+            status: done
+        successCriteria:
+          - condition: $statusCode == 200
+    outputs:
+      checkId: $steps.createCheck.outputs.checkId
+      ticketId: $steps.sendOrder.outputs.ticketId
+
+  - workflowId: localDiscountThenPay
+    summary: D. Local discount then pay
+    description: |
+      Apply LOCAL10 to chk_ok, re-read due_cents, pay the new due.
+      Paying the pre-discount 1736 after the code is 422 amount_mismatch.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: applyDiscount
+        operationId: applyDiscount
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_ok
+        requestBody:
+          contentType: application/json
+          payload:
+            code: LOCAL10
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: getCheck
+        operationId: getCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_ok
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          dueCents: $response.body#/totals/due_cents
+          version: $response.body#/version
+      - stepId: createPayment
+        operationId: createPayment
+        requestBody:
+          contentType: application/json
+          payload:
+            check_id: chk_ok
+            method: card
+            amount_cents: $steps.getCheck.outputs.dueCents
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          paymentId: $response.body#/id
+      - stepId: createCharge
+        operationId: createCharge
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+            payment_method: pm_ok
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: createInvoice
+        operationId: createInvoice
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 201
+
+  - workflowId: deliveryEndToEnd
+    summary: E. Delivery end to end
+    description: |
+      Nine hops with three branch points — zone check, courier availability,
+      ready-gate on pickup. Creates a new delivery fulfillment; does not
+      reuse dlv_pending.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: checkZone
+        operationId: checkZone
+        requestBody:
+          contentType: application/json
+          payload:
+            location_id: loc_oak
+            address_id: addr_maya
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: quoteDelivery
+        operationId: quoteDelivery
+        requestBody:
+          contentType: application/json
+          payload:
+            location_id: loc_oak
+            address_id: addr_maya
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          quoteId: $response.body#/id
+          feeCents: $response.body#/fee_cents
+      - stepId: createFulfillment
+        operationId: createFulfillment
+        requestBody:
+          contentType: application/json
+          payload:
+            location_id: loc_oak
+            type: delivery
+            guest_id: gst_maya
+            address_id: addr_maya
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          fulfillmentId: $response.body#/id
+      - stepId: createCheck
+        operationId: createCheck
+        requestBody:
+          contentType: application/json
+          payload:
+            fulfillment_id: $steps.createFulfillment.outputs.fulfillmentId
+            server_id: emp_jon
+            guest_id: gst_maya
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          checkId: $response.body#/id
+      - stepId: addItem
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            quantity: 1
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: sendOrder
+        operationId: sendOrder
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          ticketId: $response.body#/ticket/id
+      - stepId: createDelivery
+        operationId: createDelivery
+        requestBody:
+          contentType: application/json
+          payload:
+            fulfillment_id: $steps.createFulfillment.outputs.fulfillmentId
+            quote_id: $steps.quoteDelivery.outputs.quoteId
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          deliveryId: $response.body#/id
+      - stepId: dispatchDelivery
+        description: No available courier → 503 no_courier_available (retryable).
+        operationId: dispatchDelivery
+        requestBody:
+          contentType: application/json
+          payload:
+            delivery_id: $steps.createDelivery.outputs.deliveryId
+            courier_id: crr_sam
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: acceptDispatch
+        operationId: acceptDispatch
+        parameters:
+          - name: delivery_id
+            in: path
+            value: $steps.createDelivery.outputs.deliveryId
+        requestBody:
+          contentType: application/json
+          payload:
+            courier_id: crr_sam
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: doneTicket
+        operationId: completeTicket
+        parameters:
+          - name: ticket_id
+            in: path
+            value: $steps.sendOrder.outputs.ticketId
+        requestBody:
+          contentType: application/json
+          payload:
+            status: done
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: pickupDelivery
+        description: Before fulfillment ready → 409 delivery_not_ready.
+        operationId: pickupDelivery
+        parameters:
+          - name: delivery_id
+            in: path
+            value: $steps.createDelivery.outputs.deliveryId
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: pingTracking
+        operationId: pingTracking
+        parameters:
+          - name: delivery_id
+            in: path
+            value: $steps.createDelivery.outputs.deliveryId
+        requestBody:
+          contentType: application/json
+          payload:
+            lng: -122.618
+            lat: 45.427
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: deliverDelivery
+        operationId: deliverDelivery
+        parameters:
+          - name: delivery_id
+            in: path
+            value: $steps.createDelivery.outputs.deliveryId
+        requestBody:
+          contentType: application/json
+          payload:
+            notes: left at the door
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getCheck
+        description: Re-read due. Delivery fee is on the check after createDelivery.
+        operationId: getCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          dueCents: $response.body#/totals/due_cents
+      - stepId: createPayment
+        operationId: createPayment
+        requestBody:
+          contentType: application/json
+          payload:
+            check_id: $steps.createCheck.outputs.checkId
+            method: card
+            amount_cents: $steps.getCheck.outputs.dueCents
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          paymentId: $response.body#/id
+      - stepId: createCharge
+        operationId: createCharge
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+            payment_method: pm_ok
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: createInvoice
+        operationId: createInvoice
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: addCourierTip
+        operationId: addCourierTip
+        requestBody:
+          contentType: application/json
+          payload:
+            delivery_id: $steps.createDelivery.outputs.deliveryId
+            amount_cents: 300
+        successCriteria:
+          - condition: $statusCode == 200
+    outputs:
+      deliveryId: $steps.createDelivery.outputs.deliveryId
+      checkId: $steps.createCheck.outputs.checkId
+
+  - workflowId: buildABurger
+    summary: F. Build a burger
+    description: |
+      Same write endpoint as C. Each step below expects a distinct 4xx from
+      addItem, then the last step is the valid Townie. Five options in
+      modg_add is in HANDOFF but the live group only has three options, so
+      that row is not a step.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: createCheck
+        operationId: createCheck
+        requestBody:
+          contentType: application/json
+          payload:
+            location_id: loc_oak
+            table_id: tbl_1
+            server_id: emp_jon
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          checkId: $response.body#/id
+      - stepId: omitPatty
+        description: Required group omitted → 422 modifier_group_required.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 422
+      - stepId: twoPatties
+        description: Two options in a max_select 1 group → 422 modifier_max_exceeded.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_patty
+                option_id: mod_impossible
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 422
+      - stepId: baconQty
+        description: mod_bacon qty 3 → 422 modifier_qty_exceeded.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+              - group_id: modg_add
+                option_id: mod_bacon
+                qty: 3
+        successCriteria:
+          - condition: $statusCode == 422
+      - stepId: avocado86
+        description: 86'd add-on → 409 modifier_86.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+              - group_id: modg_add
+                option_id: mod_avocado
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 409
+      - stepId: incompatiblePair
+        description: mod_egg + mod_impossible → 409 modifier_incompatible.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_patty
+                option_id: mod_impossible
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+              - group_id: modg_add
+                option_id: mod_egg
+                qty: 1
+        successCriteria:
+          - condition: $statusCode == 409
+      - stepId: notADefault
+        description: removed_defaults names bacon → 422 not_a_default.
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+            removed_defaults:
+              - mod_bacon
+        successCriteria:
+          - condition: $statusCode == 422
+      - stepId: addValid
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: $steps.createCheck.outputs.checkId
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_townie
+            quantity: 1
+            selections:
+              - group_id: modg_patty
+                option_id: mod_beef
+                qty: 1
+              - group_id: modg_temp
+                option_id: mod_medium
+                qty: 1
+              - group_id: modg_add
+                option_id: mod_bacon
+                qty: 1
+            removed_defaults:
+              - mod_pickle
+        successCriteria:
+          - condition: $statusCode == 201
+    outputs:
+      checkId: $steps.createCheck.outputs.checkId
+
+  - workflowId: rewardsRedeemThenPay
+    summary: G. Rewards redemption then pay
+    description: |
+      The stale-due trap. Redeem off_free_fries on chk_ok, re-fetch the
+      check, pay the new due. Skipping the re-fetch and paying 1736 is
+      422 amount_mismatch. Passing a stale check_version is 409
+      check_version_stale.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getRewards
+        operationId: getRewards
+        parameters:
+          - name: guest_id
+            in: path
+            value: gst_maya
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listOffers
+        operationId: listOffers
+        parameters:
+          - name: guest_id
+            in: query
+            value: gst_maya
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getCheckBefore
+        operationId: getCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_ok
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          staleDue: $response.body#/totals/due_cents
+          staleVersion: $response.body#/version
+      - stepId: createRedemption
+        operationId: createRedemption
+        requestBody:
+          contentType: application/json
+          payload:
+            check_id: chk_ok
+            offer_id: off_free_fries
+            guest_id: gst_maya
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: getCheckAfter
+        description: due_cents changed. Use this amount, not staleDue.
+        operationId: getCheck
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_ok
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          dueCents: $response.body#/totals/due_cents
+          version: $response.body#/version
+      - stepId: createPayment
+        operationId: createPayment
+        requestBody:
+          contentType: application/json
+          payload:
+            check_id: chk_ok
+            method: card
+            amount_cents: $steps.getCheckAfter.outputs.dueCents
+            check_version: $steps.getCheckAfter.outputs.version
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          paymentId: $response.body#/id
+      - stepId: createCharge
+        operationId: createCharge
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+            payment_method: pm_ok
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: createInvoice
+        operationId: createInvoice
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 201
+      - stepId: earnRewards
+        operationId: earnRewards
+        parameters:
+          - name: guest_id
+            in: path
+            value: gst_maya
+        requestBody:
+          contentType: application/json
+          payload:
+            payment_id: $steps.createPayment.outputs.paymentId
+        successCriteria:
+          - condition: $statusCode == 200
+
+  - workflowId: deliveryFailedThenRefund
+    summary: H. Delivery failed then refund
+    description: |
+      Fixture dlv_enroute. Fail the job; fulfillment stays ready.
+      The seeded check chk_enroute is unpaid, so the live path is cancel
+      fulfillment — inventory is not restocked. HANDOFF also describes a
+      paid recovery (refund → processor refund → void). That branch needs
+      a paid enroute fixture the seed does not have, so it is not a step.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: failDelivery
+        operationId: failDelivery
+        parameters:
+          - name: delivery_id
+            in: path
+            value: dlv_enroute
+        requestBody:
+          contentType: application/json
+          payload:
+            reason: customer_unreachable
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          fulfillmentId: $response.body#/fulfillment_id
+      - stepId: getFulfillment
+        operationId: getFulfillment
+        parameters:
+          - name: fulfillment_id
+            in: path
+            value: $steps.failDelivery.outputs.fulfillmentId
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: cancelFulfillment
+        operationId: cancelFulfillment
+        parameters:
+          - name: fulfillment_id
+            in: path
+            value: $steps.failDelivery.outputs.fulfillmentId
+        successCriteria:
+          - condition: $statusCode == 200
+
+  - workflowId: guestDietaryFilter
+    summary: I. Guest dietary filter
+    description: |
+      Read-only filter plus one add that warns. Maya avoids alg_dairy and
+      is not strict, so a shake still 201s with warnings[]. 409
+      allergen_conflict only fires when dietary_profile.strict is true.
+      No guest on the seed is strict, so that 409 is not a step.
+    steps:
+      - stepId: reset
+        operationId: resetSandbox
+        requestBody:
+          contentType: application/json
+          payload:
+            reset: true
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: getGuest
+        operationId: getGuest
+        parameters:
+          - name: guest_id
+            in: path
+            value: gst_maya
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listAllergens
+        operationId: listAllergens
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: listItems
+        operationId: listItems
+        parameters:
+          - name: exclude_allergens
+            in: query
+            value: alg_dairy
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: addAnyway
+        description: Shake has dairy. Guest is not strict → 201 with warnings[].
+        operationId: addItem
+        parameters:
+          - name: check_id
+            in: path
+            value: chk_ok
+        requestBody:
+          contentType: application/json
+          payload:
+            item_id: itm_shake
+            quantity: 1
+        successCriteria:
+          - condition: $statusCode == 201

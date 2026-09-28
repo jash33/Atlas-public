@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Lesson 5 &middot; Create Workflow</title><link rel="stylesheet" href="../assets/course.css" /></head>
+<body>
+  <p class="homelink"><a href="index.html">&larr; All lessons</a></p>
+  <p class="eyebrow">Atlas Console &middot; Lesson 5 &middot; 3 min</p>
+  <h1>Create Workflow</h1>
+  <p class="standfirst">Describe the integration you want. Atlas drafts it using approved API actions.</p>
+
+  <h2>Start with a request</h2>
+  <p>Create Workflow opens on a quiet compose surface: a name, a plain-language prompt, and Draft. There is no scrolling capability ticker. Mention an authorized API action in the prompt and Atlas highlights it so you can open its details. Atlas may return a draft, ask a question, explain that an API action is missing, or ask for manual review. It should not guess when information is missing.</p>
+
+  <h2>Answer questions in ordinary English</h2>
+  <p>After Draft, Atlas continues as a short conversation when a detail is missing. It asks a question in ordinary sentences and names the step or API action when that is already known. Choose a suggested answer or write your own. Atlas does not guess the missing detail; your answer is checked the same way as the original request. If the request cannot be created, Atlas explains that in a sentence instead of inventing a draft. An Operator sees that they must switch to Author or Admin to create a workflow.</p>
+
+  <h2>Review the draft</h2>
+  <p>After a draft validates, a graph of that draft stacks underneath the prompt. Until then, Create Workflow stays a conversation without a graph, including questions and blocked outcomes. The graph shows steps, order, data mappings, credentials, and irreversible boundaries in ordinary language. Mappings you asked for look different from mappings Atlas inferred: amount and currency from the payment record look requested, while an unstated binding such as an idempotency key from the payment id looks inferred. Every inferred required field uses the same marking. It replaces the earlier list-style diagram, so the same draft is not shown twice.</p>
+  <p>YAML, follow-up, checks, and approval stay below the graph. Select a step to check:</p>
+  <ul>
+    <li>which API action it uses;</li>
+    <li>how data moves into and out of it;</li>
+    <li>when it runs;</li>
+    <li>how long it may take and when it may retry; and</li>
+    <li>which credential it needs.</li>
+  </ul>
+  <p>You can still open the <code>.atlas.yaml</code> authoring source to review or edit it. The Worker never executes that YAML directly. Saving an edit creates a new workflow version and checks it again.</p>
+
+  <h2>Compile the source</h2>
+  <p>Show source is for inspection and edits, not the primary review. The Backend resolves each capability name to an exact <code>capabilityVersionId</code>, orders dependencies, compiles mappings into a bounded transformation language, and recomputes the workflow fingerprint.</p>
+  <p>Missing or ambiguous mappings produce diagnostics or a question instead of invented glue code. Your answer is checked through the same compiler as hand-edited YAML.</p>
+
+  <h2>Edit and check</h2>
+  <p>Clicking Draft also runs checks once a draft exists, as the last step in the same drafting progress. Atlas does not ask for a second Run checks click on that path. If checks fail, Atlas repairs the draft once from that contract problem and runs checks again. If they still fail, the chat names the exact error, why it happened, and a suggested fix you can accept, the same way you accept a suggested answer. The graph stays visible and marks the failed step. Passing checks leave the graph in place and say this version is ready to approve, without listing individual checks. Approval stays Admin-only until checks pass.</p>
+  <p>Saving from Show source creates a new version and checks it again. A workflow with errors cannot be approved. The compiled plan is closed data interpreted later by Atlas; it is not generated JavaScript or TypeScript.</p>
+
+  <div class="claim"><span class="label">AI has a limited role</span><p>The model suggests a draft. The Backend checks it, and a person decides whether it should run. The model cannot see credentials or run the workflow.</p></div>
+
+  <p class="cite">See the <a href="../reference/workflow-artifacts.html">workflow artifacts reference</a> for the complete path from request to runtime.</p>
+
+  <div class="source"><h3>Sources</h3><p>See the <a href="https://github.com/jash33/Atlas-public/blob/main/README.md">setup guide</a>, <a href="https://github.com/jash33/Atlas-public/tree/main/docs">technical documentation</a>, and <a href="https://github.com/jash33/Atlas-public/tree/main/apps">application source</a>.</p></div>
+  <div class="nav"><a href="0004-capabilities.html">&larr; Capabilities</a><a href="0006-the-runtime.html">Test and approve &rarr;</a></div>
+</body>
+</html>

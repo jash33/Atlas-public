@@ -154,12 +154,7 @@ async function waitForCompletedRedactedRun() {
 }
 
 function configuredTopology() {
-  return JSON.parse(
-    execFileSync('docker', [...baseArgs, 'config', '--format', 'json'], {
-      cwd: workspaceRoot,
-      encoding: 'utf8',
-    }),
-  );
+  return JSON.parse(dockerOutput('config', '--format', 'json'));
 }
 
 function assertTopology() {

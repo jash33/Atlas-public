@@ -373,15 +373,16 @@ describe('payment intake identity', () => {
         stepId: 'get-payment',
       },
     });
-    expect(reportedStepAttempts).toEqual([
-      expect.objectContaining({
+    expect(reportedStepAttempts.length).toBeGreaterThan(0);
+    for (const attempt of reportedStepAttempts) {
+      expect(attempt).toMatchObject({
         runId: workflowRunId,
         stepId: 'get-payment',
         status: 'failed',
         failureType: 'PaymentNotFound',
         redactedInput: { paymentId: '[REDACTED]' },
-      }),
-    ]);
+      });
+    }
   });
 
   it('reports the generic fallback for an untyped provider exception', async () => {
@@ -391,15 +392,16 @@ describe('payment intake identity', () => {
 
     await environment.client.workflow.getHandle(workflowRunId).result();
 
-    expect(reportedStepAttempts).toEqual([
-      expect.objectContaining({
+    expect(reportedStepAttempts.length).toBeGreaterThan(0);
+    for (const attempt of reportedStepAttempts) {
+      expect(attempt).toMatchObject({
         runId: workflowRunId,
         stepId: 'get-payment',
         status: 'failed',
         failureType: 'UnknownOperationalFailure',
         redactedInput: { paymentId: '[REDACTED]' },
-      }),
-    ]);
+      });
+    }
   });
 });
 

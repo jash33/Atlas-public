@@ -297,6 +297,122 @@ describe('generic Temporal interpreter', () => {
     30_000,
   );
 
+  it.each(['success', 'failure'] as const)(
+    'retries audit delivery without changing the provider %s',
+    async (outcome) => {
+      const workflow = await createCompiledWorkflowVersion('audit-outage@1', 'org_atlas_demo', {
+        irVersion: 1,
+        steps: [
+          {
+            id: 'call',
+            kind: 'capabilityCall',
+            capabilityVersionId: 'provider@1',
+            arguments: {},
+            retryPolicy: {
+              initialInterval: '1 millisecond',
+              backoffCoefficient: 1,
+              maximumInterval: '1 millisecond',
+              maximumAttempts: 2,
+              nonRetryableErrorTypes: ['AuthenticationFailed'],
+            },
+          },
+          { id: 'done', kind: 'terminal', state: 'completed' },
+        ],
+      });
+      let providerCalls = 0;
+      const reports: StepAttempt[] = [];
+      const worker = await createTemporalWorker({
+        connection: environment.nativeConnection,
+        taskQueue,
+        dataConverter,
+        activities: {
+          async invokeStep() {
+            providerCalls++;
+            if (outcome === 'failure') throw new StepActivityError('AuthenticationFailed');
+            return { value: 'sensitive-value' };
+          },
+        },
+        stepAttemptReporter: {
+          async recordStepAttempt(attempt) {
+            reports.push(attempt);
+            if (reports.length === 1) throw new Error('Audit HTTP 503');
+          },
+        },
+      });
+      const handle = await environment.client.workflow.start(INTERPRETER_WORKFLOW, {
+        workflowId: `audit-outage-${outcome}`,
+        taskQueue,
+        args: [{ workflow, input: {}, returnFinalOutput: true }],
+      });
+      const result = await worker.runUntil(handle.result());
+      expect(providerCalls).toBe(1);
+      expect(result).toMatchObject(
+        outcome === 'success'
+          ? { state: 'completed', output: { value: 'sensitive-value' } }
+          : { state: 'repair_required', failure: { type: 'AuthenticationFailed' } },
+      );
+      expect(reports.length).toBeGreaterThanOrEqual(2);
+      expect(reports.at(-1)).toMatchObject({
+        status: outcome === 'success' ? 'succeeded' : 'failed',
+        attempt: 1,
+        ...(outcome === 'success'
+          ? { redactedOutput: { value: '[REDACTED]' } }
+          : { failureType: 'AuthenticationFailed' }),
+      });
+      await replayTemporalHistory(await handle.fetchHistory(), dataConverter);
+    },
+    30_000,
+  );
+
+  it('compensates a failed write while audit delivery is unavailable', async () => {
+    let undone = false;
+    let reports = 0;
+    const workflow = await createCompiledWorkflowVersion('audit-compensation@1', 'org_atlas_demo', {
+      irVersion: 1,
+      steps: [
+        { id: 'write', kind: 'capabilityCall', capabilityVersionId: 'write@1', arguments: {} },
+        {
+          id: 'undo',
+          kind: 'compensation',
+          compensatesStepId: 'write',
+          capabilityVersionId: 'undo@1',
+          arguments: {},
+        },
+        { id: 'done', kind: 'terminal', state: 'completed' },
+      ],
+    });
+    const worker = await createTemporalWorker({
+      connection: environment.nativeConnection,
+      taskQueue,
+      dataConverter,
+      activities: {
+        async invokeStep(invocation) {
+          if (invocation.stepId === 'write') throw new StepActivityError('ProviderUnavailable');
+          undone = true;
+          return {};
+        },
+      },
+      stepAttemptReporter: {
+        async recordStepAttempt() {
+          reports++;
+          if (!undone) throw new Error('Audit offline until compensation finishes');
+        },
+      },
+    });
+    const handle = await environment.client.workflow.start(INTERPRETER_WORKFLOW, {
+      workflowId: 'audit-compensation',
+      taskQueue,
+      args: [{ workflow, input: {} }],
+    });
+    await expect(worker.runUntil(handle.result())).resolves.toMatchObject({
+      state: 'repair_required',
+      failure: { type: 'ProviderUnavailable' },
+    });
+    expect(undone).toBe(true);
+    expect(reports).toBeGreaterThan(1);
+    await replayTemporalHistory(await handle.fetchHistory(), dataConverter);
+  }, 30_000);
+
   it('reports a fast completion durably and retries the same outcome', async () => {
     const workflow = await createCompiledWorkflowVersion('reported@1', 'org_atlas_demo', {
       irVersion: 1,
@@ -1129,14 +1245,16 @@ describe('generic Temporal interpreter', () => {
         stepId: 'get-payment',
       },
     });
-    expect(attempts).toEqual([
-      expect.objectContaining({
-        stepId: 'get-payment',
-        status: 'failed',
-        failureType: 'UnknownOperationalFailure',
-        redactedInput: { paymentId: '[REDACTED]' },
-      }),
-    ]);
+    expect(attempts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          stepId: 'get-payment',
+          status: 'failed',
+          failureType: 'UnknownOperationalFailure',
+          redactedInput: { paymentId: '[REDACTED]' },
+        }),
+      ]),
+    );
   }, 15_000);
 
   it('does not schedule a capability when a transformed payload fails its pinned schema', async () => {

@@ -859,7 +859,7 @@ describe('customer-worker workflow sandbox', () => {
           temporalRunId: expect.any(String),
           terminalOutcome: 'completed',
           attempts: [{ stepId: 'get-payment', attempt: 1, status: 200 }],
-          temporalHistory: expect.objectContaining({ completedActivities: 1 }),
+          temporalHistory: expect.objectContaining({ completedActivities: 2 }),
           providerObservations: expect.objectContaining({ sideEffectCount: 0 }),
           detail: expect.stringContaining('get-payment'),
         }),
@@ -870,7 +870,7 @@ describe('customer-worker workflow sandbox', () => {
           temporalRunId: expect.any(String),
           terminalOutcome: 'completed',
           attempts: [{ stepId: 'get-payment', attempt: 1, status: 200 }],
-          temporalHistory: expect.objectContaining({ completedActivities: 1 }),
+          temporalHistory: expect.objectContaining({ completedActivities: 2 }),
           providerObservations: expect.objectContaining({ sideEffectCount: 0 }),
         }),
         expect.objectContaining({
@@ -1289,7 +1289,7 @@ describe('customer-worker workflow sandbox', () => {
             { stepId: 'get-invoice', attempt: 2, status: 500 },
             { stepId: 'get-invoice', attempt: 3, status: 500 },
           ],
-          temporalHistory: expect.objectContaining({ scheduledActivities: 2 }),
+          temporalHistory: expect.objectContaining({ scheduledActivities: 4 }),
         }),
       ]);
 

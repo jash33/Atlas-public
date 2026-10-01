@@ -20,6 +20,15 @@ Temporal retains the start settings of executions already in progress.
 The `register-compensation-before-invoke-v1` Temporal patch preserves the previous behavior when
 replaying older runs. Keep that branch until those executions have finished and left retention.
 
+Step results and audit delivery are separate Temporal activities. New runs keep the final
+attempt's redacted trace in Temporal and retry its delivery without repeating the provider
+operation or delaying compensation. The workflow waits for pending trace delivery before it
+closes. Intermediate failed attempts and calls from old histories send best-effort diagnostics;
+delivery failure is logged without changing the provider outcome. Trace delivery can repeat,
+and the backend stores it by run, step, and attempt. The
+`separate-step-attempt-reporting-v1` patch preserves old command histories; retain that branch
+until those runs have finished and left retention.
+
 Drafting and checking are separate actions. Saving or editing a draft does not run checks. The Console shows that the version has no current result until an admin chooses **Run checks**.
 
 In the manual builder, **Save draft** stores the current working draft, including incomplete work. **Validate** checks the current canvas without saving it, replacing the saved draft, or running sandbox tests. It can check unsaved changes and unnamed workflows. Approval stores the reviewed version under the workflow's name before activating it.

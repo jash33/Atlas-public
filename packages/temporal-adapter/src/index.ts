@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 
-import { Context } from '@temporalio/activity';
-import { ApplicationFailure } from '@temporalio/common';
+import { Context, log } from '@temporalio/activity';
+import { ApplicationFailure, CancelledFailure } from '@temporalio/common';
 import { Client, Connection, type WorkflowClient } from '@temporalio/client';
 import type { DataConverter } from '@temporalio/common';
 import { NativeConnection, Worker, type WorkerOptions } from '@temporalio/worker';
@@ -15,6 +15,7 @@ import {
 import { deriveStableId } from '@atlas/workflow-ir';
 import { assertEncryptedDataConverter, type EncryptedDataConverter } from './payload-codec.js';
 import type { RunReporter } from './workflow.js';
+import { STEP_ATTEMPT_DETAIL, type StepAttempt } from './step-attempt.js';
 import { INTERPRETER_WORKFLOW } from './workflow-names.js';
 
 export { INTERPRETER_WORKFLOW };
@@ -74,17 +75,7 @@ export async function connectTemporalRuntime(options: {
   }
 }
 
-export interface StepAttempt {
-  readonly runId: string;
-  readonly stepId: string;
-  readonly capabilityVersionId: string;
-  readonly attempt: number;
-  readonly durationMs: number;
-  readonly status: 'succeeded' | 'failed';
-  readonly redactedInput: unknown;
-  readonly redactedOutput?: unknown;
-  readonly failureType?: string;
-}
+export type { StepAttempt } from './step-attempt.js';
 
 const UNKNOWN_OPERATIONAL_FAILURE_TYPE = 'UnknownOperationalFailure';
 
@@ -122,6 +113,53 @@ export async function createTemporalWorker(options: CreateTemporalWorkerOptions)
         await options.runReporter.recordRunOutcome(input);
       },
       ...projectActivityOutputs(wrapStepAttempts(options.activities, options.stepAttemptReporter)),
+      async invokeStepWithAttempt(invocation: StepInvocation) {
+        const startedAt = Date.now();
+        const identity = {
+          runId: invocation.runId ?? Context.current().info.workflowExecution!.workflowId,
+          stepId: invocation.stepId,
+          capabilityVersionId: invocation.capabilityVersionId,
+          attempt: Context.current().info.attempt,
+          redactedInput: redactJson(invocation.input),
+        };
+        try {
+          const output = await invokeOrFail(options.activities, invocation);
+          return {
+            output:
+              invocation.outputProjection === undefined
+                ? output
+                : projectOutput(output, invocation.outputProjection),
+            ...(options.stepAttemptReporter
+              ? {
+                  attempt: {
+                    ...identity,
+                    durationMs: Date.now() - startedAt,
+                    status: 'succeeded' as const,
+                    redactedOutput: redactJson(output),
+                  },
+                }
+              : {}),
+          };
+        } catch (error) {
+          if (!options.stepAttemptReporter || error instanceof CancelledFailure) throw error;
+          const attempt: StepAttempt = {
+            ...identity,
+            durationMs: Date.now() - startedAt,
+            status: 'failed',
+            failureType: stepAttemptFailureType(error),
+          };
+          // Intermediate retries are diagnostic only. Final delivery is separately durable.
+          reportAttemptInBackground(options.stepAttemptReporter, attempt);
+          const failure = ApplicationFailure.fromError(error);
+          throw ApplicationFailure.fromError(failure, {
+            details: [...(failure.details ?? []), { kind: STEP_ATTEMPT_DETAIL, attempt }],
+          });
+        }
+      },
+      async recordStepAttempt(attempt: StepAttempt) {
+        if (!options.stepAttemptReporter) throw new Error('Step reporting is not configured');
+        await options.stepAttemptReporter.recordStepAttempt(attempt);
+      },
       deriveStableId,
       async emitDriftSignal(signal: DriftSignal) {
         await options.activities.emitDriftSignal?.(signal);
@@ -156,7 +194,7 @@ function wrapStepAttempts(
       if (!runId) throw new Error('Step invocation has no workflow run identity');
       try {
         const output = await invokeOrFail(activities, invocation);
-        await reporter.recordStepAttempt({
+        reportAttemptInBackground(reporter, {
           runId,
           stepId: invocation.stepId,
           capabilityVersionId: invocation.capabilityVersionId,
@@ -168,7 +206,7 @@ function wrapStepAttempts(
         });
         return output;
       } catch (error) {
-        await reporter.recordStepAttempt({
+        reportAttemptInBackground(reporter, {
           runId,
           stepId: invocation.stepId,
           capabilityVersionId: invocation.capabilityVersionId,
@@ -182,6 +220,23 @@ function wrapStepAttempts(
       }
     },
   };
+}
+
+function reportAttemptInBackground(
+  reporter: NonNullable<CreateTemporalWorkerOptions['stepAttemptReporter']>,
+  attempt: StepAttempt,
+): void {
+  // Legacy histories and intermediate failed attempts cannot add a workflow command.
+  // Their diagnostics must never affect the provider result or consume its timeout.
+  void Promise.resolve()
+    .then(() => reporter.recordStepAttempt(attempt))
+    .catch(() => {
+      log.warn('Step attempt diagnostic delivery failed', {
+        runId: attempt.runId,
+        stepId: attempt.stepId,
+        attempt: attempt.attempt,
+      });
+    });
 }
 
 function stepAttemptFailureType(error: unknown): string {

@@ -1,3 +1,8 @@
+import {
+  STEP_ATTEMPT_DETAIL,
+  type ReportedStepActivities,
+  type StepAttempt,
+} from './step-attempt.js';
 import { ActivityFailure, ApplicationFailure } from '@temporalio/common';
 import {
   proxyActivities,
@@ -231,7 +236,21 @@ async function invokeActivityStep(
   });
 }
 
+// Temporal gives each workflow execution its own module state. Start reporting promptly,
+// but do not delay provider error routing or compensation while the backend is down.
+const stepReportDeliveries: Promise<void>[] = [];
+
 export async function interpretCompiledWorkflow(
+  interpreterInput: InterpreterInput,
+): Promise<InterpreterResult> {
+  try {
+    return await interpretWithLifecycle(interpreterInput);
+  } finally {
+    await CancellationScope.nonCancellable(() => Promise.all(stepReportDeliveries));
+  }
+}
+
+async function interpretWithLifecycle(
   interpreterInput: InterpreterInput,
 ): Promise<InterpreterResult> {
   // Existing and sandbox executions have no lifecycle setting. Their command history
@@ -770,7 +789,7 @@ const defaultRetryPolicy: RetryPolicy = {
 function activitiesWithRetryPolicy(
   retryPolicy: RetryPolicy = defaultRetryPolicy,
 ): Pick<StepActivities, 'invokeStep'> {
-  return proxyActivities<Pick<StepActivities, 'invokeStep'>>({
+  const options = {
     startToCloseTimeout: WORKFLOW_STEP_START_TO_CLOSE_TIMEOUT,
     retry: {
       initialInterval: retryPolicy.initialInterval,
@@ -784,7 +803,48 @@ function activitiesWithRetryPolicy(
         ]),
       ],
     },
+  };
+  if (!patched('separate-step-attempt-reporting-v1')) {
+    return proxyActivities<Pick<StepActivities, 'invokeStep'>>(options);
+  }
+  const provider = proxyActivities<ReportedStepActivities>(options);
+  const reporter = proxyActivities<Pick<ReportedStepActivities, 'recordStepAttempt'>>({
+    startToCloseTimeout: '30 seconds',
+    retry: { initialInterval: '1 second', maximumInterval: '30 seconds' },
   });
+  return {
+    async invokeStep(invocation) {
+      let result: Awaited<ReturnType<ReportedStepActivities['invokeStepWithAttempt']>>;
+      try {
+        result = await provider.invokeStepWithAttempt(invocation);
+      } catch (error) {
+        const failure = error instanceof ActivityFailure ? error.cause : undefined;
+        const detail =
+          failure instanceof ApplicationFailure
+            ? failure.details?.find(
+                (value): value is { kind: string; attempt: StepAttempt } =>
+                  value !== null &&
+                  typeof value === 'object' &&
+                  'kind' in value &&
+                  value.kind === STEP_ATTEMPT_DETAIL &&
+                  'attempt' in value,
+              )
+            : undefined;
+        if (detail) {
+          stepReportDeliveries.push(
+            CancellationScope.nonCancellable(() => reporter.recordStepAttempt(detail.attempt)),
+          );
+        }
+        throw error;
+      }
+      if (result.attempt) {
+        stepReportDeliveries.push(
+          CancellationScope.nonCancellable(() => reporter.recordStepAttempt(result.attempt!)),
+        );
+      }
+      return result.output;
+    },
+  };
 }
 
 function stableIdActivities(): StableIdActivities {

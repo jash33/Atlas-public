@@ -1,3 +1,4 @@
+import { encryptedRunCommandPattern } from '@atlas/run-command-encryption';
 import { randomUUID } from 'node:crypto';
 
 import type { Pool } from 'pg';
@@ -12,7 +13,7 @@ export const queueWebhookRunCommandSchema = z
     environmentId: z.string().min(1),
     deliveryId: z.string().trim().min(1).max(255),
     payloadFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
-    encryptedPayload: z.string().regex(/^rsa-oaep:[A-Za-z0-9+/]+={0,2}$/),
+    encryptedPayload: z.string().regex(encryptedRunCommandPattern),
     workflowId: z.string().min(1).optional(),
   })
   .strict();
@@ -24,7 +25,7 @@ export const queueApiRunCommandSchema = z
     workflowId: z.string().min(1),
     idempotencyKey: z.string().trim().min(1).max(255),
     payloadFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
-    encryptedPayload: z.string().regex(/^rsa-oaep:[A-Za-z0-9+/]+={0,2}$/),
+    encryptedPayload: z.string().regex(encryptedRunCommandPattern),
   })
   .strict();
 

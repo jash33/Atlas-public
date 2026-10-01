@@ -233,7 +233,7 @@ export function createBackendRunCommandProcessor(
       const command = parseRunCommand(body);
       let decryptedPayload: unknown;
       try {
-        decryptedPayload = options.decryptPayload(command.encryptedPayload);
+        decryptedPayload = await options.decryptPayload(command.encryptedPayload);
       } catch {
         await recordResult(command.commandId, {
           status: 'failed',

@@ -8,6 +8,7 @@
     "test": "vp test --run --passWithNoTests"
   },
   "dependencies": {
+    "@atlas/run-command-encryption": "workspace:*",
     "@atlas/workflow-ir": "workspace:*",
     "@hono/node-server": "catalog:",
     "canonicalize": "4.0.0",

@@ -1,3 +1,4 @@
+import { encryptedRunCommandPattern } from '@atlas/run-command-encryption';
 import { randomUUID } from 'node:crypto';
 
 import type { Pool } from 'pg';
@@ -12,7 +13,7 @@ export const workflowScheduleCreateSchema = z
     name: z.string().trim().min(1).max(120),
     intervalSeconds: z.number().int().min(60).max(31_536_000),
     startsAt: z.iso.datetime({ offset: true }),
-    encryptedPayload: z.string().regex(/^rsa-oaep:[A-Za-z0-9+/]+={0,2}$/),
+    encryptedPayload: z.string().regex(encryptedRunCommandPattern),
   })
   .strict();
 
@@ -21,10 +22,7 @@ export const workflowScheduleUpdateSchema = z
     organizationId: z.string().min(1),
     environmentId: z.string().min(1),
     enabled: z.boolean().optional(),
-    encryptedPayload: z
-      .string()
-      .regex(/^rsa-oaep:[A-Za-z0-9+/]+={0,2}$/)
-      .optional(),
+    encryptedPayload: z.string().regex(encryptedRunCommandPattern).optional(),
   })
   .strict()
   .refine((request) => request.enabled !== undefined || request.encryptedPayload !== undefined, {

@@ -1,3 +1,4 @@
+import { encryptRunCommandPayload } from '@atlas/run-command-encryption';
 import { useRemote } from '../home/data.js';
 import { requestJson } from '../shell/api.js';
 import type { ApiRunReadiness } from './RunLauncher.js';
@@ -113,23 +114,7 @@ async function sha256Hex(value: string): Promise<string> {
 }
 
 async function encryptApiRunInput(publicKey: string, plaintext: string): Promise<string> {
-  const binary = atob(publicKey);
-  const keyBytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-  const key = await crypto.subtle.importKey(
-    'spki',
-    keyBytes,
-    { name: 'RSA-OAEP', hash: 'SHA-256' },
-    false,
-    ['encrypt'],
-  );
-  const encrypted = await crypto.subtle.encrypt(
-    { name: 'RSA-OAEP' },
-    key,
-    new TextEncoder().encode(plaintext),
-  );
-  let encoded = '';
-  for (const byte of new Uint8Array(encrypted)) encoded += String.fromCharCode(byte);
-  return `rsa-oaep:${btoa(encoded)}`;
+  return encryptRunCommandPayload(publicKey, JSON.parse(plaintext));
 }
 
 interface RunCommandStatus {

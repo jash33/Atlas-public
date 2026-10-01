@@ -106,7 +106,7 @@ export function createIngestApp(options: IngestAppOptions): Hono {
     if (issues.length) return context.json({ error: 'invalid-webhook-payload', issues }, 400);
     let encryptedPayload: string;
     try {
-      encryptedPayload = encryptRunCommandPayload(ready.runCommandPublicKey, parsed.data);
+      encryptedPayload = await encryptRunCommandPayload(ready.runCommandPublicKey, parsed.data);
     } catch {
       return context.json(
         {
@@ -205,7 +205,7 @@ export function createIngestApp(options: IngestAppOptions): Hono {
     let encryptedPayload: string;
     let payloadFingerprint: string;
     try {
-      encryptedPayload = encryptRunCommandPayload(ready.runCommandPublicKey, payload);
+      encryptedPayload = await encryptRunCommandPayload(ready.runCommandPublicKey, payload);
       payloadFingerprint = fingerprintPayload(payload);
     } catch {
       return context.json(

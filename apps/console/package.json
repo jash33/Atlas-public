@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@atlas/demo-estate": "workspace:*",
+    "@atlas/run-command-encryption": "workspace:*",
     "@atlas/runtime-ports": "workspace:*",
     "@atlas/workflow-ir": "workspace:*",
     "@tanstack/react-table": "9.1.2",

@@ -1,21 +1,11 @@
-import {
-  constants,
-  createCipheriv,
-  createDecipheriv,
-  createPrivateKey,
-  createPublicKey,
-  generateKeyPairSync,
-  privateDecrypt,
-  publicEncrypt,
-  randomBytes,
-} from 'node:crypto';
+import { createCipheriv, createDecipheriv, generateKeyPairSync, randomBytes } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 
 import type { JsonValue } from '@atlas/workflow-ir';
 
 const initializationVectorLength = 12;
 const authenticationTagLength = 16;
-const rsaPrefix = 'rsa-oaep:';
+export { encryptRunCommandPayload, decryptRunCommandPayload } from '@atlas/run-command-encryption';
 
 export interface RunCommandEncryptionKeyPair {
   readonly publicKey: string;
@@ -54,36 +44,6 @@ export async function ensureRunCommandEncryptionKeyPair(
     { mode: 0o600 },
   );
   return pair;
-}
-
-export function encryptRunCommandPayload(publicKey: string, payload: JsonValue): string {
-  return `${rsaPrefix}${publicEncrypt(
-    {
-      key: createPublicKey({ key: Buffer.from(publicKey, 'base64'), format: 'der', type: 'spki' }),
-      padding: constants.RSA_PKCS1_OAEP_PADDING,
-      oaepHash: 'sha256',
-    },
-    Buffer.from(JSON.stringify(payload), 'utf8'),
-  ).toString('base64')}`;
-}
-
-export function decryptRunCommandPayload(privateKey: string, encryptedPayload: string): unknown {
-  if (!encryptedPayload.startsWith(rsaPrefix)) {
-    throw new Error('Run command payload does not use worker public-key encryption');
-  }
-  const plaintext = privateDecrypt(
-    {
-      key: createPrivateKey({
-        key: Buffer.from(privateKey, 'base64'),
-        format: 'der',
-        type: 'pkcs8',
-      }),
-      padding: constants.RSA_PKCS1_OAEP_PADDING,
-      oaepHash: 'sha256',
-    },
-    Buffer.from(encryptedPayload.slice(rsaPrefix.length), 'base64'),
-  );
-  return JSON.parse(plaintext.toString('utf8')) as unknown;
 }
 
 export function createRunCommandPayloadCipher(base64Key: string) {

@@ -93,7 +93,7 @@ describe('workflow webhook gateway', () => {
       workflowId: 'orders',
       deliveryId: 'event-1',
       payloadFingerprint: fingerprintPayload({ orderId: 'order-1' }),
-      encryptedPayload: expect.stringMatching(/^rsa-oaep:/),
+      encryptedPayload: expect.stringMatching(/^rsa-aes-gcm:v1:/),
     });
     expect(queuedBody).not.toContain('order-1');
   });

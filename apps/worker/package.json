@@ -10,6 +10,7 @@
   "dependencies": {
     "@atlas/demo-estate": "workspace:*",
     "@atlas/execution-grant": "workspace:*",
+    "@atlas/run-command-encryption": "workspace:*",
     "@atlas/runtime-ports": "workspace:*",
     "@atlas/temporal-adapter": "workspace:*",
     "@atlas/workflow-artifact": "workspace:*",

@@ -238,7 +238,7 @@ describe('ingest gateway routes', () => {
     expect(queueCalls).toHaveLength(1);
     expect(queueCalls[0]?.idempotencyKey).toBe('key-100');
     expect(queueCalls[0]?.payloadFingerprint).toBe(fingerprintPayload(payload));
-    expect(queueCalls[0]?.encryptedPayload.startsWith('rsa-oaep:')).toBe(true);
+    expect(queueCalls[0]?.encryptedPayload.startsWith('rsa-aes-gcm:v1:')).toBe(true);
     expect(queueCalls[0]?.encryptedPayload).not.toContain('order-100');
   });
 

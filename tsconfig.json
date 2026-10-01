@@ -1,17 +1,44 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/demo-estate" },
-    { "path": "./packages/workflow-ir" },
-    { "path": "./packages/workflow-artifact" },
-    { "path": "./packages/runtime-ports" },
-    { "path": "./packages/temporal-adapter" },
-    { "path": "./packages/execution-grant" },
-    { "path": "./packages/test-support" },
-    { "path": "./apps/backend" },
-    { "path": "./apps/console" },
-    { "path": "./apps/worker" },
-    { "path": "./apps/ingest" },
-    { "path": "./apps/mock-services" }
+    {
+      "path": "./packages/demo-estate"
+    },
+    {
+      "path": "./packages/workflow-ir"
+    },
+    {
+      "path": "./packages/workflow-artifact"
+    },
+    {
+      "path": "./packages/runtime-ports"
+    },
+    {
+      "path": "./packages/temporal-adapter"
+    },
+    {
+      "path": "./packages/execution-grant"
+    },
+    {
+      "path": "./packages/test-support"
+    },
+    {
+      "path": "./apps/backend"
+    },
+    {
+      "path": "./apps/console"
+    },
+    {
+      "path": "./apps/worker"
+    },
+    {
+      "path": "./apps/ingest"
+    },
+    {
+      "path": "./apps/mock-services"
+    },
+    {
+      "path": "./packages/run-command-encryption"
+    }
   ]
 }

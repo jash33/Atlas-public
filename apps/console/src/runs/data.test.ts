@@ -1,3 +1,4 @@
+import { decryptRunCommandPayload } from '@atlas/run-command-encryption';
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import {
@@ -122,18 +123,12 @@ describe('Runs API client', () => {
       payloadFingerprint: '5043a12ce12f3acaefcd40efc004f27dfea74bcec35da362d0e6366e821e7e4d',
     });
     expect(request.encryptedPayload).not.toContain('payment_demo_001');
-    const ciphertext = Uint8Array.from(
-      atob(request.encryptedPayload.replace('rsa-oaep:', '')),
-      (character) => character.charCodeAt(0),
-    );
-    const plaintext = await crypto.subtle.decrypt(
-      { name: 'RSA-OAEP' },
-      keys.privateKey,
-      ciphertext,
-    );
-    expect(JSON.parse(new TextDecoder().decode(plaintext))).toEqual({
-      paymentId: 'payment_demo_001',
-    });
+    const privateKey = new Uint8Array(await crypto.subtle.exportKey('pkcs8', keys.privateKey));
+    let privateKeyBinary = '';
+    for (const byte of privateKey) privateKeyBinary += String.fromCharCode(byte);
+    await expect(
+      decryptRunCommandPayload(btoa(privateKeyBinary), request.encryptedPayload),
+    ).resolves.toEqual({ paymentId: 'payment_demo_001' });
   });
 
   it('loads every run state within the selected environment', async () => {

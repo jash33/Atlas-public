@@ -18,6 +18,7 @@ COPY --chown=vp:vp packages/workflow-artifact/package.json ./packages/workflow-a
 COPY --chown=vp:vp packages/workflow-ir/package.json ./packages/workflow-ir/package.json
 COPY --chown=vp:vp apps/docs-site/package.json ./apps/docs-site/package.json
 COPY --chown=vp:vp packages/site-ui/package.json ./packages/site-ui/package.json
+COPY --chown=vp:vp packages/run-command-encryption/package.json ./packages/run-command-encryption/package.json
 RUN vp install --frozen-lockfile
 RUN tar -cf /tmp/workspace-node-modules.tar $(find apps packages -type d -name node_modules -prune)
 COPY --chown=vp:vp . .

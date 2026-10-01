@@ -19,12 +19,12 @@ describe('customer-side run command encryption', () => {
     try {
       const first = await ensureRunCommandEncryptionKeyPair(path);
       const second = await ensureRunCommandEncryptionKeyPair(path);
-      const encrypted = encryptRunCommandPayload(first.publicKey, {
+      const encrypted = await encryptRunCommandPayload(first.publicKey, {
         paymentId: 'payment_demo_001',
       });
 
       expect(encrypted).not.toContain('payment_demo_001');
-      expect(decryptRunCommandPayload(first.privateKey, encrypted)).toEqual({
+      expect(await decryptRunCommandPayload(first.privateKey, encrypted)).toEqual({
         paymentId: 'payment_demo_001',
       });
       expect(second).toEqual(first);
@@ -40,9 +40,9 @@ describe('customer-side run command encryption', () => {
     await writeFile(path, '{}');
     try {
       const pair = await ensureRunCommandEncryptionKeyPair(path);
-      const encrypted = encryptRunCommandPayload(pair.publicKey, {});
+      const encrypted = await encryptRunCommandPayload(pair.publicKey, {});
 
-      expect(decryptRunCommandPayload(pair.privateKey, encrypted)).toEqual({});
+      expect(await decryptRunCommandPayload(pair.privateKey, encrypted)).toEqual({});
     } finally {
       await rm(directory, { recursive: true, force: true });
     }

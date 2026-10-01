@@ -1,4 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test';
+import {
+  ApplicationFailure,
+  defaultFailureConverter,
+  defaultPayloadConverter,
+} from '@temporalio/common';
+import { failureConverter } from './failure-converter.js';
 
 import {
   assertEncryptedDataConverter,
@@ -10,6 +16,16 @@ const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
 describe('customer-side Temporal payload encryption', () => {
+  it('still reads failure history written before message encryption was enabled', () => {
+    const legacy = defaultFailureConverter.errorToFailure(
+      ApplicationFailure.create({ message: 'legacy failure', type: 'ProviderRejected' }),
+      defaultPayloadConverter,
+    );
+    expect(failureConverter.failureToError(legacy, defaultPayloadConverter)).toMatchObject({
+      message: 'legacy failure',
+      type: 'ProviderRejected',
+    });
+  });
   it('encrypts payload data before it crosses the Temporal boundary and restores it locally', async () => {
     const codec = createAesGcmPayloadCodec(Buffer.alloc(32, 7).toString('base64'));
     const plaintext = 'paymentId=pay_sensitive';

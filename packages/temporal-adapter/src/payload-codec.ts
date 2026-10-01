@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
 import type { DataConverter, Payload, PayloadCodec } from '@temporalio/common';
 
@@ -15,6 +16,12 @@ export type EncryptedDataConverter = DataConverter & {
 export function createEncryptedDataConverter(base64Key: string): EncryptedDataConverter {
   return {
     [encryptedDataConverterBrand]: true,
+    failureConverterPath: fileURLToPath(
+      new URL(
+        import.meta.url.endsWith('.ts') ? './failure-converter.ts' : './failure-converter.js',
+        import.meta.url,
+      ),
+    ),
     payloadCodecs: [createAesGcmPayloadCodec(base64Key)],
   };
 }

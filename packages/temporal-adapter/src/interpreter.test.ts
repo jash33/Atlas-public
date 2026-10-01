@@ -67,6 +67,43 @@ afterAll(async () => {
 });
 
 describe('generic Temporal interpreter', () => {
+  it('encrypts provider failure messages and stack traces in real Temporal history', async () => {
+    const privateMessage = 'private-customer@example.test';
+    const workflow = await createCompiledWorkflowVersion('private-failure@1', 'org_atlas_demo', {
+      irVersion: 1,
+      steps: [
+        {
+          id: 'write',
+          kind: 'capabilityCall',
+          capabilityVersionId: 'contacts.create@1',
+          arguments: {},
+        },
+      ],
+    });
+    const worker = await createTemporalWorker({
+      connection: environment.nativeConnection,
+      taskQueue,
+      dataConverter,
+      activities: {
+        async invokeStep() {
+          throw new StepActivityError('ProviderRejected', privateMessage);
+        },
+      },
+    });
+    const handle = await environment.client.workflow.start(INTERPRETER_WORKFLOW, {
+      workflowId: 'private-failure',
+      taskQueue,
+      args: [{ workflow, input: {} }],
+    });
+    await expect(worker.runUntil(handle.result())).resolves.toMatchObject({
+      state: 'repair_required',
+      failure: { type: 'ProviderRejected' },
+    });
+    const history = await handle.fetchHistory();
+    expect(JSON.stringify(history)).not.toContain(privateMessage);
+    await replayTemporalHistory(history, dataConverter);
+  }, 30_000);
+
   it.each([false, true])(
     'runs writes once unless retries are explicit (explicit=%s)',
     async (explicit) => {

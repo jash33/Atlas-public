@@ -26,10 +26,10 @@ The Astro Marketing Site lives under [`apps/marketing-site`](./apps/marketing-si
 `http://localhost:4321` with:
 
 ```sh
-vp run @atlas/marketing-site#dev
+pnpm exec vp run @atlas/marketing-site#dev
 ```
 
-The Astro documentation site lives under [`apps/docs-site`](./apps/docs-site). Run `vp run @atlas/docs-site#dev`
+The Astro documentation site lives under [`apps/docs-site`](./apps/docs-site). Run `pnpm exec vp run @atlas/docs-site#dev`
 to open it at `http://localhost:4322`. It includes core concepts, self-hosting, company sign-in,
 and customer roles. Both public sites share their base styles and logo through `packages/site-ui`.
 
@@ -39,7 +39,7 @@ repair, and migration journeys in 13 short lessons. It is self-contained offline
 `apps/onboarding-site/index.html` directly, or run its development server with:
 
 ```sh
-vp run @atlas/onboarding-site#dev
+pnpm exec vp run @atlas/onboarding-site#dev
 ```
 
 The development server prints its URL when it starts. Run the sites locally or configure
@@ -111,7 +111,7 @@ Install these prerequisites:
 Then install pnpm:
 
 ```sh
-npm install pnpm -g
+npm install --global pnpm@11.19.0
 ```
 
 This workspace pins pnpm 11.19.0 and Vite+ 0.2.6. Install the workspace dependencies, then run the
@@ -121,15 +121,19 @@ authoritative root validation commands:
 pnpm install --frozen-lockfile
 pnpm setup:local
 pnpm check
-vp test --run
-vp run -w typecheck
-vp run -r build
+pnpm typecheck
+pnpm build
 ```
+
+The test suite also needs PostgreSQL. After starting the local services with `pnpm infra:up`,
+run `pnpm test`; it loads the generated test-database connection from `.env`. Run type checking
+first so shared packages are built. `pnpm exec vp` uses the installed workspace tool; no global
+Vite+ installation is needed. In PowerShell, use `pnpm.cmd` if script execution is disabled.
 
 Start one shell for a specific workspace, for example the backend:
 
 ```sh
-vp run @atlas/backend#dev
+pnpm exec vp run @atlas/backend#dev
 ```
 
 `pnpm dev --console-only` starts the Console directly with Vite HMR. The Console is intentionally absent
@@ -159,7 +163,8 @@ Burger Town is a separate demo app that is still being built. Atlas reserves
 addresses from the Backend. Override the `ATLAS_BURGER_TOWN_*` values in `.env` if the delivered app
 uses another address.
 
-Copy [`.env.example`](./.env.example) to an ignored `.env` only when overriding safe local defaults.
+Run `pnpm setup:local` to create the ignored `.env`, then edit that file for local overrides.
+Keep its generated credentials. [`.env.example`](./.env.example) is a reference template.
 It documents the database URL, Temporal endpoint/namespace/task queue, service URLs, ingest gateway
 variables, and placeholder secret names. The product shells run without external credentials. For the one-box product, write
 the model key to the ignored `.local/openai-api-key` file, then set
@@ -233,18 +238,22 @@ operation; it does not expose customer provider APIs to the hosted backend.
 The gateway reads execution results from its environment worker at `ATLAS_INGEST_WORKER_URL`, authenticated with `ATLAS_WORKFLOW_RESULT_TOKEN` configured on both services. The worker reads encrypted Temporal results; response bodies are not stored in the backend database. This result-read endpoint remains available when inbound run intake is disabled. Existing executions started before this change have no final output and return `workflow-response-unavailable`; they are not rerun automatically. Capability responses currently use Atlas's JSON-object contract; downstream HTTP status codes and headers are not forwarded.
 
 External systems start workflows through `POST /ingest` on the matching environment gateway. The request body includes `workflowName`, `payload`, and optional `idempotencyKey`. Organization and environment come from gateway configuration. Callers authenticate with the configured `ATLAS_INGEST_CALLER_TOKEN` bearer token. The gateway validates the payload against the active artifact input schema, encrypts to the worker run-command public key, fingerprints the plaintext, and queues through the backend. The request then waits for execution and returns `200` with the complete JSON object returned by the last capability, without an Atlas envelope. `X-Atlas-Command-Id` and `X-Atlas-Idempotency-Key` headers carry correlation metadata. A failed execution returns `502`; waiting longer than `ATLAS_INGEST_RESPONSE_TIMEOUT_MS` (default 60000) returns `504` with the command ID and idempotency key. Timeout or client disconnect does not cancel or repeat the workflow. Reusing the same idempotency key waits for the existing execution. `GET /ingest/:commandId` still reports worker acceptance and the run ID, not execution completion.
-After a successful infra:up, POST JSON to the Development gateway at `http://localhost:4300/ingest` using the configured caller token. An example request body is:
+A fresh `infra:up` starts with no capabilities, connected repositories, or approved workflows.
+Connect a service or public repository, review its capabilities, then create, check, approve, and
+activate a workflow in Development. Use its **Invoke via API** details for the exact workflow name
+and input schema. The following body is only a request-shape example for a workflow accepting
+`paymentId`; it is not an installed sample:
 
 ```json
 {
-  "workflowName": "One-box smoke workflow",
+  "workflowName": "REPLACE_WITH_APPROVED_WORKFLOW_NAME",
   "payload": {
     "paymentId": "payment_demo_001"
   }
 }
 ```
 
-Send it with the configured caller bearer token to Development at `http://localhost:4300/ingest`. Use `http://localhost:4301/ingest` for Production. Read the generated caller token from your private `.env` file. No shared credentials are provided.
+Send it with the configured caller bearer token to Development at `http://localhost:4300/ingest`. Use `http://localhost:4301/ingest` for Production. Read `ATLAS_INGEST_CALLER_TOKEN` from your private `.env` file generated by `pnpm setup:local`. No shared credentials are provided.
 
 Authenticated webhook gateways submit an opaque, worker-encrypted payment payload to
 `POST /v1/webhook-runs` with `organizationId`, `environmentId`, and a stable provider `deliveryId`.
@@ -298,7 +307,7 @@ Use independently managed credentials and customer authentication for any public
 New browser and gateway submissions encrypt the JSON with a fresh AES-GCM key and wrap that
 key with the worker's RSA public key (`rsa-aes-gcm:v1:`). This supports inputs larger than one
 RSA block. Updated workers also read already-queued `rsa-oaep:` requests. When upgrading
-services separately, upgrade workers before the Console and ingest gateways. The backend
+services separately, upgrade the backend and workers before the Console and ingest gateways. The backend
 accepts both formats and continues to store only encrypted input.
 
 ## Working on the course

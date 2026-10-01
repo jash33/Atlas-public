@@ -58,7 +58,7 @@ pnpm infra:config
 pnpm infra:up
 ```
 
-Startup builds the application images, applies database migrations, creates the Temporal namespaces, and prepares demo API definitions. First builds depend on download speed and machine resources.
+Startup builds the application images, applies database migrations, creates the Temporal namespaces, and seeds the mock provider data. It leaves the capability and workflow catalogs empty and connects no repositories. First builds depend on download speed and machine resources.
 
 **Existing demo installations:** `infra:up` includes a migration from the retired `production-like` setup that can remove old local Atlas volumes. Export anything you need before upgrading that older setup. Ordinary startup on the current topology retains data. Do not use `prepare-demo` on data you want to keep.
 
@@ -75,7 +75,7 @@ Open **http://localhost:5173**. This local evaluation uses the development Conso
 ### 4. Verify the installation
 
 ```sh
-docker compose -f infra/compose/compose.yaml ps
+docker compose --env-file .env -f infra/compose/compose.yaml ps
 curl http://localhost:4000/health
 curl http://localhost:4300/health
 curl http://localhost:4301/health
@@ -83,14 +83,16 @@ curl http://localhost:4301/health
 
 Use `curl.exe` instead of `curl` in Windows PowerShell if `curl` resolves to a PowerShell alias. The Backend and both ingest health checks should return a successful HTTP response. Migration and namespace setup containers are expected to exit successfully rather than stay running. Open **http://localhost:8080** to inspect Temporal.
 
-In the Console, select Development, confirm the worker is connected, and review the sample workflow available in the catalog. Activate only a tested, approved workflow. Submit test input through the Development gateway at port **4300**, using the workflow's exact name and input schema. The current demo caller token is `local-ingest-caller-token`.
+In the Console, select Development and confirm the worker is connected. A fresh installation has no capabilities, connected repositories, or approved workflows. Connect a service or public repository, review its capabilities, then create a workflow, run its checks, and approve and activate it. The workflow's **Invoke via API** details show its exact name and input schema.
 
-For a Payment sample that accepts `paymentId`, this is the request shape; replace the workflow name with the one you reviewed:
+Submit test input through the Development gateway at port **4300**. Read `ATLAS_INGEST_CALLER_TOKEN` from the private `.env` created by `pnpm setup:local` and use that value as the bearer token. Each setup generates its own token; there is no shared demo token.
+
+The following is only a request-shape example for a workflow that accepts `paymentId`, not a preinstalled sample. Replace the token and workflow name, and match the payload to your approved schema:
 
 ```http
 POST /ingest HTTP/1.1
 Host: localhost:4300
-Authorization: Bearer local-ingest-caller-token
+Authorization: Bearer REPLACE_WITH_ATLAS_INGEST_CALLER_TOKEN
 Content-Type: application/json
 
 {
@@ -119,7 +121,7 @@ Named database and worker-secret volumes remain. Avoid `docker compose down -v` 
 - **Docker cannot connect:** start Docker and repeat `docker version`.
 - **A port is already in use:** check 4000, 4100, 4300, 4301, 5173, 5432, 7233, and 8080 before starting again.
 - **Network overlap:** the local Compose file reserves `172.30.99.0/24` and `172.30.100.0/24`. Check for collisions with VPN or Docker networks; its fixed addresses must be changed consistently.
-- **A service is unhealthy:** run `docker compose -f infra/compose/compose.yaml logs --tail 100 backend atlas-migrate temporal worker-development ingest-development`. Resolve the first failing dependency before restarting. Remove secrets and business data before sharing logs.
+- **A service is unhealthy:** run `docker compose --env-file .env -f infra/compose/compose.yaml logs --tail 100 backend atlas-migrate temporal worker-development ingest-development`. Resolve the first failing dependency before restarting. Remove secrets and business data before sharing logs.
 - **The Console cannot reach Atlas:** confirm the Backend health check works and that the Console's API URL matches the local Backend.
 - **A run times out:** inspect the existing run and worker status before resubmitting. Reuse the original idempotency key; do not create another write just to test connectivity.
 
@@ -133,7 +135,7 @@ A complete runtime release needs a Compose file, pinned image digests, an enviro
 
 ### 2. Configure access and storage
 
-Choose the Console hostname, certificate setup, API destinations, and backup location. Supply unique database passwords, signing keys, worker credentials, and per-environment encryption keys using mounted secrets or an approved secret store. The installer must create a customer organization and first administrator without the demo's shared tokens.
+Choose the Console hostname, certificate setup, API destinations, and backup location. Supply unique database passwords, signing keys, worker credentials, and per-environment encryption keys using mounted secrets or an approved secret store. The installer must create a customer organization and first administrator with unique credentials.
 
 Keep PostgreSQL, Temporal, and worker control endpoints on private networks. Expose the Console and required application routes through authenticated HTTPS. Restrict ingest to approved callers and restrict worker access to intended API destinations. Development and production need separate credentials, keys, and execution settings.
 

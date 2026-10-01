@@ -20,19 +20,18 @@ pnpm install --frozen-lockfile
 pnpm setup:local
 
 pnpm check
-vp test --run
-vp run -w typecheck
-vp run -r build</pre>
+pnpm typecheck
+pnpm build</pre>
 
   <h2>2. Start Atlas</h2>
   <div class="table-scroll"><table><thead><tr><th>Command</th><th>Use it to</th></tr></thead><tbody>
-    <tr><td><code>pnpm prepare-demo</code></td><td>Delete old local Atlas state and start with an empty capability catalog containing only the pending Burger Town repository.</td></tr>
+    <tr><td><code>pnpm prepare-demo</code></td><td>Delete old local Atlas state and start with an empty capability catalog and no connected repositories.</td></tr>
     <tr><td><code>pnpm infra:up</code></td><td>Start the full product. It merges the named provider fixtures and preserves other resources and canonical saved data.</td></tr>
     <tr><td><code>pnpm dev</code></td><td>Run source code in watch mode. Start its databases and services separately.</td></tr>
     <tr><td><code>pnpm infra:test:e2e</code></td><td>Run the full local integration check from a replaced, clean provider baseline.</td></tr>
   </tbody></table></div>
   <div class="note">Normal <code>infra:up</code> is additive for the mock provider: a payment you seed by hand survives another startup. Use <code>prepare-demo</code> only when you want the destructive full-demo reset; <code>infra:test:e2e</code> also replaces provider resources for a repeatable integration check.</div>
-  <div class="note">Burger Town is a separate local app running on port 43123. Atlas reaches it from Docker at <code>http://host.docker.internal:43123</code>; the matching browser address is <code>http://localhost:43123</code>. The Burger Town Connect Source form loads these editable addresses from the Backend.</div>
+  <div class="note">Burger Town is a separate demo app still being built, with port 43123 reserved for it. Atlas reaches it from Docker at <code>http://host.docker.internal:43123</code>; the matching browser address is <code>http://localhost:43123</code>. The Burger Town Connect Source form loads these editable addresses from the Backend.</div>
   <div class="note">If you ran an earlier blast-radius branch with the old Burger Town migration numbers, recreate the disposable local database before starting this version.</div>
   <div class="note">After pulling the Production rename, the first <code>pnpm infra:up</code> may find a retired Production-like Atlas stack. It announces the change, deletes that disposable Atlas project's PostgreSQL, Temporal, and Worker-secret data, then recreates Development and Production. Unrelated Docker resources are excluded. Later starts preserve canonical data. Back up anything valuable outside these demo volumes first.</div>
   <div class="note"><code>pnpm dev --console-only</code> starts the Console with Vite hot reload. Compose does not run the Console; port 5173 must be free before starting it.</div>
@@ -65,13 +64,16 @@ OPENAI_MODEL=&lt;configured-model&gt;</pre>
 
   <h2>6. Reset the demo</h2>
   <pre class="flow">pnpm prepare-demo</pre>
-  <p>Open the printed Console link. Burger Town is visible as the only repository, with no capabilities until its public source is analyzed and approved.</p>
+  <p>Open the printed Console link. There are no connected repositories, capabilities, or approved workflows. Connect a service or public repository, review its capabilities, then create, check, approve, and activate a workflow. Its Invoke via API details provide the name and required input fields. Use ATLAS_INGEST_CALLER_TOKEN from your private .env file; there is no shared caller token.</p>
+
+  <h2>Run tests</h2>
+  <p>Once <code>pnpm infra:up</code> has started PostgreSQL, run <code>pnpm test</code>. It loads the generated test-database connection from <code>.env</code>. Run <code>pnpm typecheck</code> first to build shared packages. Commands using <code>pnpm exec vp</code> use the workspace installation; no global Vite+ installation is needed. In PowerShell, use <code>pnpm.cmd</code> if script execution is disabled.</p>
 
   <h2>Focused commands and cleanup</h2>
   <pre class="flow">pnpm dev --console-only
-vp run @atlas/backend#dev
-vp run @atlas/mock-services#dev
-vp run @atlas/worker#dev
+pnpm exec vp run @atlas/backend#dev
+pnpm exec vp run @atlas/mock-services#dev
+pnpm exec vp run @atlas/worker#dev
 
 pnpm infra:down
 pnpm infra:clean:docker-cache

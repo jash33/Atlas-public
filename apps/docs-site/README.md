@@ -3,7 +3,7 @@
 Public Astro documentation, separate from the marketing site and Developer Course.
 
 ```sh
-vp run @atlas/docs-site#dev
+pnpm exec vp run @atlas/docs-site#dev
 pnpm --filter @atlas/docs-site check
 pnpm --filter @atlas/docs-site build
 ```

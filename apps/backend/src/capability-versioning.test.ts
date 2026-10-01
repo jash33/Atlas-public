@@ -85,6 +85,60 @@ describe('declared-contract compatibility', () => {
     },
   );
 
+  it.each(['const', 'enum'] as const)(
+    'treats changed literal object data under %s as breaking',
+    (keyword) => {
+      const previous = fragment();
+      const literal = { description: 'old', nested: { title: 'old', tags: ['old'] } };
+      (paymentSchema(previous).properties as JsonObject).payload = {
+        type: 'object',
+        [keyword]: keyword === 'enum' ? [literal] : literal,
+      };
+      const next = structuredClone(previous);
+      const changed = { description: 'new', nested: { title: 'new', tags: ['new'] } };
+      ((paymentSchema(next).properties as JsonObject).payload as JsonObject)[keyword] =
+        keyword === 'enum' ? [changed] : changed;
+      const diff = compatibilityDiff(previous, next);
+      expect(diff.classification).toBe('breaking');
+      expect(diff.changes.some((path) => path.includes(`/${keyword}`))).toBe(true);
+    },
+  );
+
+  it('preserves literal default data for structural review', () => {
+    const previous = fragment();
+    paymentSchema(previous).default = { description: 'old' };
+    const next = structuredClone(previous);
+    paymentSchema(next).default = { description: 'new' };
+    expect(compatibilityDiff(previous, next).classification).toBe('conditional');
+  });
+
+  it.each(['const', 'enum', 'default', 'properties'])(
+    'still strips schema annotations for a property named %s',
+    (name) => {
+      const previous = fragment();
+      (paymentSchema(previous).properties as JsonObject)[name] = {
+        type: 'string',
+        description: 'old',
+      };
+      const next = structuredClone(previous);
+      ((paymentSchema(next).properties as JsonObject)[name] as JsonObject).description = 'new';
+      expect(compatibilityDiff(previous, next).classification).toBe('metadata');
+    },
+  );
+
+  it('compares object enum values by content when another optional field is added', () => {
+    const previous = fragment();
+    (paymentSchema(previous).properties as JsonObject).payload = {
+      enum: [{ description: 'unchanged', title: 'same' }],
+    };
+    const next = structuredClone(previous);
+    ((paymentSchema(next).properties as JsonObject).payload as JsonObject).enum = [
+      { title: 'same', description: 'unchanged' },
+    ];
+    (paymentSchema(next).properties as JsonObject).optional = { type: 'string' };
+    expect(compatibilityDiff(previous, next).classification).toBe('compatible');
+  });
+
   it('leaves ambiguous structural additions for review', () => {
     const previous = fragment();
     const next = structuredClone(previous);

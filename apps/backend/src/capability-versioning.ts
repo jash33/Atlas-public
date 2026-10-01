@@ -33,13 +33,21 @@ const namedEntryMaps = new Set([
   'responses',
 ]);
 
+// Values beneath these keywords are payload data, not nested schema objects.
+const literalValueKeys = new Set(['const', 'enum', 'default']);
+
 function withoutAnnotations(value: unknown, preserveEntryNames = false): unknown {
   if (Array.isArray(value)) return value.map((child) => withoutAnnotations(child));
   if (!value || typeof value !== 'object') return value;
   return Object.fromEntries(
     Object.entries(value as JsonObject)
       .filter(([key]) => preserveEntryNames || !annotationKeys.has(key))
-      .map(([key, child]) => [key, withoutAnnotations(child, namedEntryMaps.has(key))]),
+      .map(([key, child]) => [
+        key,
+        !preserveEntryNames && literalValueKeys.has(key)
+          ? child
+          : withoutAnnotations(child, !preserveEntryNames && namedEntryMaps.has(key)),
+      ]),
   );
 }
 
@@ -160,9 +168,14 @@ function hasBreakingSchemaChange(previous: unknown, next: unknown): boolean {
   const before = previous as JsonObject;
   const after = next as JsonObject;
   if (before.type !== after.type) return true;
+  if (
+    Object.hasOwn(after, 'const') &&
+    (!Object.hasOwn(before, 'const') || canonicalJson(before.const) !== canonicalJson(after.const))
+  )
+    return true;
   if (Array.isArray(before.enum) && Array.isArray(after.enum)) {
-    const afterEnum = after.enum;
-    if (before.enum.some((value) => !afterEnum.includes(value))) return true;
+    const afterEnum = new Set(after.enum.map(canonicalJson));
+    if (before.enum.some((value) => !afterEnum.has(canonicalJson(value)))) return true;
   }
   const beforeRequired = Array.isArray(before.required) ? before.required : [];
   const afterRequired = Array.isArray(after.required) ? after.required : [];

@@ -1,5 +1,10 @@
 # Workflow checks
 
+Steps without an explicit retry policy run once. Retrying a write requires an explicit policy,
+a workflow business key, and a capability declaration describing the provider's duplicate
+protection. A timeout can mean the provider completed the write even though Atlas received no
+response; review that outcome before manually retrying it.
+
 Drafting and checking are separate actions. Saving or editing a draft does not run checks. The Console shows that the version has no current result until an admin chooses **Run checks**.
 
 In the manual builder, **Save draft** stores the current working draft, including incomplete work. **Validate** checks the current canvas without saving it, replacing the saved draft, or running sandbox tests. It can check unsaved changes and unnamed workflows. Approval stores the reviewed version under the workflow's name before activating it.

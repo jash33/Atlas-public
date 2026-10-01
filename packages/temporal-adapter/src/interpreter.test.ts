@@ -67,6 +67,58 @@ afterAll(async () => {
 });
 
 describe('generic Temporal interpreter', () => {
+  it.each([false, true])(
+    'runs writes once unless retries are explicit (explicit=%s)',
+    async (explicit) => {
+      let effects = 0;
+      const workflow = await createCompiledWorkflowVersion('retry-default@1', 'org_atlas_demo', {
+        irVersion: 1,
+        steps: [
+          {
+            id: 'write',
+            kind: 'capabilityCall',
+            capabilityVersionId: 'orders.reserve@1',
+            arguments: { orderId: { source: 'input', path: ['orderId'] } },
+            ...(explicit
+              ? {
+                  retryPolicy: {
+                    initialInterval: '1 millisecond',
+                    maximumInterval: '1 millisecond',
+                    backoffCoefficient: 1,
+                    maximumAttempts: 3,
+                    nonRetryableErrorTypes: [],
+                  },
+                }
+              : {}),
+          },
+          { id: 'done', kind: 'terminal', state: 'completed' },
+        ],
+      });
+      const worker = await createTemporalWorker({
+        connection: environment.nativeConnection,
+        taskQueue,
+        dataConverter,
+        activities: {
+          async invokeStep() {
+            effects++;
+            throw new StepActivityError('ResponseLost');
+          },
+        },
+      });
+      const handle = await environment.client.workflow.start(INTERPRETER_WORKFLOW, {
+        workflowId: 'retry-default-' + explicit,
+        taskQueue,
+        args: [{ workflow, input: { orderId: 'order_1' } }],
+      });
+      await expect(worker.runUntil(handle.result())).resolves.toMatchObject({
+        state: 'repair_required',
+      });
+      expect(effects).toBe(explicit ? 3 : 1);
+      await replayTemporalHistory(await handle.fetchHistory(), dataConverter);
+    },
+    30_000,
+  );
+
   it('reports a fast completion durably and retries the same outcome', async () => {
     const workflow = await createCompiledWorkflowVersion('reported@1', 'org_atlas_demo', {
       irVersion: 1,

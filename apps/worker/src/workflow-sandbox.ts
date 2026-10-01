@@ -20,6 +20,7 @@ import {
   type StepAttempt,
 } from '@atlas/temporal-adapter';
 import {
+  DEFAULT_STEP_MAXIMUM_ATTEMPTS,
   verifyCompiledWorkflowVersionIntegrity,
   versionedCompiledWorkflowVersionSchema,
   isCapabilityStep,
@@ -657,7 +658,7 @@ async function executeRuntimeCheck(
     const expectedAttempts =
       test.kind !== 'timeout' && step.retryPolicy?.nonRetryableErrorTypes.includes(errorType)
         ? 1
-        : (step.retryPolicy?.maximumAttempts ?? 3);
+        : (step.retryPolicy?.maximumAttempts ?? DEFAULT_STEP_MAXIMUM_ATTEMPTS);
     await injectProviderFault(fetchImplementation, controlTarget, {
       operationId: targetContract.operationId,
       stepId: test.stepId,

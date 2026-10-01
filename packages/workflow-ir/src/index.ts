@@ -622,6 +622,9 @@ export const transformationExpressionSchema = boundedExpressionSchema.pipe(
   lexicallyScopedExpressionSchema,
 );
 
+// Shared by approval, execution, and sandbox checks: retries must be explicit.
+export const DEFAULT_STEP_MAXIMUM_ATTEMPTS = 1;
+
 export const retryPolicySchema = z.strictObject({
   initialInterval: temporalDurationSchema,
   backoffCoefficient: z.number().positive(),

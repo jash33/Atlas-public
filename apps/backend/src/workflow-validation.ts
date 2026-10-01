@@ -1,4 +1,5 @@
 import {
+  DEFAULT_STEP_MAXIMUM_ATTEMPTS,
   isCapabilityStep,
   collectRevalidationActions,
   computeIrHash,
@@ -777,8 +778,7 @@ export async function validateWorkflowDraft(
       const mutates = capabilityMutates(capability?.fragment);
       if (
         mutates &&
-        step.retryPolicy &&
-        step.retryPolicy.maximumAttempts > 1 &&
+        (step.retryPolicy?.maximumAttempts ?? DEFAULT_STEP_MAXIMUM_ATTEMPTS) > 1 &&
         (!step.idempotency || !capability?.annotation?.idempotencyField)
       ) {
         diagnostics.push({

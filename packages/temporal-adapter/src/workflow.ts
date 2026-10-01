@@ -2,6 +2,7 @@ import { ActivityFailure, ApplicationFailure } from '@temporalio/common';
 import { proxyActivities, workflowInfo, sleep, CancellationScope } from '@temporalio/workflow';
 
 import {
+  DEFAULT_STEP_MAXIMUM_ATTEMPTS,
   validateWorkflowInput,
   validateCompiledWorkflowStructure,
   WORKFLOW_STEP_START_TO_CLOSE_TIMEOUT,
@@ -731,12 +732,13 @@ function narrowRequired(
   return narrowed;
 }
 
-// Steps that declare no RetryPolicy still get bounded retries rather than Temporal's unbounded default.
+// Retrying a write requires an explicit policy checked against provider duplicate protection.
+// Omitting the policy must not introduce retries that approval never checked.
 const defaultRetryPolicy: RetryPolicy = {
   initialInterval: '1 second',
   backoffCoefficient: 2,
   maximumInterval: '10 seconds',
-  maximumAttempts: 3,
+  maximumAttempts: DEFAULT_STEP_MAXIMUM_ATTEMPTS,
   nonRetryableErrorTypes: [],
 };
 

@@ -1227,6 +1227,13 @@ describe('customer-worker workflow sandbox', () => {
               id: 'get-invoice',
               kind: 'capabilityCall',
               capabilityVersionId: 'billing.get@v1',
+              retryPolicy: {
+                initialInterval: '1 millisecond',
+                maximumInterval: '1 millisecond',
+                backoffCoefficient: 1,
+                maximumAttempts: 3,
+                nonRetryableErrorTypes: [],
+              },
               arguments: {
                 invoiceId: {
                   source: 'stepOutput',

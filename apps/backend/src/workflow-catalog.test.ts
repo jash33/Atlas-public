@@ -491,7 +491,7 @@ describe('repeated catalog draft saves', () => {
       const changed = await createCompiledWorkflowVersion(draft.workflowVersionId, 'org_atlas', {
         irVersion: 1,
         inputSchema: { required: {} },
-          steps: [{ id: 'done', kind: 'terminal', state: 'validation_failed' }],
+        steps: [{ id: 'done', kind: 'terminal', state: 'validation_failed' }],
       });
       expect((await save('development', changed)).status).toBe(409);
       expect(await snapshot()).toEqual(before);

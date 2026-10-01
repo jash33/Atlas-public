@@ -7,6 +7,88 @@ import { createGenericCapabilityActivityResolver } from './generic-capability-ac
 const backendUrl = 'http://atlas.internal';
 const providerBaseUrl = 'http://providers.local';
 
+it.each(['catalog', 'secret'] as const)(
+  'does not write after cancellation during %s lookup',
+  async (stage) => {
+    const controller = new AbortController();
+    const fetch = vi.fn<typeof globalThis.fetch>().mockImplementation(async (input) => {
+      if (requestUrl(input).startsWith(backendUrl)) {
+        if (stage === 'catalog') controller.abort(new Error('Activity ended'));
+        return Response.json(
+          catalog(
+            openApiCapability({
+              operation: { security: [{ BasicAuth: [] }] },
+              secretAlias: 'PROVIDER_KEY',
+            }),
+          ),
+        );
+      }
+      return Response.json({ widgets: [] });
+    });
+    const activities = createCapabilityStepActivities({
+      resolveCapability: createGenericCapabilityActivityResolver({
+        backendUrl,
+        organizationId: 'org_atlas',
+        environmentId: 'development',
+        providerBaseUrl,
+        fetch,
+        secretProvider: {
+          async getSecret() {
+            if (stage === 'secret') controller.abort(new Error('Activity ended'));
+            return 'test-only';
+          },
+        },
+      }),
+    });
+    await expect(
+      activities.invokeStep(
+        {
+          stepId: 'list-widgets',
+          capabilityVersionId: 'widgets-current',
+          approvedHostnames: ['providers.local'],
+          input: {},
+        },
+        { signal: controller.signal },
+      ),
+    ).rejects.toThrow('Activity ended');
+    expect(fetch).toHaveBeenCalledTimes(1);
+  },
+);
+
+it('passes the activity cancellation signal to the provider request', async () => {
+  const controller = new AbortController();
+  let providerSignal: AbortSignal | null | undefined;
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockResolvedValueOnce(Response.json(catalog(openApiCapability())))
+    .mockImplementationOnce(async (_input, init) => {
+      providerSignal = init?.signal;
+      controller.abort(new Error('Activity ended'));
+      return Response.json({ widgets: [] });
+    });
+  const activities = createCapabilityStepActivities({
+    resolveCapability: createGenericCapabilityActivityResolver({
+      backendUrl,
+      organizationId: 'org_atlas',
+      environmentId: 'development',
+      providerBaseUrl,
+      fetch,
+    }),
+  });
+  await expect(
+    activities.invokeStep(
+      {
+        stepId: 'list-widgets',
+        capabilityVersionId: 'widgets-current',
+        approvedHostnames: ['providers.local'],
+        input: {},
+      },
+      { signal: controller.signal },
+    ),
+  ).rejects.toThrow('Activity ended');
+  expect(providerSignal?.aborted).toBe(true);
+});
+
 it('uses a connected application address without losing its HTTP scheme or port', async () => {
   const fetch = vi
     .fn<typeof globalThis.fetch>()

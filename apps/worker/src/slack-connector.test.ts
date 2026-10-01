@@ -33,6 +33,7 @@ describe('Slack capability runtime binding', () => {
     });
     expect(fetchImplementation).toHaveBeenCalledWith(
       'http://backend:4000/v1/capabilities?organizationId=org_atlas&environmentId=official-test',
+      { signal: expect.any(AbortSignal) },
     );
   });
 
@@ -70,6 +71,7 @@ describe('Slack capability runtime binding', () => {
 
     expect(getSecret).toHaveBeenCalledWith('SLACK_BOT_TOKEN');
     expect(fetchImplementation).toHaveBeenCalledWith('https://slack.com/api/chat.postMessage', {
+      signal: expect.any(AbortSignal),
       method: 'POST',
       redirect: 'manual',
       headers: {

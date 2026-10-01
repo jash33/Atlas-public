@@ -807,7 +807,10 @@ function activitiesWithRetryPolicy(
   if (!patched('separate-step-attempt-reporting-v1')) {
     return proxyActivities<Pick<StepActivities, 'invokeStep'>>(options);
   }
-  const provider = proxyActivities<ReportedStepActivities>(options);
+  const provider = proxyActivities<ReportedStepActivities>({
+    ...options,
+    heartbeatTimeout: '10 seconds',
+  });
   const reporter = proxyActivities<Pick<ReportedStepActivities, 'recordStepAttempt'>>({
     startToCloseTimeout: '30 seconds',
     retry: { initialInterval: '1 second', maximumInterval: '30 seconds' },

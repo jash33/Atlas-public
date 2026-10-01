@@ -74,6 +74,7 @@ describe('HubSpot capability runtime binding', () => {
     expect(fetchImplementation).toHaveBeenCalledWith(
       'https://api.hubapi.com/crm/v3/objects/contacts',
       {
+        signal: expect.any(AbortSignal),
         method: 'POST',
         redirect: 'manual',
         headers: {

@@ -1,4 +1,10 @@
-import { StepActivityError, type SecretProvider, type StepInvocation } from '@atlas/runtime-ports';
+import { stepFetch } from './step-fetch.js';
+import {
+  StepActivityError,
+  type SecretProvider,
+  type StepInvocation,
+  type StepExecutionContext,
+} from '@atlas/runtime-ports';
 import type { AdditionalCapabilityActivity } from './capability-activity.js';
 import { assertDownstreamResponseUrl, assertOutboundUrlApproved } from './outbound-http-policy.js';
 
@@ -13,11 +19,12 @@ export async function loadSlackCapabilityBinding(options: {
   readonly organizationId: string;
   readonly environmentId: string;
   readonly fetch?: typeof globalThis.fetch;
+  readonly context?: StepExecutionContext;
 }): Promise<SlackCapabilityBinding> {
   const url = new URL('/v1/capabilities', options.backendUrl);
   url.searchParams.set('organizationId', options.organizationId);
   url.searchParams.set('environmentId', options.environmentId);
-  const response = await (options.fetch ?? globalThis.fetch)(url.href);
+  const response = await stepFetch(options.fetch ?? globalThis.fetch, options.context)(url.href);
   if (!response.ok) {
     throw new Error(`Slack capability lookup failed with status ${response.status}`);
   }
@@ -52,7 +59,7 @@ export async function loadSlackCapabilityBinding(options: {
 
 export function createSlackCapabilityActivity(options: {
   readonly binding: SlackCapabilityBinding;
-  readonly refreshBinding?: () => Promise<SlackCapabilityBinding>;
+  readonly refreshBinding?: (context?: StepExecutionContext) => Promise<SlackCapabilityBinding>;
   readonly baseUrl: string;
   readonly secretProvider: SecretProvider;
   readonly fetch?: typeof globalThis.fetch;
@@ -62,14 +69,17 @@ export function createSlackCapabilityActivity(options: {
 
   return {
     capabilityVersionId: options.binding.capabilityVersionId,
-    async invokeStep(invocation) {
+    async invokeStep(invocation, context) {
+      const fetch = stepFetch(fetchImplementation, context);
       if (!invocation.approvedHostnames) {
         throw new StepActivityError('ExecutionHostNotApproved');
       }
-      const binding = options.refreshBinding ? await options.refreshBinding() : options.binding;
+      const binding = options.refreshBinding
+        ? await options.refreshBinding(context)
+        : options.binding;
       assertOutboundUrlApproved(endpoint, binding.approvedHostnames, invocation.approvedHostnames);
       const token = await options.secretProvider.getSecret(binding.secretAlias);
-      const response = await fetchImplementation(endpoint.href, {
+      const response = await fetch(endpoint.href, {
         method: 'POST',
         redirect: 'manual',
         headers: {
@@ -84,6 +94,7 @@ export function createSlackCapabilityActivity(options: {
       });
       assertDownstreamResponseUrl(response, endpoint);
       const body: unknown = await response.json();
+      context?.signal.throwIfAborted();
       if (!response.ok || (isRecord(body) && body.ok === false)) {
         const providerError = isRecord(body) && typeof body.error === 'string' ? body.error : null;
         throw new StepActivityError(

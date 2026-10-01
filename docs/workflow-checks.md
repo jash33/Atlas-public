@@ -4,6 +4,11 @@ Steps without an explicit retry policy run once. Retrying a write requires an ex
 a workflow business key, and a capability declaration describing the provider's duplicate
 protection. A timeout can mean the provider completed the write even though Atlas received no
 response; review that outcome before manually retrying it.
+The worker shares a local deadline and cancellation signal across capability lookup, credential
+lookup, and provider HTTP calls. It stops starting requests when that budget expires and aborts
+in-flight HTTP requests; activity heartbeats deliver Temporal cancellation. This cannot undo a
+request already accepted by a provider, so duplicate protection and uncertain-write compensation
+remain required.
 
 The interpreter registers a step's compensation before calling the provider. An undo operation
 must therefore tolerate an absent or already-undone write. Prefer an original input business key

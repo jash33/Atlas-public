@@ -1,4 +1,10 @@
-import { StepActivityError, type SecretProvider, type StepInvocation } from '@atlas/runtime-ports';
+import { stepFetch } from './step-fetch.js';
+import {
+  StepActivityError,
+  type SecretProvider,
+  type StepInvocation,
+  type StepExecutionContext,
+} from '@atlas/runtime-ports';
 import type { JsonValue } from '@atlas/workflow-ir';
 
 import type { AdditionalCapabilityActivity } from './capability-activity.js';
@@ -27,8 +33,8 @@ interface CatalogCapability {
 }
 
 export function createGenericCapabilityActivityResolver(options: GenericCapabilityActivityOptions) {
-  return async (capabilityVersionId: string) => {
-    const activities = await loadGenericCapabilityActivities(options, capabilityVersionId);
+  return async (capabilityVersionId: string, context?: StepExecutionContext) => {
+    const activities = await loadGenericCapabilityActivities(options, capabilityVersionId, context);
     return activities.find((activity) => activity.capabilityVersionId === capabilityVersionId);
   };
 }
@@ -36,13 +42,14 @@ export function createGenericCapabilityActivityResolver(options: GenericCapabili
 export async function loadGenericCapabilityActivities(
   options: GenericCapabilityActivityOptions,
   capabilityVersionId?: string,
+  context?: StepExecutionContext,
 ): Promise<readonly AdditionalCapabilityActivity[]> {
   const fetchImplementation = options.fetch ?? globalThis.fetch;
   const catalogUrl = new URL('/v1/capabilities', options.backendUrl);
   catalogUrl.searchParams.set('organizationId', options.organizationId);
   catalogUrl.searchParams.set('environmentId', options.environmentId);
   if (capabilityVersionId) catalogUrl.searchParams.set('capabilityVersionId', capabilityVersionId);
-  const response = await fetchImplementation(catalogUrl.href);
+  const response = await stepFetch(fetchImplementation, context)(catalogUrl.href);
   if (!response.ok) {
     throw new Error(`Capability lookup failed with status ${response.status}`);
   }
@@ -72,7 +79,8 @@ function activityFor(
 ): AdditionalCapabilityActivity {
   return {
     capabilityVersionId: capability.capabilityVersionId,
-    async invokeStep(invocation) {
+    async invokeStep(invocation, context) {
+      const fetch = stepFetch(fetchImplementation, context);
       const selectedBaseUrl = selectProviderBaseUrl(
         providerBaseUrl,
         capability.hostPolicy.approvedHostnames,
@@ -95,12 +103,13 @@ function activityFor(
       if (authorization) {
         headers.set('authorization', authorization);
       }
-      const response = await fetchImplementation(url, { ...initialRequest, headers });
+      const response = await fetch(url, { ...initialRequest, headers });
       assertDownstreamResponseUrl(response, url);
       let output: unknown;
       try {
         output = await response.json();
       } catch {
+        context?.signal.throwIfAborted();
         throw new StepActivityError(
           response.ok ? 'ResponseSchemaMismatch' : 'DownstreamRequestFailed',
           response.ok
@@ -108,6 +117,7 @@ function activityFor(
             : `Downstream request failed with status ${response.status}`,
         );
       }
+      context?.signal.throwIfAborted();
       if (!response.ok) {
         const error = isRecord(output) && isRecord(output.error) ? output.error.type : undefined;
         throw new StepActivityError(

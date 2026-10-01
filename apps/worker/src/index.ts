@@ -1,3 +1,4 @@
+import type { StepExecutionContext } from '@atlas/runtime-ports';
 import { serve } from '@hono/node-server';
 
 import {
@@ -72,8 +73,9 @@ const driftSignalReporter = createBackendDriftSignalReporter(backendExecutionSco
 // credentials. Contract-faithful local rehearsal uses the generic fragment binding below.
 const officialTestCapabilities = [];
 if (config.slackApiUrl !== config.mockServicesUrl) {
-  const loadBinding = () =>
+  const loadBinding = (context?: StepExecutionContext) =>
     loadSlackCapabilityBinding({
+      ...(context ? { context } : {}),
       backendUrl: config.backendUrl,
       organizationId: config.organizationId,
       environmentId: config.environmentId,
@@ -88,8 +90,9 @@ if (config.slackApiUrl !== config.mockServicesUrl) {
   );
 }
 if (config.hubspotApiUrl !== config.mockServicesUrl) {
-  const loadBinding = () =>
+  const loadBinding = (context?: StepExecutionContext) =>
     loadHubSpotCapabilityBinding({
+      ...(context ? { context } : {}),
       backendUrl: config.backendUrl,
       organizationId: config.organizationId,
       environmentId: config.environmentId,

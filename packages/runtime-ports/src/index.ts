@@ -43,8 +43,16 @@ export interface DriftSignal {
   readonly capabilityVersionId: string;
 }
 
+// Local execution controls; never serialized into workflow input or history.
+export interface StepExecutionContext {
+  readonly signal: AbortSignal;
+}
+
 export interface StepActivities {
-  invokeStep(invocation: StepInvocation): Promise<Readonly<Record<string, JsonValue>>>;
+  invokeStep(
+    invocation: StepInvocation,
+    context?: StepExecutionContext,
+  ): Promise<Readonly<Record<string, JsonValue>>>;
   emitDriftSignal?(signal: DriftSignal): Promise<void>;
 }
 

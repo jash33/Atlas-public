@@ -1,3 +1,4 @@
+import { stepFetch } from './step-fetch.js';
 import {
   workflowSandboxProviderModes,
   workflowSandboxRuntimeVersion,
@@ -242,7 +243,7 @@ export async function createWorkflowSandboxTemporalRuntime(options: {
   >();
   const fetchImplementation = options.fetch ?? globalThis.fetch;
   const activities: StepActivities = {
-    async invokeStep(invocation) {
+    async invokeStep(invocation, context) {
       const session = invocation.runId ? sessions.get(invocation.runId) : undefined;
       if (!session) throw new StepActivityError('UnknownSandboxExecution');
       const contract = session.contracts.get(invocation.capabilityVersionId);
@@ -254,7 +255,7 @@ export async function createWorkflowSandboxTemporalRuntime(options: {
       if (target?.secretAlias && !authorization)
         throw new StepActivityError('SandboxTargetSecretMissing');
       return invokeSandboxProvider(
-        fetchImplementation,
+        stepFetch(fetchImplementation, context),
         target?.baseUrl ?? options.providerBaseUrl,
         contract,
         invocation,

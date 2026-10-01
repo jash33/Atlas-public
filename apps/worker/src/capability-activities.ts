@@ -3,6 +3,7 @@ import {
   UNKNOWN_CAPABILITY_VERSION_FAILURE_TYPE,
   type DriftSignal,
   type StepActivities,
+  type StepExecutionContext,
 } from '@atlas/runtime-ports';
 
 import type { AdditionalCapabilityActivity } from './capability-activity.js';
@@ -11,6 +12,7 @@ export interface CapabilityStepActivitiesOptions {
   readonly capabilities?: readonly AdditionalCapabilityActivity[];
   readonly resolveCapability?: (
     capabilityVersionId: string,
+    context?: StepExecutionContext,
   ) => Promise<AdditionalCapabilityActivity | undefined>;
   readonly onDriftSignal?: (signal: DriftSignal) => Promise<void> | void;
 }
@@ -27,17 +29,19 @@ export function createCapabilityStepActivities(
     async emitDriftSignal(signal) {
       await options.onDriftSignal?.(signal);
     },
-    async invokeStep(invocation) {
+    async invokeStep(invocation, context) {
+      context?.signal.throwIfAborted();
       const capability =
         registered.get(invocation.capabilityVersionId) ??
-        (await options.resolveCapability?.(invocation.capabilityVersionId));
+        (await options.resolveCapability?.(invocation.capabilityVersionId, context));
+      context?.signal.throwIfAborted();
       if (!capability) {
         throw new StepActivityError(
           UNKNOWN_CAPABILITY_VERSION_FAILURE_TYPE,
           `No HTTP binding for ${invocation.capabilityVersionId}`,
         );
       }
-      return capability.invokeStep(invocation);
+      return capability.invokeStep(invocation, context);
     },
   };
 }

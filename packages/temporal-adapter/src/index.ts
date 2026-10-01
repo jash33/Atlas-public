@@ -1,3 +1,4 @@
+import { withActivityExecution } from './activity-execution.js';
 import { fileURLToPath } from 'node:url';
 
 import { Context, log } from '@temporalio/activity';
@@ -257,7 +258,7 @@ async function invokeOrFail(
   invocation: StepInvocation,
 ): Promise<Readonly<Record<string, import('@atlas/workflow-ir').JsonValue>>> {
   try {
-    return await activities.invokeStep(invocation);
+    return await withActivityExecution((context) => activities.invokeStep(invocation, context));
   } catch (error) {
     if (error instanceof StepActivityError) {
       throw ApplicationFailure.create({

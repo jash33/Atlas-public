@@ -16,6 +16,8 @@ COPY --chown=vp:vp packages/test-support/package.json ./packages/test-support/pa
 COPY --chown=vp:vp packages/transformation-runtime/package.json ./packages/transformation-runtime/package.json
 COPY --chown=vp:vp packages/workflow-artifact/package.json ./packages/workflow-artifact/package.json
 COPY --chown=vp:vp packages/workflow-ir/package.json ./packages/workflow-ir/package.json
+COPY --chown=vp:vp apps/docs-site/package.json ./apps/docs-site/package.json
+COPY --chown=vp:vp packages/site-ui/package.json ./packages/site-ui/package.json
 RUN vp install --frozen-lockfile
 RUN tar -cf /tmp/workspace-node-modules.tar $(find apps packages -type d -name node_modules -prune)
 COPY --chown=vp:vp . .

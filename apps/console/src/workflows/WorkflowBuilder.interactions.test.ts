@@ -129,7 +129,7 @@ it('updates names after the catalog loads without modifying the document', async
     'list orders',
   );
   expect(container.querySelector('[data-id="list_orders"] .wb-block-subtitle')?.textContent).toBe(
-    'list-orders@1',
+    'Map inputs from Start or earlier steps.',
   );
   await act(async () => root.render(createElement(Builder, { available: capabilities })));
   expect(container.querySelector('[data-id="list_orders"] .wb-block-title')?.textContent).toContain(

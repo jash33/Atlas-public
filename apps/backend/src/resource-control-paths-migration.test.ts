@@ -5,7 +5,7 @@ import { runner } from 'node-pg-migrate';
 import { Pool } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vite-plus/test';
 
-import { migrationCountAfter } from './migration-test-support.js';
+import { migrationCountThrough } from './migration-test-support.js';
 import { resolveTestDatabaseUrl } from './test-database.js';
 
 const databaseUrl = resolveTestDatabaseUrl();
@@ -24,11 +24,10 @@ const migrationOptions = {
 const capabilityVersionId = 'a'.repeat(64);
 
 beforeAll(async () => {
-  await runner({ ...migrationOptions, direction: 'up' });
   await runner({
     ...migrationOptions,
-    direction: 'down',
-    count: migrationCountAfter('060_capability_risk_notifications'),
+    direction: 'up',
+    count: migrationCountThrough('060_capability_risk_notifications'),
   });
 
   await pool.query(`

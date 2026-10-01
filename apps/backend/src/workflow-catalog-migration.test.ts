@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vite-plus/test';
 
 import { resolveTestDatabaseUrl } from './test-database.js';
 import { readWorkflowCatalog } from './workflow-catalog.js';
-import { migrationCountAfter } from './migration-test-support.js';
+import { migrationCountThrough } from './migration-test-support.js';
 
 const databaseUrl = resolveTestDatabaseUrl();
 const schemaName = `workflow_catalog_migration_test_${process.pid}`;
@@ -24,11 +24,10 @@ const migrationOptions = {
 };
 
 beforeAll(async () => {
-  await runner({ ...migrationOptions, direction: 'up' });
   await runner({
     ...migrationOptions,
-    direction: 'down',
-    count: migrationCountAfter('046_automatic_workflow_retests'),
+    direction: 'up',
+    count: migrationCountThrough('046_automatic_workflow_retests'),
   });
 });
 

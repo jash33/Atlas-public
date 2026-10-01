@@ -4,7 +4,7 @@ import { resolveTestDatabaseUrl } from './test-database.js';
 
 describe('backend test database isolation', () => {
   it('uses a dedicated database and rejects the development database', () => {
-    expect(resolveTestDatabaseUrl({})).toBe('postgresql://atlas:atlas@localhost:5432/atlas_test');
+    expect(resolveTestDatabaseUrl({})).toBe('postgresql://atlas@localhost:5432/atlas_test');
     expect(() =>
       resolveTestDatabaseUrl({
         ATLAS_TEST_DATABASE_URL: 'postgresql://atlas:atlas@localhost:5432/atlas',

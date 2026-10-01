@@ -1,3 +1,4 @@
+import { createBackendAtlasBundleRunGate } from '../apps/worker/src/backend-bundle-run-gate.js';
 import { createPrivateKey, createPublicKey, sign, verify } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -8,6 +9,19 @@ import { describe, expect, it } from 'vite-plus/test';
 import { generateLocalCredentials, setupLocal } from './setup-local.mjs';
 
 describe('private local setup', () => {
+  it('generates bundle trust that the worker can load', async () => {
+    const values = generateLocalCredentials();
+    await expect(
+      createBackendAtlasBundleRunGate({
+        backendUrl: 'http://localhost:4000',
+        organizationId: 'org_atlas',
+        environmentId: 'production',
+        workerToken: values.ATLAS_PRODUCTION_WORKER_TOKEN,
+        grantPublicKey: values.ATLAS_PRODUCTION_GRANT_PUBLIC_KEY,
+        trustConfigJson: values.ATLAS_BUNDLE_TRUST_CONFIG,
+      }),
+    ).resolves.toBeDefined();
+  });
   it('creates fresh passwords, matching worker credentials and separate signing keys', () => {
     const values = generateLocalCredentials();
     expect(values.ATLAS_DEMO_ADMIN_PASSWORD).not.toBe(

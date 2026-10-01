@@ -58,7 +58,7 @@ export function generateLocalCredentials() {
         {
           keyId,
           algorithm: 'Ed25519',
-          publicKey: bundle.publicKey,
+          publicKey: Buffer.from(bundle.publicKey, 'base64').toString('base64url'),
           organizationIds: ['org_atlas'],
           environmentIds: ['development', 'production'],
           notBefore: new Date(Date.now() - 60_000).toISOString(),

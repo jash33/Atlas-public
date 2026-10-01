@@ -1,3 +1,5 @@
+import { temporal } from '@temporalio/proto';
+import { readFileSync } from 'node:fs';
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -67,6 +69,105 @@ afterAll(async () => {
 });
 
 describe('generic Temporal interpreter', () => {
+  it.each([2, 3])(
+    'replays pre-fix IR v%i compensation history',
+    async (version) => {
+      const history = JSON.parse(
+        readFileSync(
+          new URL('./fixtures/compensation-before-fix-v' + version + '.json', import.meta.url),
+          'utf8',
+        ),
+      );
+      await expect(
+        replayTemporalHistory(temporal.api.history.v1.History.fromObject(history), dataConverter),
+      ).resolves.toBeUndefined();
+    },
+    30_000,
+  );
+
+  it.each([2, 3] as const)(
+    'compensates uncertain writes in IR v%i',
+    async (irVersion) => {
+      for (const mode of ['lost-response', 'malformed-response', 'missing-undo-input'] as const) {
+        const calls: string[] = [];
+        const write = {
+          id: 'reserve',
+          kind: 'capabilityCall' as const,
+          capabilityVersionId: 'reserve@1',
+          arguments: { orderId: { source: 'input' as const, path: ['orderId'] } },
+          inputSchema: { required: { orderId: { type: 'string' as const } } },
+          responseSchema: { required: { reservationId: { type: 'string' as const } } },
+          errorRouting: {
+            rules: [],
+            defaultAction: {
+              kind: 'compensateThenLand' as const,
+              outcome: 'manual_review' as const,
+              reasonCode: 'uncertain-write',
+            },
+          },
+        };
+        const undo = {
+          id: 'undo-reserve',
+          kind: 'compensation' as const,
+          compensatesStepId: 'reserve',
+          capabilityVersionId: 'undo@1',
+          arguments: {
+            orderId:
+              mode === 'missing-undo-input'
+                ? { source: 'stepOutput' as const, stepId: 'reserve', path: ['reservationId'] }
+                : { source: 'input' as const, path: ['orderId'] },
+          },
+          inputSchema: { required: { orderId: { type: 'string' as const } } },
+        };
+        const done = { id: 'done', kind: 'terminal' as const, state: 'completed' as const };
+        const workflow =
+          irVersion === 3
+            ? await createGraphCompiledWorkflowVersion('uncertain-write@1', 'org_atlas_demo', {
+                irVersion,
+                startStepId: 'reserve',
+                steps: [{ ...write, next: 'done' }, undo, done],
+              })
+            : await createTransformationCompiledWorkflowVersion(
+                'uncertain-write@1',
+                'org_atlas_demo',
+                { irVersion, steps: [write, undo, done] },
+              );
+        const worker = await createTemporalWorker({
+          connection: environment.nativeConnection,
+          taskQueue,
+          dataConverter,
+          activities: {
+            async invokeStep(invocation) {
+              calls.push(invocation.stepId);
+              expect(invocation.input).toEqual({ orderId: 'order_1' });
+              if (invocation.stepId === 'reserve') {
+                if (mode === 'malformed-response') return { reservationId: 42 };
+                throw new StepActivityError('ResponseLost');
+              }
+              return {};
+            },
+          },
+        });
+        const handle = await environment.client.workflow.start(INTERPRETER_WORKFLOW, {
+          workflowId: 'uncertain-write-' + irVersion + '-' + mode,
+          taskQueue,
+          args: [{ workflow, input: { orderId: 'order_1' }, returnFinalOutput: true }],
+        });
+        const result = await worker.runUntil(handle.result());
+        expect(result).toMatchObject(
+          mode === 'missing-undo-input'
+            ? { state: 'repair_required', failure: { type: 'CompensationFailed' } }
+            : { state: 'manual_review' },
+        );
+        expect(calls).toEqual(
+          mode === 'missing-undo-input' ? ['reserve'] : ['reserve', 'undo-reserve'],
+        );
+        await replayTemporalHistory(await handle.fetchHistory(), dataConverter);
+      }
+    },
+    60_000,
+  );
+
   it('encrypts provider failure messages and stack traces in real Temporal history', async () => {
     const privateMessage = 'private-customer@example.test';
     const workflow = await createCompiledWorkflowVersion('private-failure@1', 'org_atlas_demo', {

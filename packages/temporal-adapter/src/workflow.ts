@@ -1,5 +1,11 @@
 import { ActivityFailure, ApplicationFailure } from '@temporalio/common';
-import { proxyActivities, workflowInfo, sleep, CancellationScope } from '@temporalio/workflow';
+import {
+  proxyActivities,
+  workflowInfo,
+  sleep,
+  CancellationScope,
+  patched,
+} from '@temporalio/workflow';
 
 import {
   DEFAULT_STEP_MAXIMUM_ATTEMPTS,
@@ -203,6 +209,7 @@ async function invokeActivityStep(
   step: ActivityStep,
   outputs: Readonly<StepOutputs>,
   outputProjection: OutputProjection | undefined,
+  beforeInvoke: () => void,
 ) {
   const resolvedInput = resolveStepInput(interpreterInput, step, outputs);
   const idempotencyKey = step.idempotency
@@ -211,6 +218,7 @@ async function invokeActivityStep(
         resolveReference(step.idempotency.businessKey, interpreterInput.input, outputs),
       ])
     : undefined;
+  beforeInvoke();
   return activitiesWithRetryPolicy(step.retryPolicy).invokeStep({
     runId: workflowInfo().workflowId,
     stepId: step.id,
@@ -264,8 +272,14 @@ export async function interpretCompiledWorkflow(
 }
 
 async function executeWorkflow(interpreterInput: InterpreterInput): Promise<InterpreterResult> {
+  // Preserve command order when replaying histories created before this fix.
+  const registerBeforeInvoke = patched('register-compensation-before-invoke-v1');
   if (interpreterInput.workflow.executable.irVersion === 3) {
-    return interpretGraphWorkflow(interpreterInput, interpreterInput.workflow.executable);
+    return interpretGraphWorkflow(
+      interpreterInput,
+      interpreterInput.workflow.executable,
+      registerBeforeInvoke,
+    );
   }
   const steps: readonly (CompiledStep | TransformationStep)[] =
     interpreterInput.workflow.executable.steps;
@@ -277,7 +291,7 @@ async function executeWorkflow(interpreterInput: InterpreterInput): Promise<Inte
     compensations.push(step);
     compensationsByStep.set(step.compensatesStepId, compensations);
   }
-  // Compensations for completed steps, in completion order; unwound last-in, first-out.
+  // Registered before a write can take effect; unwound last-in, first-out.
   let sagaStack: CompensationStep[] = [];
   const driftSignals: DriftSignal[] = [];
   const revalidations = new Map<string, number>();
@@ -308,7 +322,12 @@ async function executeWorkflow(interpreterInput: InterpreterInput): Promise<Inte
     const outputProjection = stepOutputProjection(interpreterInput, step, stepIndex);
     let result: Readonly<Record<string, JsonValue>>;
     try {
-      result = await invokeActivityStep(interpreterInput, step, outputs, outputProjection);
+      result = await invokeActivityStep(interpreterInput, step, outputs, outputProjection, () => {
+        if (registerBeforeInvoke) {
+          sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
+          if (step.irreversibleAfter) compensationDisabled = true;
+        }
+      });
     } catch (error) {
       if (!isActivityFailure(error)) throw error;
       const failureType = applicationFailureType(error);
@@ -358,7 +377,7 @@ async function executeWorkflow(interpreterInput: InterpreterInput): Promise<Inte
 
     outputs[step.id] = result;
     finalOutput = result;
-    sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
+    if (!registerBeforeInvoke) sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
     stepIndex += 1;
   }
 
@@ -376,6 +395,7 @@ async function executeWorkflow(interpreterInput: InterpreterInput): Promise<Inte
 async function interpretGraphWorkflow(
   interpreterInput: InterpreterInput,
   executable: GraphExecutableWorkflow,
+  registerBeforeInvoke: boolean,
 ): Promise<InterpreterResult> {
   const issues = validateCompiledWorkflowStructure(executable);
   if (issues.length)
@@ -461,7 +481,12 @@ async function interpretGraphWorkflow(
     let failureType: string | undefined;
     try {
       // Graph inputs can read any guaranteed ancestor, regardless of array order.
-      result = await invokeActivityStep(interpreterInput, step, outputs, undefined);
+      result = await invokeActivityStep(interpreterInput, step, outputs, undefined, () => {
+        if (registerBeforeInvoke) {
+          sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
+          if (step.irreversibleAfter) compensationDisabled = true;
+        }
+      });
       if (step.irreversibleAfter) compensationDisabled = true;
       if (step.responseSchema && !matchesResponseSchema(result, step.responseSchema)) {
         const signal = { stepId: step.id, capabilityVersionId: step.capabilityVersionId };
@@ -494,7 +519,7 @@ async function interpretGraphWorkflow(
     }
     outputs[step.id] = result!;
     finalOutput = result!;
-    sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
+    if (!registerBeforeInvoke) sagaStack.push(...(compensationsByStep.get(step.id) ?? []));
     current = step.next;
   }
 }

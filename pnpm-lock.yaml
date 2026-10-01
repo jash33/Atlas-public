@@ -415,6 +415,9 @@ importers:
         specifier: 1.22.0
         version: 1.22.0
     devDependencies:
+      '@temporalio/proto':
+        specifier: 1.22.0
+        version: 1.22.0
       '@temporalio/testing':
         specifier: 1.22.0
         version: 1.22.0(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)

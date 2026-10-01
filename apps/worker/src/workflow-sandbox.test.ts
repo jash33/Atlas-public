@@ -1366,7 +1366,6 @@ describe('customer-worker workflow sandbox', () => {
               },
               retryPolicy: mutationRetryPolicy,
               idempotency: { businessKey: { source: 'input', path: ['paymentId'] } },
-              irreversibleAfter: true,
               errorRouting: {
                 rules: [
                   {
@@ -1453,6 +1452,36 @@ describe('customer-worker workflow sandbox', () => {
           status: 'passed',
           terminalOutcome: 'completed',
           providerObservations: expect.objectContaining({ sideEffectCount: 2 }),
+        }),
+      ]);
+
+      const irreversibleWorkflow = await createCompiledWorkflowVersion(
+        'sandbox-uncertain-irreversible@1',
+        'org_atlas',
+        {
+          ...compensatedWorkflow.executable,
+          steps: compensatedWorkflow.executable.steps.map((step) =>
+            step.id === 'mark-paid' && step.kind === 'capabilityCall'
+              ? { ...step, irreversibleAfter: true }
+              : step,
+          ),
+        },
+      );
+      const uncertainIrreversible = await runner.execute({
+        ...failureSuite,
+        workflowVersionId: irreversibleWorkflow.workflowVersionId,
+        irHash: irreversibleWorkflow.irHash,
+        workflow: irreversibleWorkflow,
+        tests: [failureSuite.tests[0]],
+      });
+      expect(uncertainIrreversible.outcomes).toEqual([
+        expect.objectContaining({
+          status: 'passed',
+          terminalOutcome: 'repair_required',
+          providerObservations: expect.objectContaining({
+            compensationOrder: [],
+            invoiceStates: [{ status: 'settling', version: 2 }],
+          }),
         }),
       ]);
 

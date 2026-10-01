@@ -1161,14 +1161,7 @@ function partialFailureExpectation(
       };
     }
   }
-  const completedIds = completedProviderIds(workflow, failingIndex, execution);
-  const priorIrreversible = workflow.executable.steps.some(
-    (step) =>
-      completedIds.includes(step.id) && isCapabilityStep(step) && step.irreversibleAfter === true,
-  );
-  const expected = priorIrreversible
-    ? []
-    : expectedCompensationOrder(workflow, failingIndex, execution);
+  const expected = expectedCompensationOrder(workflow, failingIndex, execution);
   return {
     kind: expected.length > 0 ? 'compensateThenLand' : 'preserveAndLand',
     compensationOrder: expected,
@@ -1186,8 +1179,15 @@ function expectedCompensationOrder(
   failingIndex: number,
   execution: TemporalSandboxExecution,
 ) {
-  const completedIds = completedProviderIds(workflow, failingIndex, execution);
-  return completedIds
+  const attemptedIds = attemptedProviderIds(workflow, failingIndex, execution);
+  if (
+    workflow.executable.steps.some(
+      (step) =>
+        attemptedIds.includes(step.id) && isCapabilityStep(step) && step.irreversibleAfter === true,
+    )
+  )
+    return [];
+  return attemptedIds
     .flatMap((id) =>
       workflow.executable.steps
         .filter((step) => step.kind === 'compensation' && step.compensatesStepId === id)
@@ -1196,14 +1196,14 @@ function expectedCompensationOrder(
     .reverse();
 }
 
-function completedProviderIds(
+function attemptedProviderIds(
   workflow: VersionedCompiledWorkflowVersion,
   failingIndex: number,
   execution: TemporalSandboxExecution,
 ): string[] {
   if (workflow.executable.irVersion !== 3)
     return workflow.executable.steps
-      .slice(0, failingIndex)
+      .slice(0, failingIndex + 1)
       .filter((step) => isCapabilityStep(step) && step.kind !== 'compensation')
       .map((step) => step.id);
   const ids: string[] = [];
@@ -1229,15 +1229,15 @@ function completedProviderIds(
   for (const [index, id] of visited.entries()) {
     const step = steps.get(id);
     if (!step || !isCapabilityStep(step) || step.kind === 'compensation') continue;
-    let succeeded = false;
+    let attempted = false;
     while (attempts[0]?.stepId === id) {
       const observation = attempts.shift()!;
+      attempted = true;
       if (isSuccessStatus(observation.status)) {
-        succeeded = true;
         break;
       }
     }
-    if (succeeded) ids.push(id);
+    if (attempted) ids.push(id);
     const next = visited[index + 1];
     if (next && next !== step.next) discardFrom(next);
   }

@@ -14,6 +14,7 @@ import {
 import {
   createEncryptedDataConverter,
   createTemporalWorker,
+  createTemporalWorkflowRunStarter,
   INTERPRETER_WORKFLOW,
   replayTemporalHistory,
   type StepAttempt,
@@ -69,6 +70,45 @@ afterAll(async () => {
 });
 
 describe('generic Temporal interpreter', () => {
+  it('starts an approved workflow that waits longer than one hour', async () => {
+    const workflow = await createGraphCompiledWorkflowVersion('long-wait@1', 'org_atlas_demo', {
+      irVersion: 3,
+      startStepId: 'wait',
+      steps: [
+        { id: 'wait', kind: 'sleep', durationMs: 2 * 60 * 60 * 1000, next: 'done' },
+        { id: 'done', kind: 'terminal', state: 'completed' },
+      ],
+    });
+    const starter = createTemporalWorkflowRunStarter({
+      workflowClient: environment.client.workflow,
+      taskQueue,
+      async createInterpreterInput() {
+        return { workflowVersionId: workflow.workflowVersionId, input: {} };
+      },
+      async startAuthorized(_input, startTemporal) {
+        return startTemporal(workflow);
+      },
+    });
+    const worker = await createTemporalWorker({
+      connection: environment.nativeConnection,
+      taskQueue,
+      dataConverter,
+      activities: {
+        async invokeStep() {
+          throw new Error('This workflow has no provider steps');
+        },
+      },
+    });
+    const started = await starter.startWorkflowRun({ paymentId: 'long-wait' });
+    expect(started.status).toBe('accepted');
+    const handle = environment.client.workflow.getHandle(started.workflowRunId);
+    await expect(worker.runUntil(handle.result())).resolves.toMatchObject({ state: 'completed' });
+    const history = await handle.fetchHistory();
+    const timer = history.events?.find((event) => event.timerStartedEventAttributes);
+    expect(Number(timer?.timerStartedEventAttributes?.startToFireTimeout?.seconds)).toBe(7200);
+    await replayTemporalHistory(history, dataConverter);
+  }, 30_000);
+
   it.each([2, 3])(
     'replays pre-fix IR v%i compensation history',
     async (version) => {

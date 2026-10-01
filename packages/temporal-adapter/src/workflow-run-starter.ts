@@ -77,7 +77,7 @@ export function createTemporalWorkflowRunStarter(options: TemporalWorkflowRunSta
             // the run closes must still dedupe instead of starting a second execution.
             workflowIdReusePolicy: 'REJECT_DUPLICATE',
             taskQueue: options.taskQueue,
-            workflowExecutionTimeout: '1 hour',
+            // Approved plans may wait for days. Provider calls keep their own bounded timeouts.
             args: [
               {
                 workflow: verifiedWorkflow,

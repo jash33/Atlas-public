@@ -13,6 +13,10 @@ Once an irreversible step is attempted, Atlas preserves earlier effects even if 
 its response: it cannot assume the irreversible action did not happen. Sandbox checks use the
 same attempted-step rules.
 
+Approved runs have no blanket one-hour execution limit; their declared waits can span days.
+Provider calls still have their own timeouts. This change applies to newly started runs, since
+Temporal retains the start settings of executions already in progress.
+
 The `register-compensation-before-invoke-v1` Temporal patch preserves the previous behavior when
 replaying older runs. Keep that branch until those executions have finished and left retention.
 
